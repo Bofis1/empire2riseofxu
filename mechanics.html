@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mechanics — Empire 2: Rise of Xu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Cinzel:wght@400;600;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --xu-black:#020408;--xu-deep:#060d18;--xu-navy:#0a1628;
+  --xu-cyan:#00e5ff;--xu-gold:#ffcc20;--xu-red:#ff2244;
+  --xu-purple:#8822ff;--xu-green:#00ff88;
+  --xu-text:#c8d8e8;--xu-dim:#607080;
+  --glow-cyan:0 0 20px rgba(0,229,255,0.6),0 0 60px rgba(0,229,255,0.2);
+  --glow-gold:0 0 20px rgba(255,204,32,0.6);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
+#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.1s,height 0.1s,border-color 0.1s;mix-blend-mode:screen;}
+#cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
+.nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;letter-spacing:0.15em;color:var(--xu-cyan);text-decoration:none;text-shadow:var(--glow-cyan);}
+.nav-logo span{color:var(--xu-gold);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--xu-cyan);}
+.nav-play-btn{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;color:var(--xu-black);background:var(--xu-cyan);border:none;padding:0.55rem 1.4rem;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background 0.2s;}
+.nav-play-btn:hover{background:var(--xu-gold);}
+
+.page-hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--xu-cyan),transparent);}
+.page-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.4em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.75rem;}
+.page-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);color:#fff;letter-spacing:0.05em;}
+.page-title span{color:var(--xu-gold);}
+
+main{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+/* Sidebar TOC */
+.layout{display:grid;grid-template-columns:220px 1fr;gap:3rem;align-items:start;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}}
+.toc{position:sticky;top:80px;}
+.toc-title{font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:0.25em;color:var(--xu-dim);text-transform:uppercase;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(0,229,255,0.12);}
+.toc ul{list-style:none;}
+.toc li{margin:0.25rem 0;}
+.toc a{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.08em;color:var(--xu-dim);text-decoration:none;transition:color 0.2s;display:block;padding:0.3rem 0.5rem;border-left:2px solid transparent;}
+.toc a:hover{color:var(--xu-cyan);border-left-color:var(--xu-cyan);}
+.toc a.active{color:var(--xu-cyan);border-left-color:var(--xu-cyan);}
+
+/* Content */
+.content section{margin-bottom:4rem;}
+.content h2{font-family:'Cinzel',serif;font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;}
+.content h2 .icon{font-size:1.4rem;}
+.section-bar{height:2px;background:linear-gradient(to right,var(--xu-cyan),transparent);margin-bottom:1.5rem;}
+.content p{color:var(--xu-dim);font-size:1.02rem;margin-bottom:1rem;line-height:1.75;}
+.content p b{color:var(--xu-text);}
+.content p .hl{color:var(--xu-cyan);}
+.content p .gold{color:var(--xu-gold);}
+.content p .red{color:var(--xu-red);}
+
+/* Mechanic cards */
+.mechanic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.5rem;}
+.m-card{background:var(--xu-deep);border:1px solid rgba(0,229,255,0.1);padding:1.5rem;transition:border-color 0.25s;}
+.m-card:hover{border-color:rgba(0,229,255,0.3);}
+.m-card-icon{font-size:1.8rem;margin-bottom:0.75rem;display:block;}
+.m-card-title{font-family:'Orbitron',monospace;font-size:0.78rem;font-weight:700;color:var(--xu-cyan);letter-spacing:0.08em;margin-bottom:0.5rem;}
+.m-card p{font-size:0.88rem;color:var(--xu-dim);margin:0;}
+
+/* Stat table */
+table{width:100%;border-collapse:collapse;margin-top:1.5rem;}
+thead tr{background:rgba(0,229,255,0.08);}
+th{font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:0.15em;color:var(--xu-cyan);text-align:left;padding:0.75rem 1rem;text-transform:uppercase;border-bottom:1px solid rgba(0,229,255,0.15);}
+td{font-size:0.92rem;padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+td:first-child{color:#fff;font-weight:600;}
+tr:hover td{background:rgba(0,229,255,0.03);}
+
+/* Class sections */
+.class-block{background:var(--xu-deep);border:1px solid rgba(255,255,255,0.05);padding:2rem;margin-bottom:1.5rem;}
+.class-title{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;}
+.class-skills{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem;}
+.skill-chip{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;color:var(--xu-black);background:var(--xu-cyan);padding:0.3rem 0.75rem;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.skill-chip.gold{background:var(--xu-gold);}
+.skill-chip.red{background:var(--xu-red);}
+.skill-chip.purple{background:var(--xu-purple);color:#fff;}
+
+/* Combo bar */
+.combo-visual{display:flex;gap:0.5rem;margin-top:1.5rem;align-items:center;}
+.combo-step{flex:1;text-align:center;padding:1rem 0.5rem;background:var(--xu-deep);border:1px solid rgba(255,255,255,0.05);transition:all 0.2s;}
+.combo-step:hover{border-color:var(--xu-cyan);transform:translateY(-2px);}
+.combo-num{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:var(--xu-cyan);}
+.combo-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:var(--xu-dim);}
+.combo-arrow{color:var(--xu-dim);font-size:1.2rem;}
+
+/* Race comparison */
+.race-table td:nth-child(3){color:var(--xu-green);}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#play">Play</a></li>
+    <li><a href="mechanics.html" class="active">Mechanics</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="controls.html">Controls</a></li>
+  </ul>
+  <a href="index.html#play" class="nav-play-btn">PLAY FREE</a>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-grid"></div>
+  <p class="eyebrow">Systems Reference</p>
+  <h1 class="page-title">Game <span>Mechanics</span></h1>
+</div>
+
+<main>
+  <div class="layout">
+    <aside class="toc">
+      <div class="toc-title">Contents</div>
+      <ul>
+        <li><a href="#combat">Combat System</a></li>
+        <li><a href="#skills">Skills & Classes</a></li>
+        <li><a href="#races">Races</a></li>
+        <li><a href="#stats">Stats & Scaling</a></li>
+        <li><a href="#loot">Loot & Crafting</a></li>
+        <li><a href="#ascendancy">Ascendancy</a></li>
+        <li><a href="#multiplayer">Multiplayer</a></li>
+      </ul>
+    </aside>
+
+    <div class="content">
+      <!-- COMBAT -->
+      <section id="combat" class="reveal">
+        <h2><span class="icon">⚔️</span>Combat System</h2>
+        <div class="section-bar"></div>
+        <p>Empire 2 uses <b>real-time point-and-click combat</b>. Left-click attacks toward the mouse cursor, and holding down deals a continuous stream of auto-attacks. All combat is skill-expression — knowing when to commit, when to dodge, and when to parry separates survivors from corpses.</p>
+
+        <h3 style="color:var(--xu-gold);font-family:'Orbitron',monospace;font-size:0.85rem;letter-spacing:0.1em;margin:1.5rem 0 0.75rem;text-transform:uppercase;">Combo Multiplier</h3>
+        <p>Chain consecutive hits without taking damage to build your combo multiplier. The multiplier resets when you get hit.</p>
+        <div class="combo-visual">
+          <div class="combo-step"><div class="combo-num">x1</div><div class="combo-label">Default</div></div>
+          <div class="combo-arrow">→</div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-green)">x3</div><div class="combo-label">5 Hits</div></div>
+          <div class="combo-arrow">→</div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-gold)">x6</div><div class="combo-label">12 Hits</div></div>
+          <div class="combo-arrow">→</div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-red)">x10</div><div class="combo-label">25 Hits</div></div>
+        </div>
+
+        <div class="mechanic-grid" style="margin-top:2rem;">
+          <div class="m-card">
+            <span class="m-card-icon">🛡️</span>
+            <div class="m-card-title">Block & Parry</div>
+            <p>Hold RMB to block. Parry perfectly just as an attack lands to counter with bonus damage and stun the attacker.</p>
+          </div>
+          <div class="m-card">
+            <span class="m-card-icon">💨</span>
+            <div class="m-card-title">Dodge Roll</div>
+            <p>Press SPACE to roll in your movement direction. Brief invincibility frames. Essential for boss phase transitions and AoE avoidance.</p>
+          </div>
+          <div class="m-card">
+            <span class="m-card-icon">⚡</span>
+            <div class="m-card-title">Status Effects</div>
+            <p>Burn, freeze, poison, stun, bleed — applied by skills and certain weapons. Enemies with active statuses display icons above their health bar.</p>
+          </div>
+          <div class="m-card">
+            <span class="m-card-icon">🎯</span>
+            <div class="m-card-title">Damage Types</div>
+            <p>Physical, Magic, and Ranged. Each interacts differently with enemy resistances. Mixed builds are viable but specialists deal more to their type.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section id="skills" class="reveal">
+        <h2><span class="icon">🧿</span>Skills & Classes</h2>
+        <div class="section-bar"></div>
+        <p>Four skill slots on hotkeys <span class="hl">E / R / T / G</span>. Each class has a unique skill tree — pick any combination from your class pool. Skills have cooldowns managed with a mana cost. Some skills scale off ATK, others off INT.</p>
+
+        <div class="class-block">
+          <div class="class-title">⚔️ Warrior</div>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> is core to the class.</p>
+          <div class="class-skills">
+            <span class="skill-chip">🌀 Whirlwind</span>
+            <span class="skill-chip">⚔️ Rending Slash</span>
+            <span class="skill-chip">🔪 Blade Flurry</span>
+            <span class="skill-chip red">💀 Execute</span>
+            <span class="skill-chip">🦘 Leap Strike</span>
+            <span class="skill-chip gold">🛡️ Counter Strike</span>
+            <span class="skill-chip">⚙️ Iron Stance</span>
+            <span class="skill-chip red">🔥 Berserker Fury</span>
+          </div>
+        </div>
+
+        <div class="class-block">
+          <div class="class-title">🔮 Mage</div>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Highest burst damage, area denial, mobility. Glass cannon. <b style="color:var(--xu-text)">INT scaling</b> makes late-game Mages terrifying.</p>
+          <div class="class-skills">
+            <span class="skill-chip purple">⚡ Chain Lightning</span>
+            <span class="skill-chip red">☄️ Void Meteor</span>
+            <span class="skill-chip" style="background:#1488cc;color:#fff">❄️ Cryo Pulse</span>
+            <span class="skill-chip purple">🔮 Aether Nova</span>
+            <span class="skill-chip purple">🌀 Void Blink</span>
+            <span class="skill-chip gold">✨ Aether Sigil</span>
+            <span class="skill-chip red">🌩️ Meteor Shower</span>
+            <span class="skill-chip purple">🔦 Void Pierce</span>
+          </div>
+        </div>
+
+        <div class="class-block">
+          <div class="class-title">🏹 Ranger</div>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Long-range, high mobility, utility-heavy. Best sustained DPS at distance. <b style="color:var(--xu-text)">Precision Shot</b> is the signature ability.</p>
+          <div class="class-skills">
+            <span class="skill-chip">🏹 Aether Volley</span>
+            <span class="skill-chip gold">🎯 Precision Shot</span>
+            <span class="skill-chip" style="background:#226622;color:#fff">☠️ Venom Coat</span>
+            <span class="skill-chip">👁️ Tactical Scan</span>
+            <span class="skill-chip">💨 Swiftfoot</span>
+            <span class="skill-chip gold">🎒 Scavenger</span>
+            <span class="skill-chip">🌑 Shadow Veil</span>
+            <span class="skill-chip">⚡ Aether Dash</span>
+          </div>
+        </div>
+
+        <div class="class-block">
+          <div class="class-title">💚 Healer</div>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Party support, sustain, aura buffs. In multiplayer, a Healer changes everything. <b style="color:var(--xu-text)">War Rally</b> buffs the whole party simultaneously.</p>
+          <div class="class-skills">
+            <span class="skill-chip" style="background:#22aa44;color:#fff">💚 Heal Pulse</span>
+            <span class="skill-chip red">🩸 Life Drain</span>
+            <span class="skill-chip gold">🛡️ Holy Barrier</span>
+            <span class="skill-chip" style="background:#22aa44;color:#fff">♻️ Void Regeneration</span>
+            <span class="skill-chip gold">🏋️ War Rally</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RACES -->
+      <section id="races" class="reveal">
+        <h2><span class="icon">🧬</span>Races</h2>
+        <div class="section-bar"></div>
+        <p>Your race is chosen once and cannot be changed. Each race has unique <b>passive bonuses</b>, a <b>stat spread</b>, and a <b>racial ability</b> that defines your playstyle from level 1 to level 100.</p>
+        <table>
+          <thead>
+            <tr><th>Race</th><th>Identity</th><th>Signature Ability</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🦎 Xu</td><td>Warrior — 12% phys reduction, fear aura</td><td>Crest Flare — AoE Fear</td></tr>
+            <tr><td>🧑 Human</td><td>Adaptive — equip any weapon class</td><td>+5% XP from all sources</td></tr>
+            <tr><td>⚙️ Gnome</td><td>Highest INT+SPD — engineer builds</td><td>Deploy Combat Automaton</td></tr>
+            <tr><td>💪 Ogre</td><td>Heaviest hitter — 18% phys reduction</td><td>War Chant — party buff</td></tr>
+            <tr><td>🐴 Centaur</td><td>Fastest race — minimap enemy reveal</td><td>Charge — massive single hit</td></tr>
+            <tr><td>🐂 Minotaur</td><td>Earthbound — damage reflection</td><td>Vreth Stance — reflect 30%</td></tr>
+            <tr><td>🧝 Elf</td><td>Best mage — -20% mana cost</td><td>Void-Sight — see through walls</td></tr>
+            <tr><td>🧛 Vampire</td><td>Life steal melee — short range teleport</td><td>Void-Step — 6s blink</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- STATS -->
+      <section id="stats" class="reveal">
+        <h2><span class="icon">📊</span>Stats & Scaling</h2>
+        <div class="section-bar"></div>
+        <p>Six core stats govern your character. Every level-up grants stat points to spend. Gear bonuses stack additively with base stats.</p>
+        <table>
+          <thead><tr><th>Stat</th><th>Effect</th><th>Scales</th></tr></thead>
+          <tbody>
+            <tr><td>⚔️ ATK</td><td>Physical damage per hit</td><td>Warrior skills, melee weapons</td></tr>
+            <tr><td>🛡️ DEF</td><td>Damage reduction (flat)</td><td>Armor, block stance</td></tr>
+            <tr><td>🔮 INT</td><td>Magic damage, mana pool</td><td>Mage skills, staff weapons</td></tr>
+            <tr><td>❤️ VIT</td><td>Max HP (+20 HP per point)</td><td>Tanky builds, Ogre/Minotaur</td></tr>
+            <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue sub-class</td></tr>
+            <tr><td>🍀 LCK</td><td>Crit chance, loot quality</td><td>Scavenger talent, late game</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:1rem;"><span class="hl">Crit strikes</span> deal <span class="gold">2× damage</span> and create a screen flash. Critical hits can be forced with the <span class="hl">First-Hit Crit</span> talent.</p>
+      </section>
+
+      <!-- LOOT -->
+      <section id="loot" class="reveal">
+        <h2><span class="icon">💎</span>Loot & Crafting</h2>
+        <div class="section-bar"></div>
+        <p>All enemies drop loot on death. Boss kills scatter items in a ring. Walk over items to auto-collect. <b>Rarity tiers</b> determine base power and visual appearance:</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">⬜</span><div class="m-card-title" style="color:#aaa">Common</div><p>Drops from basic enemies. Starter gear.</p></div>
+          <div class="m-card"><span class="m-card-icon">🟩</span><div class="m-card-title" style="color:#44cc44">Uncommon</div><p>Small bonus stats. Mid-game staple.</p></div>
+          <div class="m-card"><span class="m-card-icon">🟦</span><div class="m-card-title" style="color:#4488ff">Rare</div><p>Meaningful upgrades. Zone-specific drops.</p></div>
+          <div class="m-card"><span class="m-card-icon">🟪</span><div class="m-card-title" style="color:#aa44ff">Epic</div><p>Build-defining items. Crafting materials required.</p></div>
+          <div class="m-card"><span class="m-card-icon">🟨</span><div class="m-card-title" style="color:var(--xu-gold)">Legendary</div><p>Endgame power. Unique visuals. Boss-only drops.</p></div>
+        </div>
+        <p style="margin-top:1.5rem;"><b>Gem Socketing</b> — Open the gem panel (<span class="hl">press J</span>) to slot gems into gear. Rubies boost ATK, Sapphires boost INT, Emeralds boost SPD, Void Gems add all stats.</p>
+        <p><b>Crafting</b> — 28 craftable items across weapon, armor, and accessory benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
+      </section>
+
+      <!-- ASCENDANCY -->
+      <section id="ascendancy" class="reveal">
+        <h2><span class="icon">🌟</span>Ascendancy System</h2>
+        <div class="section-bar"></div>
+        <p>At <span class="gold">Level 100</span>, the level cap is reached — but your character is not done. The <b>Ascendancy System</b> unlocks power beyond the cap via <span class="hl">Ascendancy Ability Points (AA Points)</span> earned through kills and boss clears.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">👤</span><div class="m-card-title">Shadow Step</div><p>Teleport behind target, deal 400% ATK. Brief stun on arrival.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗡️</span><div class="m-card-title">Assassinate</div><p>Execute targets below 30% HP. Instant kill. No cooldown on kill.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Death Mark</div><p>Mark an enemy. All attacks on it deal +40% damage for 8 seconds.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Aether Surge</div><p>Next ability deals 250% damage and costs no mana. 45s cooldown.</p></div>
+          <div class="m-card"><span class="m-card-icon">🦅</span><div class="m-card-title">Elusive</div><p>Dodge chance increases with each consecutive dodge. Stacks to 70%.</p></div>
+          <div class="m-card"><span class="m-card-icon">🩸</span><div class="m-card-title">Hemorrhage</div><p>Bleed attacks stack up to 8×. Bleed damage scales with ATK.</p></div>
+          <div class="m-card"><span class="m-card-icon">🛡️</span><div class="m-card-title">Iron Will</div><p>After death, revive once with 30% HP. 10-minute cooldown.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚙️</span><div class="m-card-title">Overcharge</div><p>Attacks charge an overload bar. At full, next hit deals 500% damage.</p></div>
+        </div>
+      </section>
+
+      <!-- MULTIPLAYER -->
+      <section id="multiplayer" class="reveal">
+        <h2><span class="icon">🌐</span>Multiplayer</h2>
+        <div class="section-bar"></div>
+        <p>Empire 2 supports <b>real-time cooperative multiplayer</b> via WebRTC peer-to-peer + a dedicated server. Up to <span class="hl">4 players</span> per game session.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>All 17 zones are live on the server from the moment a game is created. Enter any zone and enemies are already there.</p></div>
+          <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll. Kills credit the killer. XP and gold from boss clears go to all party members in the zone.</p></div>
+          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and dead status in real time. Trade items via the trade window (T key).</p></div>
+        </div>
+      </section>
+    </div><!-- /content -->
+  </div><!-- /layout -->
+</main>
+
+<footer style="padding:3rem 2rem;background:var(--xu-black);border-top:1px solid rgba(0,229,255,0.08);text-align:center;">
+  <ul style="display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1rem;">
+    <li><a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Home</a></li>
+    <li><a href="lore.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Lore</a></li>
+    <li><a href="controls.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Controls</a></li>
+  </ul>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;color:rgba(96,112,128,0.5);">Empire 2: Rise of Xu · Created by <a href="https://tehbofis.itch.io" target="_blank" style="color:var(--xu-cyan);text-decoration:none;">Tehbofis</a></p>
+</footer>
+
+<script>
+const cursor=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button,.m-card,.class-block').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
+const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+// TOC active state
+const sections=document.querySelectorAll('.content section');
+const tocLinks=document.querySelectorAll('.toc a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{if(s.getBoundingClientRect().top<200)cur=s.id;});
+  tocLinks.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
+});
+</script>
+</body>
+</html>

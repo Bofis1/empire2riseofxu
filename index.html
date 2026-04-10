@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empire 2: Rise of Xu — Browser Action RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Uncial+Antiqua&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#39ff8a;--g2:#a8ff3e;--g3:#1a5c30;
+  --c:#00ccff;--pu:#8c00ff;--or:#ff7800;
+  --bg:#01000a;--bg2:#020d05;--bg3:#040f07;
+  --tx:#b8d4b0;--dim:#3a5c40;
+  --glow:0 0 30px rgba(57,255,138,0.45),0 0 80px rgba(57,255,138,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
+#cur{width:18px;height:18px;border:1.5px solid var(--g);position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%) rotate(45deg);mix-blend-mode:screen;transition:width .12s,height .12s,border-color .12s;}
+#cur::after{content:'';position:absolute;width:4px;height:4px;background:var(--g);top:50%;left:50%;transform:translate(-50%,-50%);}
+#cur.h{width:30px;height:30px;border-color:var(--c);}
+#cur.h::after{background:var(--c);}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:60px;background:linear-gradient(to bottom,rgba(1,0,10,0.97),rgba(1,0,10,0));backdrop-filter:blur(6px);border-bottom:1px solid rgba(57,255,138,0.08);}
+.nav-logo{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:0.9rem;letter-spacing:0.12em;color:var(--g);text-decoration:none;text-shadow:var(--glow);}
+.nav-logo em{color:var(--c);font-style:normal;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--g);}
+.nav-cta{font-family:'Share Tech Mono',monospace;font-size:0.62rem;font-weight:700;letter-spacing:0.2em;color:var(--bg);background:var(--g);border:none;padding:0.5rem 1.4rem;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background .2s;}
+.nav-cta:hover{background:var(--c);}
+#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+#city{position:absolute;inset:0;width:100%;height:100%;}
+#pcan{position:absolute;inset:0;pointer-events:none;}
+.scanline{position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 3px);}
+.scan-sweep{position:absolute;left:0;right:0;height:2px;z-index:4;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(57,255,138,0.06),rgba(57,255,138,0.13),rgba(57,255,138,0.06),transparent);animation:sweep 10s linear infinite;}
+@keyframes sweep{from{top:-2px}to{top:100%}}
+.smoke{position:absolute;bottom:0;left:0;right:0;height:35%;z-index:3;pointer-events:none;background:linear-gradient(0deg,rgba(2,13,5,0.97) 0%,rgba(4,18,8,0.55) 50%,transparent 100%);}
+.vignette{position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at center,transparent 25%,rgba(1,0,10,0.7) 100%);}
+.hero-body{position:relative;z-index:10;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.4rem;padding:0 2rem;}
+.hero-pre{font-family:'Uncial Antiqua',serif;font-size:0.62rem;letter-spacing:0.45em;color:rgba(57,255,138,0.6);text-transform:uppercase;opacity:0;animation:fadeUp .7s .2s forwards;}
+.hero-title{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:clamp(2.8rem,8vw,7.5rem);line-height:0.9;letter-spacing:0.04em;opacity:0;animation:fadeUp .8s .4s forwards;}
+.hero-title .l1{display:block;color:#e8f5e0;text-shadow:0 0 40px rgba(57,255,138,0.3),0 0 80px rgba(57,255,138,0.1),0 2px 8px rgba(0,0,0,0.9);}
+.hero-title .l2{display:block;color:var(--c);font-size:0.55em;letter-spacing:0.28em;text-shadow:0 0 20px rgba(0,200,255,0.5),0 0 40px rgba(0,100,200,0.3);margin-top:0.2em;}
+.hero-div{width:240px;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);opacity:0;animation:fadeIn .8s .7s forwards;}
+.hero-sub{font-size:1.1rem;color:rgba(184,212,176,0.7);max-width:540px;font-weight:300;letter-spacing:0.04em;opacity:0;animation:fadeUp .8s .8s forwards;}
+.hero-sub b{color:var(--tx);}
+.hero-stats{display:flex;gap:3rem;opacity:0;animation:fadeUp .8s 1.0s forwards;}
+.st-num{font-family:'Cinzel Decorative',serif;font-size:2rem;font-weight:900;color:var(--g);line-height:1;text-shadow:var(--glow);}
+.st-lab{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeUp .8s 1.2s forwards;}
+.btn-p{font-family:'Cinzel Decorative',serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;color:var(--bg);background:var(--g);border:none;padding:0.9rem 2.2rem;text-decoration:none;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:all .25s;position:relative;overflow:hidden;}
+.btn-p::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent);transform:translateX(-100%);transition:transform .4s;}
+.btn-p:hover{background:var(--g2);box-shadow:0 0 30px rgba(168,255,62,0.45);}
+.btn-p:hover::before{transform:translateX(100%);}
+.btn-s{font-family:'Share Tech Mono',monospace;font-size:0.7rem;font-weight:700;letter-spacing:0.2em;color:var(--g);background:transparent;border:1px solid rgba(57,255,138,0.35);padding:0.9rem 2.2rem;text-decoration:none;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:all .25s;}
+.btn-s:hover{background:rgba(57,255,138,0.08);border-color:var(--g);box-shadow:var(--glow);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:0.4rem;opacity:0;animation:fadeIn 1s 2.2s forwards;}
+.scroll-hint span{font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:0.3em;color:var(--dim);}
+.scroll-arr{width:18px;height:18px;border-right:1px solid var(--g);border-bottom:1px solid var(--g);transform:rotate(45deg);animation:bounce 1.8s infinite;}
+.ticker-wrap{overflow:hidden;border-top:1px solid rgba(57,255,138,0.08);border-bottom:1px solid rgba(57,255,138,0.08);padding:0.9rem 0;background:rgba(2,13,5,0.92);}
+.ticker-track{display:flex;gap:3rem;width:max-content;animation:tick 45s linear infinite;}
+.t-item{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.15em;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:0.6rem;white-space:nowrap;}
+.t-item .d{width:4px;height:4px;border-radius:50%;background:var(--g);}
+.t-item.warn{color:rgba(255,120,0,0.7);}.t-item.warn .d{background:#ff7800;}
+.t-item.dead{color:rgba(255,34,68,0.7);}.t-item.dead .d{background:#ff2244;}
+#play{padding:6rem 2rem;background:var(--bg2);position:relative;}
+#play::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--g),transparent);}
+.sec-head{text-align:center;margin-bottom:3rem;}
+.sec-pre{font-family:'Uncial Antiqua',serif;font-size:0.62rem;letter-spacing:0.4em;color:rgba(57,255,138,0.6);text-transform:uppercase;margin-bottom:0.6rem;}
+.sec-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,4vw,2.6rem);font-weight:900;color:#e8f5e0;letter-spacing:0.04em;text-shadow:0 0 30px rgba(57,255,138,0.2);}
+.sec-title em{color:var(--c);font-style:normal;}
+.divbar{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--g),transparent);margin:0.8rem auto;}
+.iframe-wrap{max-width:860px;margin:0 auto;position:relative;}
+.iframe-glow{position:absolute;inset:-2px;border-radius:3px;animation:gRot 4s linear infinite;opacity:0.65;}
+@keyframes gRot{0%{background:linear-gradient(135deg,#39ff8a,#00ccff,#8c00ff,#39ff8a)}33%{background:linear-gradient(135deg,#00ccff,#8c00ff,#39ff8a,#00ccff)}66%{background:linear-gradient(135deg,#8c00ff,#39ff8a,#00ccff,#8c00ff)}100%{background:linear-gradient(135deg,#39ff8a,#00ccff,#8c00ff,#39ff8a)}}
+.iframe-in{position:relative;z-index:1;background:var(--bg);border-radius:2px;overflow:hidden;}
+.iframe-in iframe{width:100%;height:620px;border:none;display:block;}
+.iframe-cap{text-align:center;margin-top:1rem;font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;color:var(--dim);}
+.iframe-cap a{color:var(--c);text-decoration:none;}
+#feat{padding:6rem 2rem;background:var(--bg);}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;max-width:1200px;margin:0 auto;}
+.fc{background:var(--bg3);border:1px solid rgba(57,255,138,0.08);padding:2rem;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--g),transparent);opacity:0;transition:opacity .3s;}
+.fc:hover{transform:translateY(-4px);border-color:rgba(57,255,138,0.28);}
+.fc:hover::before{opacity:1;}
+.fc-icon{font-size:1.8rem;margin-bottom:0.9rem;display:block;}
+.fc-title{font-family:'Cinzel Decorative',serif;font-size:0.7rem;font-weight:700;color:var(--g);letter-spacing:0.08em;margin-bottom:0.6rem;}
+.fc-desc{font-size:0.92rem;color:var(--dim);line-height:1.75;}
+.fc-tag{display:inline-block;margin-top:1rem;font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;color:rgba(57,255,138,0.6);border:1px solid rgba(57,255,138,0.2);padding:0.2rem 0.7rem;}
+#races{padding:6rem 2rem;background:var(--bg2);}
+.race-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1100px;margin:0 auto;}
+@media(max-width:900px){.race-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.race-grid{grid-template-columns:1fr;}}
+.rc{background:var(--bg3);border:1px solid rgba(57,255,138,0.07);padding:1.5rem;text-align:center;transition:all .3s;position:relative;overflow:hidden;}
+.rc:hover{border-color:rgba(57,255,138,0.22);transform:translateY(-2px);}
+.rc-em{font-size:2.4rem;margin-bottom:0.7rem;display:block;}
+.rc-name{font-family:'Cinzel Decorative',serif;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;color:#e8f5e0;margin-bottom:0.4rem;}
+.rc-tag{font-size:0.8rem;color:var(--dim);line-height:1.5;}
+.rc-bonus{margin-top:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;color:var(--g);}
+#bosses{padding:6rem 2rem;background:var(--bg);position:relative;}
+#bosses::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,34,68,0.6),transparent);}
+.boss-list{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:0.5rem;}
+.br{display:grid;grid-template-columns:2.4rem 1fr auto;align-items:center;gap:1rem;padding:1rem 1.5rem;background:rgba(10,2,4,0.8);border:1px solid rgba(255,34,68,0.07);transition:all .25s;}
+.br:hover{border-color:rgba(255,34,68,0.28);background:rgba(20,4,8,0.9);}
+.br-icon{font-size:1.4rem;text-align:center;}
+.br-name{font-family:'Cinzel Decorative',serif;font-size:0.8rem;font-weight:700;color:#e8f5e0;}
+.br-zone{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;color:rgba(255,34,68,0.6);text-transform:uppercase;}
+.br-hp{font-family:'Share Tech Mono',monospace;font-size:0.65rem;font-weight:700;color:rgba(255,34,68,0.8);white-space:nowrap;text-align:right;}
+footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,138,0.08);text-align:center;}
+.ft-logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;font-weight:900;color:var(--g);text-shadow:var(--glow);margin-bottom:0.4rem;}
+.ft-nav{display:flex;justify-content:center;gap:2rem;list-style:none;margin:1.2rem 0;}
+.ft-nav a{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--dim);text-decoration:none;text-transform:uppercase;transition:color .2s;}
+.ft-nav a:hover{color:var(--g);}
+.ft-cr{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:rgba(58,92,64,0.5);}
+.ft-cr a{color:var(--c);text-decoration:none;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(5px)}}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
+.reveal.vis{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<nav>
+  <a href="index.html" class="nav-logo">EMPIRE<em>2</em></a>
+  <ul class="nav-links">
+    <li><a href="#play">Play</a></li>
+    <li><a href="mechanics.html">Mechanics</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="controls.html">Controls</a></li>
+  </ul>
+  <a href="#play" class="nav-cta">PLAY FREE</a>
+</nav>
+<section id="hero">
+  <canvas id="city"></canvas>
+  <canvas id="pcan"></canvas>
+  <div class="scanline"></div>
+  <div class="scan-sweep"></div>
+  <div class="smoke"></div>
+  <div class="vignette"></div>
+  <div class="hero-body">
+    <p class="hero-pre">Browser Action RPG &middot; Free to Play &middot; No Download</p>
+    <h1 class="hero-title"><span class="l1">EMPIRE 2</span><span class="l2">Rise of Xu</span></h1>
+    <div class="hero-div"></div>
+    <p class="hero-sub">Fight through <b>17 zones</b>. Slay <b>16 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
+    <div class="hero-stats">
+      <div><div class="st-num">17</div><div class="st-lab">Zones</div></div>
+      <div><div class="st-num">16</div><div class="st-lab">Bosses</div></div>
+      <div><div class="st-num">8</div><div class="st-lab">Races</div></div>
+      <div><div class="st-num">100</div><div class="st-lab">Max Level</div></div>
+    </div>
+    <div class="hero-btns">
+      <a href="#play" class="btn-p">PLAY NOW FREE</a>
+      <a href="lore.html" class="btn-s">READ THE LORE</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><div class="scroll-arr"></div></div>
+</section>
+<div class="ticker-wrap"><div class="ticker-track" id="tt"></div></div>
+<section id="play">
+  <div class="sec-head reveal">
+    <p class="sec-pre">Play In Browser</p>
+    <h2 class="sec-title">Enter the <em>Xu Dominion</em></h2>
+    <div class="divbar"></div>
+    <p style="color:var(--dim);max-width:500px;margin:0 auto;font-size:0.95rem;">No download. No account. Click play and you&apos;re in.</p>
+  </div>
+  <div class="iframe-wrap reveal">
+    <div class="iframe-glow"></div>
+    <div class="iframe-in">
+      <iframe src="https://itch.io/embed-upload/4409074?color=01000a" allowfullscreen title="Empire 2: Rise of Xu"></iframe>
+    </div>
+  </div>
+  <p class="iframe-cap reveal">Prefer full screen? <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank">Open on itch.io &#x2197;</a></p>
+</section>
+<section id="feat">
+  <div class="sec-head reveal">
+    <p class="sec-pre">Core Systems</p>
+    <h2 class="sec-title">Built for <em style="color:var(--g)">Combat</em></h2>
+    <div class="divbar"></div>
+  </div>
+  <div class="feat-grid">
+    <div class="fc reveal"><span class="fc-icon">&#x2694;&#xFE0F;</span><div class="fc-title">Real-Time Combat</div><p class="fc-desc">Click to attack, aim with mouse. Chain hits into x3, x6, x10 combo multipliers. Block, parry, counter with timing-based defense.</p><span class="fc-tag">CORE</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F310;</span><div class="fc-title">Multiplayer Co-op</div><p class="fc-desc">Real-time WebRTC multiplayer. Create or join games from the lobby. Party up to 4. MMO-style persistent enemy state.</p><span class="fc-tag">ONLINE</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F9EC;</span><div class="fc-title">8 Playable Races</div><p class="fc-desc">Every race plays differently. Xu warriors, Gnome artificers, Vampire assassins, Elf spellweavers. Your race defines your build.</p><span class="fc-tag">BUILD</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F48E;</span><div class="fc-title">Gem Socketing</div><p class="fc-desc">Socket rubies, sapphires, emeralds, void gems into gear. 28 craftable items across weapon, armour and accessory benches.</p><span class="fc-tag">CRAFTING</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F31F;</span><div class="fc-title">Ascendancy System</div><p class="fc-desc">Hit level 100 and unlock powers beyond the cap. Shadow Step, Assassinate, Aether Surge, Iron Will and more.</p><span class="fc-tag">ENDGAME</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F30D;</span><div class="fc-title">17 Zones</div><p class="fc-desc">From the ruined Outpost to the Necropolis where the sky attacks you. Hand-crafted zones. No two feel the same.</p><span class="fc-tag">WORLD</span></div>
+  </div>
+</section>
+<section id="races">
+  <div class="sec-head reveal">
+    <p class="sec-pre">Choose Your Heritage</p>
+    <h2 class="sec-title">Eight <em style="color:var(--g)">Races</em></h2>
+    <div class="divbar"></div>
+  </div>
+  <div class="race-grid">
+    <div class="rc reveal"><span class="rc-em">&#x1F98E;</span><div class="rc-name">XU</div><div class="rc-tag">Warrior Race</div><div class="rc-bonus">12% phys reduction</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F9D1;</span><div class="rc-name">HUMAN</div><div class="rc-tag">Adaptive</div><div class="rc-bonus">+5% XP all sources</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x2699;&#xFE0F;</span><div class="rc-name">GNOME</div><div class="rc-tag">Artificer</div><div class="rc-bonus">Highest INT+SPD</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F4AA;</span><div class="rc-name">OGRE</div><div class="rc-tag">The Unbroken</div><div class="rc-bonus">18% phys reduction</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F434;</span><div class="rc-name">CENTAUR</div><div class="rc-tag">Wind Rider</div><div class="rc-bonus">Fastest Race</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F402;</span><div class="rc-name">MINOTAUR</div><div class="rc-tag">Earthbound</div><div class="rc-bonus">AOE Heal Pulse</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F9DD;</span><div class="rc-name">ELF</div><div class="rc-tag">Aether Weaver</div><div class="rc-bonus">-20% Mana Cost</div></div>
+    <div class="rc reveal"><span class="rc-em">&#x1F9DB;</span><div class="rc-name">VAMPIRE</div><div class="rc-tag">Deep Houses</div><div class="rc-bonus">Life Steal + Blink</div></div>
+  </div>
+  <div style="text-align:center;margin-top:3rem;" class="reveal"><a href="mechanics.html" class="btn-s">Full Race &amp; Class Guide &rarr;</a></div>
+</section>
+<section id="bosses">
+  <div class="sec-head reveal">
+    <p class="sec-pre">They Are Waiting</p>
+    <h2 class="sec-title" style="color:#e8f5e0;">16 <em style="color:#ff2244;font-style:normal;">Bosses</em></h2>
+    <div class="divbar" style="background:linear-gradient(to right,transparent,#ff2244,transparent)"></div>
+  </div>
+  <div class="boss-list reveal">
+    <div class="br"><span class="br-icon">&#x2620;&#xFE0F;</span><div><div class="br-name">The Bone Colossus</div><div class="br-zone">Necropolis &middot; Level 100+</div></div><div class="br-hp">1,400,000 HP</div></div>
+    <div class="br"><span class="br-icon">&#x1F53A;</span><div><div class="br-name">The Apex Pyramid</div><div class="br-zone">Xumen Fortress &middot; Level 100+</div></div><div class="br-hp">Orbital Cannons</div></div>
+    <div class="br"><span class="br-icon">&#x1F432;</span><div><div class="br-name">Vaeltharax The Undying</div><div class="br-zone">Dragon Lair &middot; 5 Phases</div></div><div class="br-hp">Cannot Be Killed</div></div>
+    <div class="br"><span class="br-icon">&#x1F300;</span><div><div class="br-name">The Rift Sovereign</div><div class="br-zone">Rift Vale &middot; Level 65+</div></div><div class="br-hp">Dimensional Anomaly</div></div>
+    <div class="br"><span class="br-icon">&#x1F916;</span><div><div class="br-name">XU Supreme Overlord</div><div class="br-zone">Xumen &middot; Level 80+</div></div><div class="br-hp">Top of the Chain</div></div>
+    <div class="br"><span class="br-icon">&#x1F9D9;</span><div><div class="br-name">The Lich King</div><div class="br-zone">Cemetery &middot; Centuries Dead</div></div><div class="br-hp">Still Rising</div></div>
+    <div class="br"><span class="br-icon">&#x2694;&#xFE0F;</span><div><div class="br-name">General Vorrakh</div><div class="br-zone">XU Citadel &middot; The Traitor</div></div><div class="br-hp">Heavily Fortified</div></div>
+    <div class="br"><span class="br-icon">&#x1F525;</span><div><div class="br-name">Inferno Colossus</div><div class="br-zone">Ashlands &middot; Level 35+</div></div><div class="br-hp">Fire and Mass</div></div>
+  </div>
+  <div style="text-align:center;margin-top:2.5rem;" class="reveal"><a href="lore.html" class="btn-s">All 16 Bosses + Full Lore &rarr;</a></div>
+</section>
+<footer>
+  <div class="ft-logo">EMPIRE 2: RISE OF XU</div>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.22em;color:var(--dim);">BROWSER ACTION RPG &middot; FREE TO PLAY</p>
+  <ul class="ft-nav">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="mechanics.html">Mechanics</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="controls.html">Controls</a></li>
+    <li><a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank">Itch.io</a></li>
+  </ul>
+  <p class="ft-cr">Created by <a href="https://tehbofis.itch.io" target="_blank">Tehbofis</a> &middot; Built with Three.js &amp; PeerJS</p>
+</footer>
+<script>
+// CURSOR
+const cur=document.getElementById('cur');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function aC(){cx+=(mx-cx)*0.16;cy+=(my-cy)*0.16;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(aC);})();
+document.querySelectorAll('a,button,.fc,.rc,.br').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('h'));el.addEventListener('mouseleave',()=>cur.classList.remove('h'));});
+
+// SEEDED RNG
+function mkR(seed){let s=seed;return()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/0xffffffff;};}
+
+// CITY CANVAS
+const cvs=document.getElementById('city'),ctx=cvs.getContext('2d');
+let W,H,buildings=[],signs=[],carLanes=[],farBuildings=[];
+
+function buildCity(){
+  const rng=mkR(7331);
+  const hor=H*0.60;
+  buildings=[];signs=[];carLanes=[];
+  // Buildings
+  let bx=0;
+  while(bx<W+200){
+    const isTow=rng()<0.22, isPag=rng()<0.16;
+    const w=isTow?35+rng()*55:20+rng()*95;
+    const h=isTow?H*0.38+rng()*H*0.30:H*0.06+rng()*H*0.40;
+    const gap=rng()*14;
+    const accs=['rgba(57,255,138,','rgba(0,200,255,','rgba(168,255,62,','rgba(140,0,255,','rgba(255,100,0,','rgba(0,255,200,'][Math.floor(rng()*6)];
+    buildings.push({x:bx,w,h,top:hor-h,tiers:isPag?2+Math.floor(rng()*4):0,isTow,
+      bodyR:3+rng()*5|0,bodyG:10+rng()*12|0,bodyB:4+rng()*8|0,
+      acc:accs,winD:0.2+rng()*0.5,winG:rng()<0.6,hasCrane:rng()<0.10,
+      spikeH:15+rng()*45,hasSky:h>H*0.22&&w>22});
+    // Signs
+    if(rng()<0.38&&h>H*0.1){
+      signs.push({x:bx+w*0.08+rng()*w*0.35,y:hor-h*0.85+rng()*h*0.6,
+        w:7+rng()*18,h:16+rng()*55,col:accs,a:0.5+rng()*0.5,blink:rng()<0.22,bs:0.4+rng()*2.5});
+    }
+    bx+=w+gap;
+  }
+  // Car lanes — 6 lanes at different heights
+  const laneCols=['rgba(57,255,138,','rgba(0,200,255,','rgba(168,255,62,','rgba(255,120,0,','rgba(0,255,200,','rgba(200,100,255,'];
+  [0.22,0.34,0.46,0.56,0.66,0.76].forEach((yf,li)=>{
+    const lane={y:hor*yf,dir:li%2===0?1:-1,spd:0.4+Math.random()*0.7,col:laneCols[li],cars:[]};
+    const cnt=3+Math.floor(Math.random()*7);
+    for(let i=0;i<cnt;i++){
+      lane.cars.push({x:Math.random()*W,len:12+Math.random()*22,ch:2.5+Math.random()*3,glow:0.6+Math.random()*0.4,trail:25+Math.random()*70});
+    }
+    carLanes.push(lane);
+  });
+}
+
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+  const hor=H*0.60;
+  // Sky
+  const sk=ctx.createLinearGradient(0,0,0,H);
+  sk.addColorStop(0,'#000103');sk.addColorStop(0.3,'#010407');
+  sk.addColorStop(0.55,'#010a04');sk.addColorStop(0.78,'#020d06');sk.addColorStop(1,'#01000a');
+  ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
+  // Stars
+  const sr=mkR(42);
+  for(let i=0;i<200;i++){const sx=sr()*W,sy=sr()*H*0.52,fl=0.08+Math.sin(t*0.0007*sr()*4+i)*0.08;ctx.fillStyle=`rgba(160,255,180,${fl})`;ctx.beginPath();ctx.arc(sx,sy,sr()*0.8,0,Math.PI*2);ctx.fill();}
+  // Far bg buildings — pre-baked
+  farBuildings.forEach(fb=>{ctx.fillStyle=fb.col;ctx.fillRect(fb.x,hor-fb.h,fb.w,fb.h);fb.wins.forEach(wp=>{ctx.fillStyle=wp.c;ctx.fillRect(wp.x,hor-fb.h+wp.ry,3,4);});});
+  // Main buildings
+  buildings.forEach(b=>{
+    if(b.hasSky){const ga=ctx.createRadialGradient(b.x+b.w/2,b.top,0,b.x+b.w/2,b.top,b.w*2.8);ga.addColorStop(0,b.acc+'0.07)');ga.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=ga;ctx.fillRect(b.x-b.w*2,b.top-b.h*0.4,b.w*5,b.h*1.6);}
+    ctx.fillStyle=`rgb(${b.bodyR},${b.bodyG},${b.bodyB})`;ctx.fillRect(b.x,b.top,b.w,b.h);
+    ctx.strokeStyle=b.acc+'0.20)';ctx.lineWidth=0.8;ctx.strokeRect(b.x+0.5,b.top+0.5,b.w-1,b.h-1);
+    if(b.w>28){const sg=ctx.createLinearGradient(b.x,b.top,b.x,b.top+b.h);sg.addColorStop(0,'rgba(0,0,0,0)');sg.addColorStop(0.35,b.acc+'0.16)');sg.addColorStop(0.65,b.acc+'0.16)');sg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=sg;ctx.fillRect(b.x,b.top,1.5,b.h);}
+    // Windows — static, baked per building using position-seeded values
+    {const wr=mkR((b.x*31+b.top*17)&0xfffff);for(let row=b.top+6;row<hor-8;row+=8)for(let col=b.x+4;col<b.x+b.w-4;col+=6){const rv=wr();if(rv<b.winD){const wa=0.28+wr()*0.52;const wc=b.winG&&wr()<0.6?`rgba(57,255,138,${wa})`:`rgba(0,180,255,${wa})`;ctx.fillStyle=wc;ctx.fillRect(col,row,3,4);}}}
+    // Pagoda tiers
+    for(let ti=0;ti<b.tiers;ti++){const tw=b.w*(1.12-ti*0.17),ty=b.top-ti*11-4,tx=b.x-(tw-b.w)/2;ctx.fillStyle=`rgb(${b.bodyR},${b.bodyG},${b.bodyB})`;ctx.fillRect(tx,ty,tw,6);ctx.strokeStyle=b.acc+'0.55)';ctx.lineWidth=0.7;ctx.strokeRect(tx,ty,tw,6);ctx.fillStyle=b.acc+'0.65)';ctx.fillRect(tx-1,ty,2,10);ctx.fillRect(tx+tw-1,ty,2,10);}
+    // Spire + blink
+    if(b.hasSky){const ax=b.x+b.w/2;ctx.strokeStyle=b.acc+'0.50)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ax,b.top);ctx.lineTo(ax,b.top-b.spikeH);ctx.stroke();ctx.fillStyle=b.acc+'0.75)';ctx.beginPath();ctx.arc(ax,b.top-b.spikeH,2.5,0,Math.PI*2);ctx.fill();ctx.fillStyle=b.acc+'0.06)';ctx.beginPath();ctx.arc(ax,b.top-b.spikeH,10,0,Math.PI*2);ctx.fill();}
+    if(b.hasCrane&&b.h>H*0.14){const cx2=b.x+b.w*0.7,cy2=b.top-8;ctx.strokeStyle='rgba(57,255,138,0.22)';ctx.lineWidth=0.9;ctx.beginPath();ctx.moveTo(cx2,b.top);ctx.lineTo(cx2,cy2-45);ctx.stroke();ctx.beginPath();ctx.moveTo(cx2,cy2-36);ctx.lineTo(cx2+38,cy2-42);ctx.stroke();ctx.fillStyle='rgba(255,60,60,0.65)';ctx.beginPath();ctx.arc(cx2,cy2-45,2,0,Math.PI*2);ctx.fill();}
+  });
+  // Signs
+  signs.forEach(s=>{const a=s.a;ctx.fillStyle=s.col+(a*0.12)+')';ctx.fillRect(s.x,s.y,s.w,s.h);ctx.strokeStyle=s.col+(a*0.80)+')';ctx.lineWidth=0.7;ctx.strokeRect(s.x,s.y,s.w,s.h);for(let li=0;li<3;li++){ctx.fillStyle=s.col+(a*0.50)+')';ctx.fillRect(s.x+s.w*0.18,s.y+s.h*(0.18+li*0.26),s.w*0.64,1.5);}});
+  // Cars
+  carLanes.forEach(lane=>{
+    lane.cars.forEach(car=>{
+      car.x+=lane.dir*lane.spd;
+      if(lane.dir===1&&car.x>W+100)car.x=-car.trail;
+      if(lane.dir===-1&&car.x<-car.trail)car.x=W+100;
+      const tg=ctx.createLinearGradient(lane.dir===1?car.x-car.trail:car.x+car.len,lane.y,lane.dir===1?car.x+car.len:car.x-car.trail,lane.y);
+      tg.addColorStop(0,'rgba(0,0,0,0)');tg.addColorStop(1,lane.col+(car.glow*0.4)+')');
+      ctx.fillStyle=tg;ctx.fillRect(lane.dir===1?car.x-car.trail:car.x,lane.y-car.ch/2,car.trail,car.ch);
+      ctx.fillStyle=lane.col+car.glow+')';ctx.fillRect(car.x,lane.y-car.ch/2,car.len,car.ch);
+      const hx=lane.dir===1?car.x+car.len:car.x,hg=ctx.createRadialGradient(hx,lane.y,0,hx,lane.y,20);
+      hg.addColorStop(0,lane.col+(car.glow*0.55)+')');hg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=hg;ctx.fillRect(hx-20,lane.y-20,40,40);
+    });
+    ctx.strokeStyle=lane.col+'0.05)';ctx.lineWidth=0.5;ctx.setLineDash([8,22]);
+    ctx.beginPath();ctx.moveTo(0,lane.y);ctx.lineTo(W,lane.y);ctx.stroke();ctx.setLineDash([]);
+  });
+  // Horizon glow
+  const hg=ctx.createLinearGradient(0,hor-4,0,hor+70);
+  hg.addColorStop(0,'rgba(57,255,138,0)');hg.addColorStop(0.15,'rgba(57,255,138,0.18)');
+  hg.addColorStop(0.4,'rgba(20,80,30,0.4)');hg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=hg;ctx.fillRect(0,hor-4,W,70);
+  // Ground reflections
+  const gr=mkR(5555);
+  for(let i=0;i<22;i++){const rx=gr()*W,rw=12+gr()*90;const rc=gr()<0.55?'rgba(57,255,138,':'rgba(0,180,255,';const rg=ctx.createLinearGradient(rx,hor,rx,hor+55);rg.addColorStop(0,rc+(0.12+gr()*0.1)+')');rg.addColorStop(1,rc+'0)');ctx.fillStyle=rg;ctx.fillRect(rx-rw/2,hor,rw,55);}
+  // Ground
+  const gnd=ctx.createLinearGradient(0,hor,0,H);gnd.addColorStop(0,'rgba(2,12,4,0.88)');gnd.addColorStop(0.22,'rgba(1,6,2,0.97)');gnd.addColorStop(1,'rgba(1,0,10,1)');ctx.fillStyle=gnd;ctx.fillRect(0,hor,W,H-hor);
+  // Street grid
+  ctx.strokeStyle='rgba(57,255,138,0.035)';ctx.lineWidth=0.4;
+  for(let gx=0;gx<W;gx+=55){ctx.beginPath();ctx.moveTo(gx,hor);ctx.lineTo(gx+15,H);ctx.stroke();}
+  // Searchlights
+  for(let sl=0;sl<3;sl++){const slx=W*(0.18+sl*0.32),sla=Math.sin(t*0.0003+sl*2.0)*0.3;ctx.save();ctx.translate(slx,H);ctx.rotate(sla);const sg=ctx.createLinearGradient(0,0,0,-H);sg.addColorStop(0,'rgba(57,255,138,0.05)');sg.addColorStop(0.4,'rgba(57,255,138,0.015)');sg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=sg;ctx.fillRect(-3,-H,6,H);ctx.restore();}
+}
+
+// PARTICLES
+const pCvs=document.getElementById('pcan'),pCtx=pCvs.getContext('2d');
+let parts=[];
+function mkParts(){pCvs.width=W;pCvs.height=H;parts=[];for(let i=0;i<100;i++)parts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:-(0.12+Math.random()*.5),a:0,ma:0.12+Math.random()*.5,up:true,r:0.4+Math.random()*1.1,c:Math.random()<0.6?'57,255,138':Math.random()<0.5?'0,200,255':'168,255,62'});}
+function drawParts(){pCtx.clearRect(0,0,W,H);parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.up){p.a+=0.01;if(p.a>=p.ma)p.up=false;}else p.a-=0.007;if(p.a<=0||p.y<-10){p.x=Math.random()*W;p.y=H+5;p.a=0;p.up=true;}pCtx.fillStyle=`rgba(${p.c},${p.a})`;pCtx.beginPath();pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);pCtx.fill();});}
+
+// RESIZE + LOOP
+function resize(){W=cvs.width=pCvs.width=window.innerWidth;H=cvs.height=pCvs.height=window.innerHeight;buildCity();mkParts();}
+window.addEventListener('resize',resize);
+let t=0;
+function loop(){t++;draw(t);drawParts();requestAnimationFrame(loop);}
+resize();loop();
+
+// TICKER
+const zones=[{l:'XU Outpost · Safe Hub',c:false},{l:'Patrol Zone · Lv 5+',c:false},{l:'XU Cemetery · Lv 20+',c:'warn'},{l:'Void Wastes · Lv 15+',c:false},{l:'XU Citadel · Lv 25+',c:'warn'},{l:'Ashlands · Lv 35+',c:'warn'},{l:'Fungal Depths · Lv 42+',c:'warn'},{l:'Frostveil · Lv 50+',c:'warn'},{l:'Ancient Realm · Lv 58+',c:'dead'},{l:'Rift Vale · Lv 65+',c:'dead'},{l:'Dragon Lair · Lv 75+ · VAELTHARAX',c:'dead'},{l:'Xumen · Lv 80+',c:'dead'},{l:'Wyvern Wastes · Lv 80+',c:'dead'},{l:'Xumen Fortress · Lv 100+',c:'dead'},{l:'THE NECROPOLIS · Lv 100+ · SKY JOINS THE FIGHT',c:'dead'}];
+const tt=document.getElementById('tt');
+[...zones,...zones].forEach(z=>{const el=document.createElement('div');el.className='t-item'+(z.c?' '+z.c:'');el.innerHTML='<div class="d"></div>'+z.l;tt.appendChild(el);});
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('vis');}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(i%3)*0.08+'s';});
+</script>
+</body>
+</html>

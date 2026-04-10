@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lore — Empire 2: Rise of Xu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Cinzel:wght@400;600;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--xu-black:#020408;--xu-deep:#060d18;--xu-navy:#0a1628;--xu-cyan:#00e5ff;--xu-gold:#ffcc20;--xu-red:#ff2244;--xu-purple:#8822ff;--xu-green:#00ff88;--xu-text:#c8d8e8;--xu-dim:#607080;--glow-cyan:0 0 20px rgba(0,229,255,0.6),0 0 60px rgba(0,229,255,0.2);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
+#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.1s,height 0.1s;mix-blend-mode:screen;}
+#cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
+.nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;letter-spacing:0.15em;color:var(--xu-cyan);text-decoration:none;text-shadow:var(--glow-cyan);}
+.nav-logo span{color:var(--xu-gold);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--xu-cyan);}
+.nav-play-btn{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;color:var(--xu-black);background:var(--xu-cyan);border:none;padding:0.55rem 1.4rem;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background 0.2s;}
+.nav-play-btn:hover{background:var(--xu-gold);}
+
+/* Lore hero — atmospheric */
+.lore-hero{position:relative;padding:8rem 2rem 5rem;text-align:center;overflow:hidden;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.lore-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(0,50,100,0.3) 0%,var(--xu-black) 70%);}
+.lore-hero-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 3px);pointer-events:none;}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.4em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.75rem;position:relative;z-index:2;}
+.page-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);color:#fff;letter-spacing:0.05em;position:relative;z-index:2;}
+.page-title span{color:var(--xu-gold);}
+.hero-quote{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:1.05rem;color:var(--xu-dim);font-style:italic;max-width:600px;position:relative;z-index:2;line-height:1.8;}
+.hero-quote::before,.hero-quote::after{content:'"';color:var(--xu-cyan);font-size:1.5rem;line-height:0;vertical-align:-0.4em;}
+
+main{max-width:860px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+/* Lore sections */
+.lore-chapter{margin-bottom:5rem;position:relative;}
+.chapter-label{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.35em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;}
+.chapter-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(0,229,255,0.3),transparent);}
+.chapter-title{font-family:'Cinzel',serif;font-size:2rem;font-weight:900;color:#fff;margin-bottom:1.5rem;letter-spacing:0.04em;}
+.chapter-title .accent{color:var(--xu-gold);}
+.lore-text{color:var(--xu-dim);font-size:1.05rem;line-height:1.85;margin-bottom:1.25rem;}
+.lore-text b{color:var(--xu-text);}
+.lore-text .hl{color:var(--xu-cyan);}
+.lore-text .gold{color:var(--xu-gold);}
+.lore-text .red{color:var(--xu-red);}
+
+/* Pull quote */
+.pull-quote{border-left:3px solid var(--xu-cyan);padding:1.25rem 1.5rem;margin:2rem 0;background:rgba(0,229,255,0.04);}
+.pull-quote p{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--xu-text);font-style:italic;line-height:1.7;margin:0;}
+.pull-quote cite{display:block;margin-top:0.75rem;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:var(--xu-dim);}
+
+/* Boss lore cards */
+.boss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.25rem;margin-top:2rem;}
+.boss-card{background:var(--xu-deep);border:1px solid rgba(255,34,68,0.12);padding:1.75rem;transition:border-color 0.25s;position:relative;overflow:hidden;}
+.boss-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--xu-red),transparent);opacity:0;transition:opacity 0.25s;}
+.boss-card:hover{border-color:rgba(255,34,68,0.35);}
+.boss-card:hover::before{opacity:1;}
+.boss-card-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
+.boss-emoji{font-size:2rem;}
+.boss-name-wrap{}
+.boss-card-name{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:#fff;}
+.boss-card-zone{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--xu-red);text-transform:uppercase;}
+.boss-lore{font-size:0.9rem;color:var(--xu-dim);line-height:1.7;}
+
+/* Zone timeline */
+.zone-timeline{position:relative;padding-left:1.5rem;margin-top:2rem;}
+.zone-timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--xu-cyan),rgba(0,229,255,0.1));}
+.zone-entry{position:relative;margin-bottom:1.75rem;padding-left:1.5rem;}
+.zone-entry::before{content:'';position:absolute;left:-1.5rem;top:0.45rem;width:8px;height:8px;border-radius:50%;background:var(--xu-deep);border:1px solid var(--xu-cyan);}
+.zone-entry.danger::before{border-color:var(--xu-red);box-shadow:0 0 8px rgba(255,34,68,0.4);}
+.zone-level{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:var(--xu-dim);}
+.zone-name{font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;color:#fff;margin:0.15rem 0;}
+.zone-desc{font-size:0.88rem;color:var(--xu-dim);line-height:1.6;}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.7s,transform 0.7s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="cursor"></div><div id="cursor-dot"></div>
+<nav>
+  <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#play">Play</a></li>
+    <li><a href="mechanics.html">Mechanics</a></li>
+    <li><a href="lore.html" class="active">Lore</a></li>
+    <li><a href="controls.html">Controls</a></li>
+  </ul>
+  <a href="index.html#play" class="nav-play-btn">PLAY FREE</a>
+</nav>
+
+<div class="lore-hero">
+  <div class="lore-hero-bg"></div>
+  <div class="lore-hero-scanlines"></div>
+  <p class="eyebrow">World History · Faction War · Ancient Power</p>
+  <h1 class="page-title">The <span>Lore</span> of Xu</h1>
+  <p class="hero-quote">They came from the deep faults. They do not negotiate. They do not remember mercy. They are the Xu, and this world was already theirs.<cite>— Recovered Resistance Field Report, Author Unknown</cite></p>
+</div>
+
+<main>
+
+  <div class="lore-chapter reveal">
+    <div class="chapter-label">Chapter I</div>
+    <h2 class="chapter-title">The <span class="accent">Xu Dominion</span></h2>
+    <p class="lore-text">Centuries before the events of Empire 2, the <b>Xu</b> were not conquerors — they were architects. Descended from an ancient lineage of scale-plated warriors who built their civilization in the deep fault-lines of the world, the Xu developed technology that blended organic scale-craft with mechanical engineering. Their cities were marvels of neon-lit metal and living stone.</p>
+    <p class="lore-text">The transformation into conquerors came with the rise of <b class="gold">the Xu Supreme Overlord</b> — a military commander who unified the scattered Xu city-states under a single iron banner. What had been a civilization of engineers and warriors became a <span class="red">Dominion</span>: expansionist, authoritarian, and consuming.</p>
+
+    <div class="pull-quote">
+      <p>We did not choose to resist. We chose to survive. When the Xu rolled through the Outpost gates, every family that fled north became a soldier. Every refugee became a fighter. The Resistance was not organized. It simply refused to stop existing.</p>
+      <cite>— Commander Yelen Ashe, Founding Member of the Free Races Coalition</cite>
+    </div>
+
+    <p class="lore-text">The <b>Free Races Coalition</b> — Humans, Gnomes, Ogres, Centaurs, Minotaurs, Elves, and Vampires — formed not from ideology but from desperation. The Xu had taken everything: trade routes, cities, farmland, and the ancient ruins that once belonged to everyone. The <span class="hl">XU Outpost</span> that players begin in is one of the last strongholds still standing.</p>
+  </div>
+
+  <div class="lore-chapter reveal">
+    <div class="chapter-label">Chapter II</div>
+    <h2 class="chapter-title">The <span class="accent">Architects</span> & Ancient Power</h2>
+    <p class="lore-text">Beneath the political conflict runs a deeper mystery. The world is riddled with <b>Ancient Realm structures</b> — ruins that predate the Xu, predate the Free Races, predate written history. Scholars call their builders <span class="hl">The Architects</span>.</p>
+    <p class="lore-text">The Architects left behind technology that neither faction fully understands. <b>Void gems</b>, <b>void weapons</b>, and <b>dimensional anomalies</b> like the Rift Vale are all their legacy. The Xu Supreme Overlord believes controlling Architect technology is the key to total dominion. The Resistance believes it's the only way to stop them.</p>
+    <p class="lore-text">The <b class="gold">Ancient Realm</b> — zone 11 in the game — is a direct entry into Architect territory. What guards it is not of the Xu. It is older. It has been waiting.</p>
+  </div>
+
+  <div class="lore-chapter reveal">
+    <div class="chapter-label">Chapter III</div>
+    <h2 class="chapter-title">The <span class="accent">Zones</span> — Path to Xumen</h2>
+    <p class="lore-text">The campaign follows a single line of geographic escalation — from the front lines of the war to the Xu capital itself. Each zone has its own history, its own horror, and its own boss that must fall before you advance.</p>
+    <div class="zone-timeline">
+      <div class="zone-entry"><div class="zone-level">Level 1+ · Safe Zone</div><div class="zone-name">🏚️ XU Outpost</div><div class="zone-desc">The last Resistance stronghold. Crafting benches, merchants, and the lobby where heroes gather.</div></div>
+      <div class="zone-entry"><div class="zone-level">Level 5+</div><div class="zone-name">⚔️ Patrol Zone</div><div class="zone-desc">Xu patrol routes. First combat encounter with xu_scouts, soldiers, and their commanding officers.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 20+</div><div class="zone-name">💀 XU Cemetery</div><div class="zone-desc">Ancient burial ground repurposed by the Xu. The Lich King has been here for centuries. He was not invited.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 15+</div><div class="zone-name">🌌 Void Wastes</div><div class="zone-desc">Dimensional anomalies tear reality here. Void Wraith Prime commands creatures that shouldn't exist.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 25+</div><div class="zone-name">🏙️ XU Citadel</div><div class="zone-desc">The Xu military nerve centre. General Vorrakh — traitor, war criminal, fortress commander — awaits at the top.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 35+</div><div class="zone-name">🌋 Ashlands</div><div class="zone-desc">Scorched earth. Volcanic activity sustained by Xu geothermal mining. The Inferno Colossus is not a natural creature.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 80+</div><div class="zone-name">🗡️ Xumen</div><div class="zone-desc">The Xu capital. Every Xu soldier alive is here. The Supreme Overlord commands from the central spire.</div></div>
+      <div class="zone-entry danger"><div class="zone-level">Level 100+ · Endgame</div><div class="zone-name">☠️ The Necropolis</div><div class="zone-desc">It rains. Lightning kills you. The Bone Colossus — 1,400,000 HP, four phases, void-crack skull the size of a building — waits at the centre.</div></div>
+    </div>
+  </div>
+
+  <div class="lore-chapter reveal">
+    <div class="chapter-label">Chapter IV</div>
+    <h2 class="chapter-title">The <span class="accent">16 Bosses</span></h2>
+    <p class="lore-text">Every zone has a guardian. Some were created by the Xu. Some are older than the Xu. Some are things no one created on purpose.</p>
+    <div class="boss-grid">
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">☠️</span><div class="boss-name-wrap"><div class="boss-card-name">The Bone Colossus</div><div class="boss-card-zone">Necropolis · 1,400,000 HP</div></div></div>
+        <p class="boss-lore">A void-crack entity that assembled itself from the remains of everyone who fell in the Necropolis war. Four phases. The fourth phase involves the sky joining the fight. No one has confirmed how it began existing.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🔺</span><div class="boss-name-wrap"><div class="boss-card-name">The Apex Pyramid</div><div class="boss-card-zone">Xumen Fortress · Level 100+</div></div></div>
+        <p class="boss-lore">A Xu military spacecraft repurposed as a fortress AI. Orbital cannon arrays, tractor beams, and a rotating hull make it unkillable from range. The Xu Supreme Overlord built it as a last resort. It became a first resort.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🐲</span><div class="boss-name-wrap"><div class="boss-card-name">Vaeltharax The Undying</div><div class="boss-card-zone">Dragon Lair · 5 Phases</div></div></div>
+        <p class="boss-lore">She has been killed fourteen times. She comes back. The Dragon Lair is littered with the armour of adventurers who thought the fifth phase was the last one. It is not. She enters a new phase when "dead." Her fifth phase unlocks abilities she wasn't supposed to have.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🌀</span><div class="boss-name-wrap"><div class="boss-card-name">The Rift Sovereign</div><div class="boss-card-zone">Rift Vale · Dimensional Anomaly</div></div></div>
+        <p class="boss-lore">The Rift Vale is a zone where dimensional collapse is ongoing. The Rift Sovereign is not a creature that entered through the rift — it IS the rift. Destroying it collapses the anomaly. The world is not sure this is safe.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">⚔️</span><div class="boss-name-wrap"><div class="boss-card-name">General Vorrakh</div><div class="boss-card-zone">XU Citadel · The Traitor General</div></div></div>
+        <p class="boss-lore">Vorrakh was once a Free Races general who defected to the Xu Dominion in exchange for promises of power. He got what he was promised. The Citadel garrison worships him. The Resistance has a word for him in every language they speak. None of them are kind.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🧙</span><div class="boss-name-wrap"><div class="boss-card-name">The Lich King</div><div class="boss-card-zone">Cemetery · Centuries Dead</div></div></div>
+        <p class="boss-lore">Not a Xu creation. The Lich King predates the Xu by four centuries. He was ruling the Cemetery before the Xu arrived, and he will still be there after. He permits the Xu to operate nearby because they provide a steady stream of the newly dead. He finds this convenient.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🤖</span><div class="boss-name-wrap"><div class="boss-card-name">XU Supreme Overlord</div><div class="boss-card-zone">Xumen · The Command Chain</div></div></div>
+        <p class="boss-lore">The architect of the Xu Dominion. Not a warlord. Not a conqueror. An administrator. The Supreme Overlord built the Dominion from bureaucratic precision — every zone, every patrol route, every slave camp was authorized through proper channels. He is the most dangerous kind of enemy: an organized one.</p>
+      </div>
+      <div class="boss-card">
+        <div class="boss-card-header"><span class="boss-emoji">🐲</span><div class="boss-name-wrap"><div class="boss-card-name">Stonewyrm Colossus</div><div class="boss-card-zone">Wyvern Wastes · Level 80+</div></div></div>
+        <p class="boss-lore">Ancient. Massive. The Wyvern Wastes were its territory long before either faction arrived. It does not care about the war. It cares about the noise. The Xu brought the noise. It will flatten both sides with equal indifference.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="lore-chapter reveal">
+    <div class="chapter-label">Chapter V</div>
+    <h2 class="chapter-title">The <span class="accent">Races</span> of the Coalition</h2>
+    <p class="lore-text">The Free Races Coalition was not designed — it was collided into existence. Eight species that had spent centuries trading, competing, and occasionally warring with each other found themselves united by a single existential threat.</p>
+    <p class="lore-text">The <b>Xu</b> themselves can choose to fight against their own Dominion — former soldiers, escaped prisoners, and ideological dissidents who believe the Overlord has led their civilization to ruin. Playing as a Xu in the Resistance is considered the hardest alignment in the game. Every soldier you fight used to be your people.</p>
+    <p class="lore-text">The <b class="gold">Vampires</b> of the Deep Houses joined last. For centuries they had maintained careful neutrality with the Xu Dominion, trading void-gems and arcane knowledge in exchange for being left alone. When the Xu broke that agreement and raided the Deep Houses, the Vampires did not forgive. They joined the Coalition not as allies — as instruments of a very specific revenge.</p>
+    <div class="pull-quote">
+      <p>The Gnomes built the weapons. The Ogres carried them. The Centaurs delivered them. The Elves aimed them. The Humans convinced everyone this was worth doing. And the Vampires reminded everyone what happens when it isn't.</p>
+      <cite>— Anonymous Coalition Historian, "The Unlikely Resistance"</cite>
+    </div>
+  </div>
+
+</main>
+
+<footer style="padding:3rem 2rem;background:var(--xu-black);border-top:1px solid rgba(0,229,255,0.08);text-align:center;">
+  <ul style="display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1rem;">
+    <li><a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Home</a></li>
+    <li><a href="mechanics.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Mechanics</a></li>
+    <li><a href="controls.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Controls</a></li>
+  </ul>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;color:rgba(96,112,128,0.5);">Empire 2: Rise of Xu · Created by <a href="https://tehbofis.itch.io" target="_blank" style="color:var(--xu-cyan);text-decoration:none;">Tehbofis</a></p>
+</footer>
+
+<script>
+const cursor=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button,.boss-card').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
+const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+</script>
+</body>
+</html>

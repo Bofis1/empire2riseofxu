@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controls — Empire 2: Rise of Xu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Cinzel:wght@400;600;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--xu-black:#020408;--xu-deep:#060d18;--xu-navy:#0a1628;--xu-cyan:#00e5ff;--xu-gold:#ffcc20;--xu-red:#ff2244;--xu-purple:#8822ff;--xu-green:#00ff88;--xu-text:#c8d8e8;--xu-dim:#607080;--glow-cyan:0 0 20px rgba(0,229,255,0.6),0 0 60px rgba(0,229,255,0.2);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
+#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+#cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
+#cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
+.nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;letter-spacing:0.15em;color:var(--xu-cyan);text-decoration:none;text-shadow:var(--glow-cyan);}
+.nav-logo span{color:var(--xu-gold);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--xu-cyan);}
+.nav-play-btn{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;color:var(--xu-black);background:var(--xu-cyan);border:none;padding:0.55rem 1.4rem;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background 0.2s;}
+.nav-play-btn:hover{background:var(--xu-gold);}
+.page-hero{padding:8rem 2rem 4rem;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.page-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--xu-cyan),transparent);}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.4em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.75rem;position:relative;z-index:2;}
+.page-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);color:#fff;letter-spacing:0.05em;position:relative;z-index:2;}
+.page-title span{color:var(--xu-gold);}
+.page-sub{margin-top:1rem;font-size:1rem;color:var(--xu-dim);position:relative;z-index:2;}
+
+main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
+
+/* Section headers */
+.section-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.35em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;}
+.section-eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(0,229,255,0.3),transparent);}
+.section-title{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:2rem;letter-spacing:0.03em;}
+.section-title span{color:var(--xu-gold);}
+.ctrl-section{margin-bottom:4rem;}
+
+/* Keyboard visual */
+.keyboard{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:2.5rem;align-items:flex-start;}
+.key-row{display:flex;gap:0.35rem;}
+
+.key{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--xu-deep);
+  border:1px solid rgba(0,229,255,0.2);
+  border-bottom:3px solid rgba(0,229,255,0.4);
+  border-radius:4px;
+  width:48px;height:48px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;
+  color:var(--xu-text);
+  position:relative;
+  transition:all 0.15s;
+  cursor:default;
+}
+.key:hover,.key.active{
+  background:rgba(0,229,255,0.12);
+  border-color:var(--xu-cyan);
+  border-bottom-color:var(--xu-cyan);
+  color:var(--xu-cyan);
+  transform:translateY(1px);
+  border-bottom-width:2px;
+}
+.key.wide{width:72px;}
+.key.wider{width:96px;}
+.key.widest{width:200px;}
+.key.skill{border-color:rgba(255,204,32,0.4);border-bottom-color:rgba(255,204,32,0.6);}
+.key.skill:hover,.key.skill.active{background:rgba(255,204,32,0.10);border-color:var(--xu-gold);border-bottom-color:var(--xu-gold);color:var(--xu-gold);}
+.key.action{border-color:rgba(0,255,136,0.3);border-bottom-color:rgba(0,255,136,0.5);}
+.key.action:hover{background:rgba(0,255,136,0.08);border-color:var(--xu-green);color:var(--xu-green);}
+.key-label{font-size:0.58rem;letter-spacing:0.05em;margin-top:2px;color:var(--xu-dim);}
+
+/* Binding list */
+.binding-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;}
+@media(max-width:600px){.binding-grid{grid-template-columns:1fr;}}
+.binding{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--xu-deep);border:1px solid rgba(255,255,255,0.04);transition:border-color 0.2s;}
+.binding:hover{border-color:rgba(0,229,255,0.15);}
+.key-badge{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--xu-cyan);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);padding:0.25rem 0.6rem;border-radius:3px;white-space:nowrap;min-width:44px;text-align:center;}
+.key-badge.gold{color:var(--xu-gold);background:rgba(255,204,32,0.08);border-color:rgba(255,204,32,0.3);}
+.key-badge.red{color:var(--xu-red);background:rgba(255,34,68,0.08);border-color:rgba(255,34,68,0.3);}
+.binding-desc{font-size:0.92rem;color:var(--xu-dim);}
+.binding-desc b{color:var(--xu-text);}
+
+/* Mouse diagram */
+.mouse-diagram{display:flex;gap:3rem;align-items:flex-start;margin:2rem 0;flex-wrap:wrap;}
+.mouse-visual{position:relative;width:120px;flex-shrink:0;}
+.mouse-svg{width:120px;}
+.mouse-labels{flex:1;display:flex;flex-direction:column;gap:0.75rem;}
+.mouse-binding{display:flex;align-items:center;gap:0.75rem;}
+.mouse-dot{width:8px;height:8px;border-radius:50%;background:var(--xu-cyan);flex-shrink:0;}
+.mouse-dot.right{background:var(--xu-red);}
+.mouse-dot.scroll{background:var(--xu-gold);}
+
+/* Tips */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1.5rem;}
+.tip-card{background:var(--xu-deep);border:1px solid rgba(255,204,32,0.1);padding:1.5rem;position:relative;overflow:hidden;}
+.tip-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--xu-gold);}
+.tip-num{font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--xu-gold);margin-bottom:0.5rem;}
+.tip-card p{font-size:0.9rem;color:var(--xu-dim);line-height:1.7;}
+.tip-card p b{color:var(--xu-text);}
+.tip-card p .hl{color:var(--xu-cyan);}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="cursor"></div><div id="cursor-dot"></div>
+<nav>
+  <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#play">Play</a></li>
+    <li><a href="mechanics.html">Mechanics</a></li>
+    <li><a href="lore.html">Lore</a></li>
+    <li><a href="controls.html" class="active">Controls</a></li>
+  </ul>
+  <a href="index.html#play" class="nav-play-btn">PLAY FREE</a>
+</nav>
+
+<div class="page-hero">
+  <p class="eyebrow">Keybinds · Mouse · Tips</p>
+  <h1 class="page-title">Controls & <span>Hotkeys</span></h1>
+  <p class="page-sub">Everything you need to survive the Xu Dominion.</p>
+</div>
+
+<main>
+
+  <!-- KEYBOARD SECTION -->
+  <div class="ctrl-section reveal">
+    <div class="section-eyebrow">Input Reference</div>
+    <h2 class="section-title">Keyboard <span>Layout</span></h2>
+
+    <div class="keyboard">
+      <div class="key-row">
+        <div class="key" id="key-q">Q<span class="key-label">POTION</span></div>
+        <div class="key skill" id="key-e">E<span class="key-label">SKILL 1</span></div>
+        <div class="key skill" id="key-r">R<span class="key-label">SKILL 2</span></div>
+        <div class="key skill" id="key-t">T<span class="key-label">SKILL 3</span></div>
+        <div class="key action" id="key-y">Y</div>
+        <div class="key action" id="key-u">U<span class="key-label">AA HUD</span></div>
+        <div class="key action" id="key-i">I<span class="key-label">INV</span></div>
+        <div class="key action" id="key-o">O</div>
+      </div>
+      <div class="key-row">
+        <div class="key wide" id="key-a">A<span class="key-label">←</span></div>
+        <div class="key" id="key-s">S<span class="key-label">↓</span></div>
+        <div class="key" id="key-d">D<span class="key-label">→</span></div>
+        <div class="key skill" id="key-g">G<span class="key-label">SKILL 4</span></div>
+        <div class="key" id="key-h">H</div>
+        <div class="key action" id="key-j">J<span class="key-label">GEMS</span></div>
+        <div class="key" id="key-k">K</div>
+        <div class="key action" id="key-l">L</div>
+      </div>
+      <div class="key-row">
+        <div class="key wider" id="key-shift">SHIFT<span class="key-label">SPRINT</span></div>
+        <div class="key" id="key-z">Z<span class="key-label">ZOOM</span></div>
+        <div class="key" id="key-x">X</div>
+        <div class="key" id="key-c">C<span class="key-label">CHAR</span></div>
+        <div class="key" id="key-v">V</div>
+        <div class="key" id="key-b">B</div>
+        <div class="key" id="key-n">N</div>
+        <div class="key" id="key-m">M<span class="key-label">MAP</span></div>
+      </div>
+      <div class="key-row">
+        <div class="key widest" id="key-space">SPACE<span class="key-label">DODGE ROLL</span></div>
+        <div class="key" id="key-esc">ESC<span class="key-label">MENU</span></div>
+      </div>
+    </div>
+
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">LMB</span><div class="binding-desc"><b>Attack</b> — Click to strike toward cursor</div></div>
+      <div class="binding"><span class="key-badge red">RMB</span><div class="binding-desc"><b>Block</b> — Hold to raise shield and reduce damage</div></div>
+      <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction</div></div>
+      <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Skill 1</b> — First equipped active skill</div></div>
+      <div class="binding"><span class="key-badge gold">R</span><div class="binding-desc"><b>Skill 2</b> — Second equipped active skill</div></div>
+      <div class="binding"><span class="key-badge gold">T</span><div class="binding-desc"><b>Skill 3</b> — Third equipped active skill</div></div>
+      <div class="binding"><span class="key-badge gold">G</span><div class="binding-desc"><b>Skill 4</b> — Fourth equipped active skill</div></div>
+      <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Use Potion</b> — Consume top potion from bag</div></div>
+      <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open/close item bag and equipment</div></div>
+      <div class="binding"><span class="key-badge">J</span><div class="binding-desc"><b>Gem Panel</b> — Open gem socketing interface</div></div>
+      <div class="binding"><span class="key-badge">U</span><div class="binding-desc"><b>AA HUD</b> — Show Ascendancy Ability cooldowns</div></div>
+      <div class="binding"><span class="key-badge">C</span><div class="binding-desc"><b>Character</b> — Stats, talents, and level info</div></div>
+      <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>Map</b> — Toggle minimap zoom</div></div>
+      <div class="binding"><span class="key-badge">Z</span><div class="binding-desc"><b>Zoom</b> — Scroll to adjust camera distance</div></div>
+      <div class="binding"><span class="key-badge">SHIFT</span><div class="binding-desc"><b>Sprint</b> — Hold to move faster (drains stamina)</div></div>
+      <div class="binding"><span class="key-badge">ENTER</span><div class="binding-desc"><b>Chat</b> — Open/send chat message</div></div>
+    </div>
+  </div>
+
+  <!-- MOUSE SECTION -->
+  <div class="ctrl-section reveal">
+    <div class="section-eyebrow">Mouse Input</div>
+    <h2 class="section-title">Mouse <span>Controls</span></h2>
+    <div class="mouse-diagram">
+      <div class="mouse-visual">
+        <svg class="mouse-svg" viewBox="0 0 120 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Mouse body -->
+          <rect x="20" y="40" width="80" height="120" rx="40" fill="#060d18" stroke="rgba(0,229,255,0.3)" stroke-width="1.5"/>
+          <!-- Left button -->
+          <path d="M20 60 L60 60 L60 40 Q40 40 20 60Z" fill="rgba(0,229,255,0.15)" stroke="rgba(0,229,255,0.5)" stroke-width="1"/>
+          <!-- Right button -->
+          <path d="M100 60 L60 60 L60 40 Q80 40 100 60Z" fill="rgba(255,34,68,0.08)" stroke="rgba(255,34,68,0.3)" stroke-width="1"/>
+          <!-- Scroll wheel -->
+          <rect x="52" y="65" width="16" height="28" rx="8" fill="rgba(255,204,32,0.15)" stroke="rgba(255,204,32,0.5)" stroke-width="1"/>
+          <!-- Left label -->
+          <text x="35" y="55" fill="rgba(0,229,255,0.9)" font-size="7" font-family="monospace" text-anchor="middle">LMB</text>
+          <!-- Right label -->
+          <text x="85" y="55" fill="rgba(255,34,68,0.9)" font-size="7" font-family="monospace" text-anchor="middle">RMB</text>
+        </svg>
+      </div>
+      <div class="mouse-labels">
+        <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Left Click / Hold</b> — Attack in cursor direction. Hold to auto-attack.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block. Reduces incoming damage. Depletes stamina over time.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Adjust camera zoom distance.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS SECTION -->
+  <div class="ctrl-section reveal">
+    <div class="section-eyebrow">Survival Guide</div>
+    <h2 class="section-title">Tips for <span>New Players</span></h2>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num">TIP 01</div>
+        <p><b>Don't ignore the Outpost.</b> The crafting benches, merchants, and skill trainers in the <span class="hl">XU Outpost</span> can dramatically accelerate your power. Visit before each new zone push.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 02</div>
+        <p><b>Combo multiplier is everything.</b> At <span class="hl">x10 combo</span>, your damage is ten times base. Learn to dodge-weave attacks rather than tank hits — preserving your combo is worth more than the damage you avoid.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 03</div>
+        <p><b>Parry timing.</b> Block just as an enemy swings (watch their tell animation) to trigger a <span class="hl">perfect parry</span>. The counterattack deals 3× your ATK and staggers most enemies.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 04</div>
+        <p><b>Socket your gems early.</b> Press <span class="hl">J</span> to open the gem panel. Even common rubies in your weapon slots add meaningful ATK. Players who ignore socketing fall behind quickly.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 05</div>
+        <p><b>Skills synergize.</b> Don't just pick the highest-damage skills. Pair a <b>gap closer</b> (Leap Strike, Blink) with a <b>burst skill</b> (Execute, Nova) and a <b>sustain tool</b> (Heal Pulse, Fortify) for survivable aggression.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 06</div>
+        <p><b>Boss phases telegraph their escalation.</b> When a boss enters a new phase, there's a 2-3 second window before the new attack pattern begins. Use this to heal, reposition, and check your mana.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 07</div>
+        <p><b>In multiplayer, zone entry matters.</b> All enemies are server-side and persistent. If your party is in Patrol Zone but you're in the Outpost, enemies in Patrol Zone are still active — they will be there when you arrive.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">TIP 08</div>
+        <p><b>Level 100 isn't the end.</b> The <span class="hl">Ascendancy System</span> begins at the cap. Farm AA Points in endgame zones to unlock abilities that dramatically reshape your combat identity.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REF -->
+  <div class="ctrl-section reveal">
+    <div class="section-eyebrow">Quick Reference</div>
+    <h2 class="section-title">UI <span>Panels</span></h2>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge gold">HUD</span><div class="binding-desc"><b>HP/MP bars</b> top-left, level, gold, zone name</div></div>
+      <div class="binding"><span class="key-badge gold">MINIMAP</span><div class="binding-desc">Top-right — red dots are enemies, white are items</div></div>
+      <div class="binding"><span class="key-badge">CHAT</span><div class="binding-desc">Bottom-left — press ENTER to open, send chat</div></div>
+      <div class="binding"><span class="key-badge">SKILL BAR</span><div class="binding-desc">Bottom-center — E / R / T / G slots with cooldown</div></div>
+      <div class="binding"><span class="key-badge">PARTY</span><div class="binding-desc">Left panel — party members' HP/MP and zones</div></div>
+      <div class="binding"><span class="key-badge red">BOSS BAR</span><div class="binding-desc">Top-center — appears when boss is in zone</div></div>
+      <div class="binding"><span class="key-badge">COMBO</span><div class="binding-desc">Screen center-top — current combo multiplier</div></div>
+      <div class="binding"><span class="key-badge">LOOT</span><div class="binding-desc">Walk over items to auto-collect — check bag (I)</div></div>
+    </div>
+  </div>
+
+</main>
+
+<footer style="padding:3rem 2rem;background:var(--xu-black);border-top:1px solid rgba(0,229,255,0.08);text-align:center;">
+  <ul style="display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1rem;">
+    <li><a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Home</a></li>
+    <li><a href="mechanics.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Mechanics</a></li>
+    <li><a href="lore.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Lore</a></li>
+  </ul>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;color:rgba(96,112,128,0.5);">Empire 2: Rise of Xu · Created by <a href="https://tehbofis.itch.io" target="_blank" style="color:var(--xu-cyan);text-decoration:none;">Tehbofis</a></p>
+</footer>
+
+<script>
+const cursor=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button,.tip-card,.binding').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
+
+// Key hover highlight
+const keyMap = {
+  'e':'key-e','r':'key-r','t':'key-t','g':'key-g',
+  'q':'key-q','i':'key-i','j':'key-j','u':'key-u',
+  'c':'key-c','m':'key-m','z':'key-z',
+  ' ':'key-space','shift':'key-shift','escape':'key-esc',
+  'a':'key-a','s':'key-s','d':'key-d',
+};
+document.addEventListener('keydown', e => {
+  const id = keyMap[e.key.toLowerCase()];
+  if(id) document.getElementById(id)?.classList.add('active');
+});
+document.addEventListener('keyup', e => {
+  const id = keyMap[e.key.toLowerCase()];
+  if(id) document.getElementById(id)?.classList.remove('active');
+});
+
+const obs=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+</script>
+</body>
+</html>

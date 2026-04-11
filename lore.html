@@ -10,8 +10,8 @@
 :root{--xu-black:#020408;--xu-deep:#060d18;--xu-navy:#0a1628;--xu-cyan:#00e5ff;--xu-gold:#ffcc20;--xu-red:#ff2244;--xu-purple:#8822ff;--xu-green:#00ff88;--xu-text:#c8d8e8;--xu-dim:#607080;--glow-cyan:0 0 20px rgba(0,229,255,0.6),0 0 60px rgba(0,229,255,0.2);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
-#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.1s,height 0.1s;mix-blend-mode:screen;}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.9;overflow-x:hidden;cursor:none;}
+#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
 #cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
 #cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
@@ -23,61 +23,69 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .nav-play-btn{font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;color:var(--xu-black);background:var(--xu-cyan);border:none;padding:0.55rem 1.4rem;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:background 0.2s;}
 .nav-play-btn:hover{background:var(--xu-gold);}
 
-/* Lore hero — atmospheric */
-.lore-hero{position:relative;padding:8rem 2rem 5rem;text-align:center;overflow:hidden;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+/* Hero */
+.lore-hero{position:relative;padding:8rem 2rem 5rem;text-align:center;overflow:hidden;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .lore-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(0,50,100,0.3) 0%,var(--xu-black) 70%);}
 .lore-hero-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 3px);pointer-events:none;}
 .eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.4em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.75rem;position:relative;z-index:2;}
 .page-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);color:#fff;letter-spacing:0.05em;position:relative;z-index:2;}
 .page-title span{color:var(--xu-gold);}
-.hero-quote{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:1.05rem;color:var(--xu-dim);font-style:italic;max-width:600px;position:relative;z-index:2;line-height:1.8;}
-.hero-quote::before,.hero-quote::after{content:'"';color:var(--xu-cyan);font-size:1.5rem;line-height:0;vertical-align:-0.4em;}
+.hero-quote{margin-top:1.5rem;font-family:'Cinzel',serif;font-size:1.05rem;color:var(--xu-dim);font-style:italic;max-width:640px;position:relative;z-index:2;line-height:1.8;}
+.hero-quote::before{content:'\201C';color:var(--xu-cyan);font-size:1.5rem;line-height:0;vertical-align:-0.4em;}
+.hero-quote::after{content:none;}
+.hero-quote cite{display:block;margin-top:0.75rem;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:var(--xu-dim);}
 
-main{max-width:860px;margin:0 auto;padding:4rem 2rem 6rem;}
+main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
 
-/* Lore sections */
-.lore-chapter{margin-bottom:5rem;position:relative;}
+/* Chapter layout */
+.lore-chapter{margin-bottom:6rem;position:relative;}
+.chapter-number{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.4em;color:rgba(0,229,255,0.35);text-transform:uppercase;margin-bottom:0.25rem;}
 .chapter-label{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.35em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.75rem;}
 .chapter-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(0,229,255,0.3),transparent);}
-.chapter-title{font-family:'Cinzel',serif;font-size:2rem;font-weight:900;color:#fff;margin-bottom:1.5rem;letter-spacing:0.04em;}
+.chapter-title{font-family:'Cinzel',serif;font-size:2rem;font-weight:900;color:#fff;margin-bottom:1.75rem;letter-spacing:0.04em;}
 .chapter-title .accent{color:var(--xu-gold);}
-.lore-text{color:var(--xu-dim);font-size:1.05rem;line-height:1.85;margin-bottom:1.25rem;}
-.lore-text b{color:var(--xu-text);}
+.chapter-title .red{color:var(--xu-red);}
+
+/* Prose */
+.lore-text{color:#a0b8c8;font-size:1.05rem;line-height:1.95;margin-bottom:1.4rem;}
+.lore-text b{color:var(--xu-text);font-weight:600;}
 .lore-text .hl{color:var(--xu-cyan);}
 .lore-text .gold{color:var(--xu-gold);}
 .lore-text .red{color:var(--xu-red);}
+.lore-text .green{color:var(--xu-green);}
 
 /* Pull quote */
-.pull-quote{border-left:3px solid var(--xu-cyan);padding:1.25rem 1.5rem;margin:2rem 0;background:rgba(0,229,255,0.04);}
-.pull-quote p{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--xu-text);font-style:italic;line-height:1.7;margin:0;}
-.pull-quote cite{display:block;margin-top:0.75rem;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:var(--xu-dim);}
+.pull-quote{border-left:3px solid var(--xu-cyan);padding:1.4rem 1.75rem;margin:2.5rem 0;background:rgba(0,229,255,0.04);position:relative;}
+.pull-quote::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--xu-cyan),rgba(0,229,255,0.1));}
+.pull-quote p{font-family:'Cinzel',serif;font-size:1.08rem;color:var(--xu-text);font-style:italic;line-height:1.8;margin:0;}
+.pull-quote cite{display:block;margin-top:0.85rem;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:var(--xu-dim);}
 
-/* Boss lore cards */
-.boss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.25rem;margin-top:2rem;}
-.boss-card{background:var(--xu-deep);border:1px solid rgba(255,34,68,0.12);padding:1.75rem;transition:border-color 0.25s;position:relative;overflow:hidden;}
-.boss-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--xu-red),transparent);opacity:0;transition:opacity 0.25s;}
-.boss-card:hover{border-color:rgba(255,34,68,0.35);}
-.boss-card:hover::before{opacity:1;}
-.boss-card-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;}
-.boss-emoji{font-size:2rem;}
-.boss-name-wrap{}
-.boss-card-name{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:#fff;}
-.boss-card-zone{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;color:var(--xu-red);text-transform:uppercase;}
-.boss-lore{font-size:0.9rem;color:var(--xu-dim);line-height:1.7;}
+.red-quote{border-left-color:var(--xu-red);}
+.red-quote::before{background:linear-gradient(to bottom,var(--xu-red),rgba(255,34,68,0.1));}
+.gold-quote{border-left-color:var(--xu-gold);}
+.gold-quote::before{background:linear-gradient(to bottom,var(--xu-gold),rgba(255,204,32,0.1));}
 
-/* Zone timeline */
-.zone-timeline{position:relative;padding-left:1.5rem;margin-top:2rem;}
-.zone-timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--xu-cyan),rgba(0,229,255,0.1));}
-.zone-entry{position:relative;margin-bottom:1.75rem;padding-left:1.5rem;}
-.zone-entry::before{content:'';position:absolute;left:-1.5rem;top:0.45rem;width:8px;height:8px;border-radius:50%;background:var(--xu-deep);border:1px solid var(--xu-cyan);}
-.zone-entry.danger::before{border-color:var(--xu-red);box-shadow:0 0 8px rgba(255,34,68,0.4);}
-.zone-level{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:var(--xu-dim);}
-.zone-name{font-family:'Orbitron',monospace;font-size:0.85rem;font-weight:700;color:#fff;margin:0.15rem 0;}
-.zone-desc{font-size:0.88rem;color:var(--xu-dim);line-height:1.6;}
+/* Boss feature cards */
+.boss-feature{display:grid;grid-template-columns:auto 1fr;gap:1.5rem;background:var(--xu-deep);border:1px solid rgba(255,34,68,0.12);padding:1.75rem;margin:1.5rem 0;position:relative;overflow:hidden;transition:border-color 0.25s;}
+.boss-feature::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--xu-red),transparent);opacity:0;transition:opacity 0.3s;}
+.boss-feature:hover{border-color:rgba(255,34,68,0.3);}
+.boss-feature:hover::before{opacity:1;}
+.boss-icon-lg{font-size:3rem;line-height:1;}
+.boss-title{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:0.3rem;}
+.boss-location{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;color:var(--xu-red);text-transform:uppercase;margin-bottom:0.75rem;}
+.boss-desc{font-size:0.95rem;color:var(--xu-dim);line-height:1.75;}
+.boss-desc b{color:var(--xu-text);}
+
+/* Chapter divider */
+.ch-divider{height:1px;background:linear-gradient(to right,transparent,rgba(0,229,255,0.15),transparent);margin:5rem 0;}
 
 /* Reveal */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.7s,transform 0.7s;}
 .reveal.visible{opacity:1;transform:translateY(0);}
+
+/* Stagger */
+.reveal:nth-child(2){transition-delay:0.1s;}
+.reveal:nth-child(3){transition-delay:0.2s;}
 </style>
 </head>
 <body>
@@ -96,101 +104,247 @@ main{max-width:860px;margin:0 auto;padding:4rem 2rem 6rem;}
 <div class="lore-hero">
   <div class="lore-hero-bg"></div>
   <div class="lore-hero-scanlines"></div>
-  <p class="eyebrow">World History · Faction War · Ancient Power</p>
+  <p class="eyebrow">Chronicle of the Xu War · Recovered Resistance Archives</p>
   <h1 class="page-title">The <span>Lore</span> of Xu</h1>
-  <p class="hero-quote">They came from the deep faults. They do not negotiate. They do not remember mercy. They are the Xu, and this world was already theirs.<cite>— Recovered Resistance Field Report, Author Unknown</cite></p>
+  <p class="hero-quote">Everything that breathes in this world has already chosen a side. Some just don't know it yet.<cite>— Commander Yelen Ashe, First Address to the Free Races Coalition</cite></p>
 </div>
 
 <main>
 
+  <!-- ══ CHAPTER I ══ -->
   <div class="lore-chapter reveal">
-    <div class="chapter-label">Chapter I</div>
-    <h2 class="chapter-title">The <span class="accent">Xu Dominion</span></h2>
-    <p class="lore-text">Centuries before the events of Empire 2, the <b>Xu</b> were not conquerors — they were architects. Descended from an ancient lineage of scale-plated warriors who built their civilization in the deep fault-lines of the world, the Xu developed technology that blended organic scale-craft with mechanical engineering. Their cities were marvels of neon-lit metal and living stone.</p>
-    <p class="lore-text">The transformation into conquerors came with the rise of <b class="gold">the Xu Supreme Overlord</b> — a military commander who unified the scattered Xu city-states under a single iron banner. What had been a civilization of engineers and warriors became a <span class="red">Dominion</span>: expansionist, authoritarian, and consuming.</p>
+    <div class="chapter-number">Chapter I</div>
+    <div class="chapter-label">In The Beginning</div>
+    <h2 class="chapter-title">Before the <span class="accent">Dominion</span></h2>
+
+    <p class="lore-text">Nobody remembers exactly when the <b>Xu</b> arrived. The oldest Elf historians will tell you the fault-lines cracked one autumn evening — a sound like a continent splitting at its seams — and then they were simply there. Scale-plated, seven feet tall on average, with eyes that caught light at angles no natural creature's eyes should. They did not come through a portal. They did not cross an ocean. They emerged from the deep places of the world as if the rock itself had been hiding them.</p>
+
+    <p class="lore-text">For two centuries, the Xu were not enemies. They were <b>architects</b> in the truest sense of the word. Their cities burrowed into fault-line walls and canyon floors, glowing from within with the bioluminescent minerals they cultivated, mixed with something else — something that hummed at a frequency that made other races uncomfortable if they stood near it too long. Gnome engineers visited their construction sites and came back with the thousand-yard stare. Human merchants traded cloth and grain for Xu metalwork so refined it never corroded. Elf scholars attempted to learn their language and managed, after decades of effort, to learn about forty words.</p>
+
+    <p class="lore-text">Nobody conquered them. Nobody tried. The Xu were simply <span class="hl">there</span>, deep in their fault-cities, building things no one else understood, and the world had learned to orbit around them without questioning why.</p>
 
     <div class="pull-quote">
-      <p>We did not choose to resist. We chose to survive. When the Xu rolled through the Outpost gates, every family that fled north became a soldier. Every refugee became a fighter. The Resistance was not organized. It simply refused to stop existing.</p>
-      <cite>— Commander Yelen Ashe, Founding Member of the Free Races Coalition</cite>
+      <p>We called them the Quiet Ones. Not because they were silent — their cities made a sound like a low hum you felt in your chest more than heard in your ears. Quiet because they never explained themselves. They built. They expanded. They didn't ask permission, but they never took anything either. We thought that was peace. We were wrong about what peace meant.</p>
+      <cite>— Lenn Vassar, Gnome Trade Historian, recovered from Outpost archives</cite>
     </div>
 
-    <p class="lore-text">The <b>Free Races Coalition</b> — Humans, Gnomes, Ogres, Centaurs, Minotaurs, Elves, and Vampires — formed not from ideology but from desperation. The Xu had taken everything: trade routes, cities, farmland, and the ancient ruins that once belonged to everyone. The <span class="hl">XU Outpost</span> that players begin in is one of the last strongholds still standing.</p>
+    <p class="lore-text">The change came with a single Xu who had a different idea about what all that building was for. He called himself the <b class="gold">Supreme Overlord</b> — not a title anyone had heard before, not in Xu culture or any other. He emerged from the deepest fault-city one morning with a column of soldiers at his back and a proclamation carved into a slab of their luminous stone: the scattered Xu city-states were now unified under one banner. There would be order. There would be expansion. There would be a Dominion.</p>
+
+    <p class="lore-text">The other races assumed it was an internal Xu political matter. It wasn't.</p>
   </div>
 
-  <div class="lore-chapter reveal">
-    <div class="chapter-label">Chapter II</div>
-    <h2 class="chapter-title">The <span class="accent">Architects</span> & Ancient Power</h2>
-    <p class="lore-text">Beneath the political conflict runs a deeper mystery. The world is riddled with <b>Ancient Realm structures</b> — ruins that predate the Xu, predate the Free Races, predate written history. Scholars call their builders <span class="hl">The Architects</span>.</p>
-    <p class="lore-text">The Architects left behind technology that neither faction fully understands. <b>Void gems</b>, <b>void weapons</b>, and <b>dimensional anomalies</b> like the Rift Vale are all their legacy. The Xu Supreme Overlord believes controlling Architect technology is the key to total dominion. The Resistance believes it's the only way to stop them.</p>
-    <p class="lore-text">The <b class="gold">Ancient Realm</b> — zone 11 in the game — is a direct entry into Architect territory. What guards it is not of the Xu. It is older. It has been waiting.</p>
-  </div>
+  <div class="ch-divider"></div>
 
+  <!-- ══ CHAPTER II ══ -->
   <div class="lore-chapter reveal">
-    <div class="chapter-label">Chapter III</div>
-    <h2 class="chapter-title">The <span class="accent">Zones</span> — Path to Xumen</h2>
-    <p class="lore-text">The campaign follows a single line of geographic escalation — from the front lines of the war to the Xu capital itself. Each zone has its own history, its own horror, and its own boss that must fall before you advance.</p>
-    <div class="zone-timeline">
-      <div class="zone-entry"><div class="zone-level">Level 1+ · Safe Zone</div><div class="zone-name">🏚️ XU Outpost</div><div class="zone-desc">The last Resistance stronghold. Crafting benches, merchants, and the lobby where heroes gather.</div></div>
-      <div class="zone-entry"><div class="zone-level">Level 5+</div><div class="zone-name">⚔️ Patrol Zone</div><div class="zone-desc">Xu patrol routes. First combat encounter with xu_scouts, soldiers, and their commanding officers.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 20+</div><div class="zone-name">💀 XU Cemetery</div><div class="zone-desc">Ancient burial ground repurposed by the Xu. The Lich King has been here for centuries. He was not invited.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 15+</div><div class="zone-name">🌌 Void Wastes</div><div class="zone-desc">Dimensional anomalies tear reality here. Void Wraith Prime commands creatures that shouldn't exist.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 25+</div><div class="zone-name">🏙️ XU Citadel</div><div class="zone-desc">The Xu military nerve centre. General Vorrakh — traitor, war criminal, fortress commander — awaits at the top.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 35+</div><div class="zone-name">🌋 Ashlands</div><div class="zone-desc">Scorched earth. Volcanic activity sustained by Xu geothermal mining. The Inferno Colossus is not a natural creature.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 80+</div><div class="zone-name">🗡️ Xumen</div><div class="zone-desc">The Xu capital. Every Xu soldier alive is here. The Supreme Overlord commands from the central spire.</div></div>
-      <div class="zone-entry danger"><div class="zone-level">Level 100+ · Endgame</div><div class="zone-name">☠️ The Necropolis</div><div class="zone-desc">It rains. Lightning kills you. The Bone Colossus — 1,400,000 HP, four phases, void-crack skull the size of a building — waits at the centre.</div></div>
-    </div>
-  </div>
+    <div class="chapter-number">Chapter II</div>
+    <div class="chapter-label">The War Begins</div>
+    <h2 class="chapter-title">The <span class="red">Fall</span> of the Outposts</h2>
 
-  <div class="lore-chapter reveal">
-    <div class="chapter-label">Chapter IV</div>
-    <h2 class="chapter-title">The <span class="accent">16 Bosses</span></h2>
-    <p class="lore-text">Every zone has a guardian. Some were created by the Xu. Some are older than the Xu. Some are things no one created on purpose.</p>
-    <div class="boss-grid">
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">☠️</span><div class="boss-name-wrap"><div class="boss-card-name">The Bone Colossus</div><div class="boss-card-zone">Necropolis · 1,400,000 HP</div></div></div>
-        <p class="boss-lore">A void-crack entity that assembled itself from the remains of everyone who fell in the Necropolis war. Four phases. The fourth phase involves the sky joining the fight. No one has confirmed how it began existing.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🔺</span><div class="boss-name-wrap"><div class="boss-card-name">The Apex Pyramid</div><div class="boss-card-zone">Xumen Fortress · Level 100+</div></div></div>
-        <p class="boss-lore">A Xu military spacecraft repurposed as a fortress AI. Orbital cannon arrays, tractor beams, and a rotating hull make it unkillable from range. The Xu Supreme Overlord built it as a last resort. It became a first resort.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🐲</span><div class="boss-name-wrap"><div class="boss-card-name">Vaeltharax The Undying</div><div class="boss-card-zone">Dragon Lair · 5 Phases</div></div></div>
-        <p class="boss-lore">She has been killed fourteen times. She comes back. The Dragon Lair is littered with the armour of adventurers who thought the fifth phase was the last one. It is not. She enters a new phase when "dead." Her fifth phase unlocks abilities she wasn't supposed to have.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🌀</span><div class="boss-name-wrap"><div class="boss-card-name">The Rift Sovereign</div><div class="boss-card-zone">Rift Vale · Dimensional Anomaly</div></div></div>
-        <p class="boss-lore">The Rift Vale is a zone where dimensional collapse is ongoing. The Rift Sovereign is not a creature that entered through the rift — it IS the rift. Destroying it collapses the anomaly. The world is not sure this is safe.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">⚔️</span><div class="boss-name-wrap"><div class="boss-card-name">General Vorrakh</div><div class="boss-card-zone">XU Citadel · The Traitor General</div></div></div>
-        <p class="boss-lore">Vorrakh was once a Free Races general who defected to the Xu Dominion in exchange for promises of power. He got what he was promised. The Citadel garrison worships him. The Resistance has a word for him in every language they speak. None of them are kind.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🧙</span><div class="boss-name-wrap"><div class="boss-card-name">The Lich King</div><div class="boss-card-zone">Cemetery · Centuries Dead</div></div></div>
-        <p class="boss-lore">Not a Xu creation. The Lich King predates the Xu by four centuries. He was ruling the Cemetery before the Xu arrived, and he will still be there after. He permits the Xu to operate nearby because they provide a steady stream of the newly dead. He finds this convenient.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🤖</span><div class="boss-name-wrap"><div class="boss-card-name">XU Supreme Overlord</div><div class="boss-card-zone">Xumen · The Command Chain</div></div></div>
-        <p class="boss-lore">The architect of the Xu Dominion. Not a warlord. Not a conqueror. An administrator. The Supreme Overlord built the Dominion from bureaucratic precision — every zone, every patrol route, every slave camp was authorized through proper channels. He is the most dangerous kind of enemy: an organized one.</p>
-      </div>
-      <div class="boss-card">
-        <div class="boss-card-header"><span class="boss-emoji">🐲</span><div class="boss-name-wrap"><div class="boss-card-name">Stonewyrm Colossus</div><div class="boss-card-zone">Wyvern Wastes · Level 80+</div></div></div>
-        <p class="boss-lore">Ancient. Massive. The Wyvern Wastes were its territory long before either faction arrived. It does not care about the war. It cares about the noise. The Xu brought the noise. It will flatten both sides with equal indifference.</p>
+    <p class="lore-text">The first zone to fall wasn't a city. It was a <b>patrol route</b> — a stretch of road between the Gnome trading hub and the Human agricultural settlements that sat at the edge of what had been, for two centuries, Xu-adjacent territory. One morning the traders who used that road didn't come back. The next morning, neither did the soldiers sent to find them. By the third morning, there were Xu soldiers at both ends of the road and it wasn't a road anymore. It was a <span class="hl">border</span>.</p>
+
+    <p class="lore-text">The Xu didn't announce the war. There was no declaration, no ultimatum, no diplomatic envoy. The Supreme Overlord's philosophy, such as it was, held that announcing a war was an act of weakness — it implied you needed the enemy's acknowledgment of your intentions. The Xu simply began to occupy. Zone by zone, road by road, city by city. You woke up one morning and the territory you'd lived on for three generations had a Xu garrison flag on it, and the soldiers who'd been quartered in your town hall last night were calling it a Xu Citadel now.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">⚔️</div>
+      <div>
+        <div class="boss-title">General Vorrakh — The Traitor of the Citadel</div>
+        <div class="boss-location">XU Citadel · Level 25+</div>
+        <p class="boss-desc">What made the early war devastating wasn't Xu numbers — it was <b>General Vorrakh</b>. A Free Races commander who defected in the third year of the occupation, Vorrakh handed the Xu every defensive map, every supply route, every position the Coalition had spent a decade building. He told himself he was being pragmatic. He told himself the Dominion was winning anyway. He got what he was promised — command of the Citadel, the largest fortified structure in the occupied territories, and a garrison of ten thousand who called him General.<br><br>The Resistance has a word for Vorrakh in every language they speak. In Gnomish the word is <em>veth-karal</em>, which translates loosely to "the one who sold the sunrise." In the Elf tongue it's a single syllable they spit rather than say. In Human common it's just his name, which has become its own insult.</p>
       </div>
     </div>
+
+    <p class="lore-text">The Free Races Coalition formed not from strategy but from desperation. <b>Humans</b> fled north when the farms burned. <b>Gnomes</b> packed their workbenches and their schematics and their children into carts and moved them underground. <b>Ogres</b> who had never in recorded history fought alongside Elves found themselves sharing a trench with them. <b>Centaurs</b> who had spent generations in proud isolation opened their plains to refugees because the alternative was watching the refugee camps burn. Nobody designed the Coalition. It simply grew from the shared recognition that the old world was gone, and the only question now was whether there would be a new one.</p>
+
+    <p class="lore-text">The <b>XU Outpost</b> — where every player begins — is one of the last structures from that early defensive period still standing. Built by Gnome engineers in six weeks using techniques they'd studied from watching Xu construction, it occupies a natural choke point between the occupied territories and the northern free zones. It has been attacked forty-seven times. It has not fallen once. This is considered something close to a miracle by people who have seen what happens to structures that fall.</p>
   </div>
 
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER III ══ -->
   <div class="lore-chapter reveal">
-    <div class="chapter-label">Chapter V</div>
-    <h2 class="chapter-title">The <span class="accent">Races</span> of the Coalition</h2>
-    <p class="lore-text">The Free Races Coalition was not designed — it was collided into existence. Eight species that had spent centuries trading, competing, and occasionally warring with each other found themselves united by a single existential threat.</p>
-    <p class="lore-text">The <b>Xu</b> themselves can choose to fight against their own Dominion — former soldiers, escaped prisoners, and ideological dissidents who believe the Overlord has led their civilization to ruin. Playing as a Xu in the Resistance is considered the hardest alignment in the game. Every soldier you fight used to be your people.</p>
-    <p class="lore-text">The <b class="gold">Vampires</b> of the Deep Houses joined last. For centuries they had maintained careful neutrality with the Xu Dominion, trading void-gems and arcane knowledge in exchange for being left alone. When the Xu broke that agreement and raided the Deep Houses, the Vampires did not forgive. They joined the Coalition not as allies — as instruments of a very specific revenge.</p>
+    <div class="chapter-number">Chapter III</div>
+    <div class="chapter-label">What Lies Beneath</div>
+    <h2 class="chapter-title">The <span class="accent">Architects</span> & the Void</h2>
+
+    <p class="lore-text">Everything about the Xu War would be simpler if it were just a war. Armies on both sides, territory changing hands, eventually a winner. But there is something older running underneath the conflict — something that predates the Dominion, predates the Xu, predates written history in any language any scholar has yet deciphered.</p>
+
+    <p class="lore-text">The world is riddled with structures that nobody built. Or rather: nobody alive built them. In the <b class="hl">Void Wastes</b>, dimensional anomalies tear reality in ways that suggest something once tried to connect this world to somewhere else and almost succeeded. In the <b class="hl">Ancient Realm</b>, ruins stretch for miles in architectural styles that follow no logic any surviving civilization has ever produced — buildings designed for inhabitants who apparently didn't walk on flat ground. Beneath the <b class="hl">XU Cemetery</b>, buried under centuries of Xu dead, are structures older than the Xu themselves, their walls still warm to the touch, still <em>humming</em>.</p>
+
+    <p class="lore-text">Scholars call their builders the <b class="gold">Architects</b>. Everyone else calls them the reason the war is complicated.</p>
+
+    <div class="pull-quote gold-quote">
+      <p>The Xu Supreme Overlord is not conquering this world for its land or its people or even its resources. He's looking for something. Every expansion, every new zone occupied, every garrison established — it's a search pattern. He's trying to find what the Architects left behind before anyone else does. The tragedy is that several people already have. They just don't talk about it publicly, because what they found in those ruins wasn't the kind of thing you announce.</p>
+      <cite>— Recovered intelligence briefing, author and distribution list redacted</cite>
+    </div>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">👾</div>
+      <div>
+        <div class="boss-title">Void Wraith Prime — The Incomplete One</div>
+        <div class="boss-location">Void Wastes · Level 15+</div>
+        <p class="boss-desc">The <b>Void Wraith Prime</b> is not a creature that entered through the rift in the Void Wastes. The leading theory among the Resistance scholars — and it is not a comfortable theory — is that it IS the rift, or at least the closest thing the rift has to a consciousness. It phases through physical matter as if matter is an inconvenience. Weapons that should kill it pass through. The few survivors of encounters with it describe a sensation of being briefly unmade — of their own body becoming temporarily uncertain about whether it existed.<br><br>The Architects built the mechanism that created the rift. Nobody knows why. Nobody is confident that closing it would be better than leaving it open.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">The <b>Void Wastes</b> are also the origin point of void gems — the most powerful crafting material in the known world, with properties that no natural mineralogy can explain. They store energy. They respond to intent. They can amplify physical force, magical output, or speed in ways that scale non-linearly with quality. The Xu want them. The Coalition needs them. Both sides are mining them from the same anomaly zones, occasionally at the same time, occasionally fighting over the same vein while the dimensional tear ten feet away hums and flickers and occasionally reaches out to touch something it finds interesting.</p>
+  </div>
+
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER IV ══ -->
+  <div class="lore-chapter reveal">
+    <div class="chapter-number">Chapter IV</div>
+    <div class="chapter-label">The Dead & The Living</div>
+    <h2 class="chapter-title">Zones of <span class="red">No Return</span></h2>
+
+    <p class="lore-text">Not every zone in the war is contested. Some zones are simply <em>lost</em> — territories where the occupying force is no longer the Xu, because something else got there first.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🧙</div>
+      <div>
+        <div class="boss-title">The Lich King — Centuries Dead, Still Ruling</div>
+        <div class="boss-location">XU Cemetery · Level 20+</div>
+        <p class="boss-desc">The <b>Lich King</b> predates the Xu occupation by four centuries. He was sovereign of the Cemetery before the Xu arrived. He is sovereign of it now. When the Xu marched through his territory in the early years of the Dominion expansion, he let them pass — not out of fear, not out of alliance, but because they provided a steady supply of the newly dead, which he found convenient. The Xu, in turn, found it useful to leave him in place as an intermediate buffer zone between the occupied territories and the deeper wilderness.<br><br>This arrangement lasted until the Xu tried to fortify the Cemetery for military use, at which point the Lich King made clear, in extremely direct terms, that the Cemetery was his and had always been his and would remain his after the Xu Dominion was dust and memory. The Xu retreated. This is considered one of the few times in the war that a non-Coalition force made the Dominion back down, and the Resistance finds this both reassuring and deeply unsettling.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">The <b class="hl">Ashlands</b> are a different kind of lost — a zone that was, before the war, a productive agricultural territory. The Xu Dominion's geothermal mining operations turned it into what it is now: a landscape of volcanic vents, scorched earth, and perpetual fire. The <b>Inferno Colossus</b> that guards it was not a natural creature. It was assembled from Xu industrial equipment, void energy, and something the Dominion's engineers found in an Architect ruin beneath the old farmland. They used it as a weapon against Coalition forces and lost control of it almost immediately. It has been operating autonomously for six years. The Xu and the Coalition have both tried to destroy it. Both have failed. It now treats both sides equally.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🍄</div>
+      <div>
+        <div class="boss-title">The Fungal Sovereign — Something That Grew Wrong</div>
+        <div class="boss-location">Fungal Depths · Level 42+</div>
+        <p class="boss-desc">Deep below the Fungal Depths, in caverns that glow with bioluminescent organisms so old they have no classification in any biological catalogue, something grew. It grew slowly, over millennia, fed by the same warm mineral seepage that kept the Architect ruins warm to the touch. The <b>Fungal Sovereign</b> is not intelligent in any way the living understand the word. But it is aware. It is very, very aware. And it has been waiting with the patience of something that doesn't experience time the way organisms with heartbeats do. Xu scouts sent into the Depths to establish forward positions sent back one message before going silent: <em>"It already knew we were coming."</em></p>
+      </div>
+    </div>
+
+    <p class="lore-text">The <b class="hl">Caves of Despair</b> were named by the first Coalition soldiers sent to scout them, who came back having lost between three and eleven days of memory depending on who you asked, and who all agreed that whatever was in those caves was wrong in a way that resisted more specific description. The Xu have not attempted to mine them despite the significant void gem deposits inside. This is generally considered a sign that even the Dominion has things it's afraid of.</p>
+  </div>
+
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER V ══ -->
+  <div class="lore-chapter reveal">
+    <div class="chapter-number">Chapter V</div>
+    <div class="chapter-label">The Frozen North & Ancient Depths</div>
+    <h2 class="chapter-title">Ice, Sand, and <span class="accent">Elder Things</span></h2>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">❄️</div>
+      <div>
+        <div class="boss-title">The Frostveil Warden — The Storm That Thinks</div>
+        <div class="boss-location">Frostveil · Level 50+</div>
+        <p class="boss-desc">The <b>Frostveil</b> is the northernmost zone in the known world — a region of permanent blizzard where visibility drops to zero and temperature to death within minutes of exposure without proper preparation. It is also, paradoxically, one of the most strategically valuable zones in the war, because Frostveil's storms hide an Architect complex of extraordinary size, and whoever controls the complex controls access to the most complete surviving record of whatever the Architects were actually building.<br><br>The Warden that protects the complex is not Xu. It is not Coalition. It is old — old the way the ruins are old — and it has one purpose: keep everyone out until whoever the Architects were waiting for finally arrives. It has been waiting a very long time.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">The <b class="hl">Sunken Sands</b> were once a coastal civilization — the remnants of their architecture still visible above the dunes, worn smooth by centuries of abrasion, the windows watching the desert like empty eye sockets. <b>Khepri the Sand Colossus</b> is the only thing left of what they built. Whether it was built as a guardian or whether it simply became one over time — whether it remembers what it was made to protect or is now operating on pure territorial instinct — is a question that has not been answered, partly because everyone who gets close enough to ask doesn't come back to report.</p>
+
+    <p class="lore-text">The <b class="hl">Ancient Realm</b> is where the scholarly theories about the Architects collapse into direct evidence. The Elder Architect who commands it is not a ghost or a recording or an automaton. It is a being that has been in that realm since the structures were built, maintaining them, waiting, operating on a timeline so long that the entire history of every living civilization in the known world fits into a small portion of a single interval of what it considers patience. It does not attack intruders immediately. First it studies them. First it wants to know what kind of creature has finally arrived at its door. Then, having determined that the answer is "not the ones I was waiting for," it acts.</p>
+
     <div class="pull-quote">
-      <p>The Gnomes built the weapons. The Ogres carried them. The Centaurs delivered them. The Elves aimed them. The Humans convinced everyone this was worth doing. And the Vampires reminded everyone what happens when it isn't.</p>
-      <cite>— Anonymous Coalition Historian, "The Unlikely Resistance"</cite>
+      <p>We sent a team of twelve into the Ancient Realm. Seven came back. Of the seven, four could still speak coherently. Of those four, three said the same thing: that whatever is in there at the center isn't a boss. It isn't a guardian. It's a landlord. It's been maintaining the premises for fifty thousand years and it is exceptionally tired of squatters.</p>
+      <cite>— Coalition Deep Reconnaissance Report 44-C, Classification: Eyes Only</cite>
     </div>
+  </div>
+
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER VI ══ -->
+  <div class="lore-chapter reveal">
+    <div class="chapter-number">Chapter VI</div>
+    <div class="chapter-label">The Dragon & The Rift</div>
+    <h2 class="chapter-title"><span class="red">Vaeltharax</span> & The Sovereign</h2>
+
+    <p class="lore-text">There are two entities in the known world that the Xu Supreme Overlord has specifically ordered his armies not to engage under any circumstances. One is the Lich King. The other is <b class="red">Vaeltharax the Undying</b>.</p>
+
+    <p class="lore-text">Vaeltharax has been killed fourteen times. The records are precise because each death was witnessed, documented, and celebrated, and each time — sometimes in hours, sometimes in days, once in three years that everyone hoped was permanent — she came back. Not weakened. Not diminished. Each death changed something in her, and whatever changed was never in the direction of more vulnerable.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🐲</div>
+      <div>
+        <div class="boss-title">Vaeltharax The Undying — Five Phases, No Ceiling</div>
+        <div class="boss-location">Dragon Lair · Level 75+ · 5 Phases</div>
+        <p class="boss-desc">The Dragon Lair is a cave system the size of a small city, and every surface of it is scorched. The bones of the things that tried to kill Vaeltharax are still there — Xu Dominion heavy infantry, Coalition strike teams, and things that aren't identifiable as either. They make a kind of archaeological record of failure.<br><br><b>Five phases.</b> Each one unlocks when you kill her. The first phase — the one that looks like a dragon — is the easiest. By phase three she stops using anything you've seen before. By phase four the fire has changed color twice. Phase five involves abilities that were not present in phases one through four, which researchers believe she synthesizes in real time from studying how you fight. The Lair has been entered over two hundred times. She has been killed in her final phase six times. Nobody knows what would happen if you succeeded a seventh.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">The <b class="hl">Rift Vale</b> is a different category of danger entirely. Vaeltharax can be understood, at least in principle — she is a creature, she has a body, she can be studied. The Rift Sovereign has no body. It has no fixed location. It is a dimensional collapse given will, and the will it has been given is simple: expand. The Vale has been growing for thirty years. At current rates, in another century it will have consumed the eastern third of the known world. The Xu want to weaponize it. The Coalition wants to close it. The Rift Sovereign doesn't care what either side wants.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🌀</div>
+      <div>
+        <div class="boss-title">The Rift Sovereign — The Collapse With a Name</div>
+        <div class="boss-location">Rift Vale · Level 65+</div>
+        <p class="boss-desc">The <b>Rift Sovereign</b> shouldn't exist. Dimensional collapses are events, not beings — they happen, they expand, they consume. They don't develop preferences. They don't hunt. They don't choose. The Sovereign does all three. The working theory among the Coalition's void scholars is that the collapse passed through an Architect site at some point in its expansion and absorbed something that was still running inside — some residual intelligence or purpose that the structure was still executing after fifty millennia. What that purpose was has been lost. What replaced it is the Sovereign: a being that is simultaneously everywhere the Vale has reached, with no central point you can destroy and no border you can negotiate with.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER VII ══ -->
+  <div class="lore-chapter reveal">
+    <div class="chapter-number">Chapter VII</div>
+    <div class="chapter-label">The Wyvern Wastes & the Heart of the Empire</div>
+    <h2 class="chapter-title">The Road to <span class="accent">Xumen</span></h2>
+
+    <p class="lore-text">The <b class="hl">Wyvern Wastes</b> are what the Xu expansion left behind — a snow-covered wilderness between the outer occupied territories and the capital city that the Dominion decided wasn't worth pacifying, because the things that lived there were too large to be worth the casualties. The <b>Stonewyrm Colossus</b> is the largest of them. The Xu survey teams that mapped the region noted it as a geographical feature before they realized it was alive. It has been alive for longer than the Xu language has existed as a spoken thing.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🗿</div>
+      <div>
+        <div class="boss-title">The Stonewyrm Colossus — Older Than Names</div>
+        <div class="boss-location">Wyvern Wastes · Level 80+</div>
+        <p class="boss-desc">The <b>Stonewyrm Colossus</b> does not have sides in this war. It does not have politics or ideology or grievance. What it has is territory, and a limbic system older than the concept of territory, and an extremely well-developed ability to flatten things that enter what it has decided is its space. The Xu tried to drive it out of the Wastes in the early years of the expansion. They lost six battalions before the Supreme Overlord issued the standing order: route around it. The Coalition discovered this order in captured Xu intelligence briefings and felt a complicated mixture of vindication and new respect for an adversary that knew when to stop fighting something unkillable.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">Beyond the Wastes lies <b class="gold">Xumen</b> — the Xu capital city, the seat of the Dominion, the place that every Coalition offensive for the past twenty years has been theoretically aimed at without ever getting within eight hundred miles of. It is not a city that grew. It was planned, then executed with Xu precision over a century of construction, and it shows: every street runs at exactly the angle that maximizes defensive sight lines, every building has a structural role in the city's fortification system, and at its center, the Supreme Overlord's command spire rises so high that it catches morning light before any other point on the horizon.</p>
+
+    <p class="lore-text">The <b>XU Supreme Overlord</b> is not what most people who haven't fought the Xu expect. They expect a warlord — something brutal, something elemental, something that runs on violence and contempt. What they get is an administrator. His genius is organizational. He built the Dominion zone by zone the way you'd build a machine — each part precisely fitted, each garrison calibrated to the specific resistance profile of its territory, each resource extraction operation timed to the supply chain it feeds. He is dangerous not because he is powerful but because he is <em>right</em>, in the tactical sense, almost every time. The three times he has been strategically wrong, the Coalition survived because of them.</p>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">🤖</div>
+      <div>
+        <div class="boss-title">XU Supreme Overlord — The Machine at the Top</div>
+        <div class="boss-location">Xumen · Level 80+</div>
+        <p class="boss-desc">There are operatives in the Coalition who have spent their careers trying to understand the <b>Supreme Overlord</b> as a person rather than as a system, on the theory that people have weaknesses systems don't. They've found very little. He doesn't have ambitions beyond the Dominion's expansion — he doesn't want monuments to himself, doesn't want worship, doesn't want history to remember him. He wants the Architects' technology, and he wants it before anyone else finds it, and he has built the most efficient military-administrative apparatus in recorded history to help him get there. The tragedy — Coalition commanders discuss this in hushed voices — is that he might actually be right about why it matters. The tragedy inside the tragedy is that it doesn't change what has to be done.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ch-divider"></div>
+
+  <!-- ══ CHAPTER VIII ══ -->
+  <div class="lore-chapter reveal">
+    <div class="chapter-number">Chapter VIII</div>
+    <div class="chapter-label">The End of All Things</div>
+    <h2 class="chapter-title">The <span class="red">Necropolis</span> & The Bone Colossus</h2>
+
+    <p class="lore-text">Beyond Xumen, past the Fortress and its orbital weapon systems, past every fortification the Dominion has built and every horror that has claimed territory in the chaos of the war — there is a place that appears on no Coalition map and on very few Xu ones. The Resistance learned it existed from a captured Xu intelligence officer who had been in the outer territory and came back with what he'd seen written on his face in a way that didn't go away when his expression changed.</p>
+
+    <p class="lore-text">He called it the <b class="red">Necropolis</b>. He said the sky there was different. Not metaphorically — literally different, as if the atmosphere above that zone had been replaced with something that followed different physical rules. It rained. Not water. He couldn't identify what it was. It killed two of his five soldiers before they reached shelter. The lightning that came with the rain was not natural lightning. Natural lightning strikes downward. The lightning in the Necropolis moved horizontally, chose targets, and returned. It was hunting.</p>
+
+    <div class="pull-quote red-quote">
+      <p>You want to know what's in the center. Everyone wants to know what's in the center. I'll tell you. There's a skull the size of a building — void-cracked, which means it was assembled from nothing, which means it was built and not born — and it's been sitting in the middle of that rain for longer than any living thing has been alive. It isn't sleeping. It's waiting. I don't know what for. I know it's patient. I know it's the most patient thing I've ever been afraid of. And I've been afraid of a lot of things.</p>
+      <cite>— Xu Intelligence Officer, debriefing transcript, name withheld, current status: unknown</cite>
+    </div>
+
+    <div class="boss-feature">
+      <div class="boss-icon-lg">☠️</div>
+      <div>
+        <div class="boss-title">The Bone Colossus — The Final Question</div>
+        <div class="boss-location">The Necropolis · Level 100+ · 1,400,000 HP · 4 Phases</div>
+        <p class="boss-desc">Nobody knows who built the <b>Bone Colossus</b>. The void-crack assembly technique matches Architect-era construction methods, which means it's at least fifty thousand years old, which means it predates the Xu, the Free Races, the Lich King, and everything else in the known world except the ruins themselves. Its skull is composed of bones from no identified species. Its size — estimated at thirty meters at rest — is inconsistent with any known ecology. It has four phases, the fourth of which has never been fully documented because no one who has seen it has been able to give a complete account afterward.<br><br>What the Bone Colossus is <em>for</em> is the question that has been keeping Coalition researchers awake for the five years since they confirmed it existed. The Supreme Overlord knows. That much is clear from intercepted Xu communications. He's been searching for it for thirty years. Now that the war has pushed into the Necropolis zone, the race isn't just military anymore. It's existential. Whatever the Colossus is guarding, or waiting for, or preparing — it matters in a way that makes the territorial war look like a border dispute.</p>
+      </div>
+    </div>
+
+    <p class="lore-text">This is why you're here. Not because the Coalition needs another soldier — though it does, it always does. Not because the Outpost needs defending — though it does, and it will again tomorrow. You're here because somewhere between the Patrol Zone and the Necropolis, between Level 1 and whatever comes after Level 100, you are going to learn things that matter. You are going to fight things that have been waiting to be fought for longer than civilization has existed. And at the end, in the rain that isn't rain, in the lightning that hunts, at the feet of a structure that shouldn't exist —</p>
+
+    <p class="lore-text" style="text-align:center;font-family:'Cinzel',serif;font-size:1.2rem;color:#fff;letter-spacing:0.05em;margin-top:2rem;">You will find out what it was all for.</p>
   </div>
 
 </main>
@@ -209,8 +363,8 @@ const cursor=document.getElementById('cursor'),dot=document.getElementById('curs
 let mx=0,my=0,cx=0,cy=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
 (function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
-document.querySelectorAll('a,button,.boss-card').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
-const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('a,button,.boss-feature').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
+const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.06});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 </script>
 </body>

@@ -137,38 +137,43 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
 
     <div class="keyboard">
       <div class="key-row">
-        <div class="key" id="key-q">Q<span class="key-label">POTION</span></div>
-        <div class="key skill" id="key-e">E<span class="key-label">SKILL 1</span></div>
-        <div class="key skill" id="key-r">R<span class="key-label">SKILL 2</span></div>
-        <div class="key skill" id="key-t">T<span class="key-label">SKILL 3</span></div>
-        <div class="key action" id="key-y">Y</div>
-        <div class="key action" id="key-u">U<span class="key-label">AA HUD</span></div>
-        <div class="key action" id="key-i">I<span class="key-label">INV</span></div>
-        <div class="key action" id="key-o">O</div>
+        <div class="key action" id="key-q">Q<span class="key-label">QUEST</span></div>
+        <div class="key action" id="key-w">W<span class="key-label">↑</span></div>
+        <div class="key action" id="key-e">E<span class="key-label">↑</span></div>
+        <div class="key action" id="key-r">R<span class="key-label">↑</span></div>
+        <div class="key action" id="key-t">T<span class="key-label">INV</span></div>
+        <div class="key action" id="key-y">Y<span class="key-label">ACHIEV</span></div>
+        <div class="key action" id="key-i">I<span class="key-label">ITEMS</span></div>
       </div>
       <div class="key-row">
         <div class="key wide" id="key-a">A<span class="key-label">←</span></div>
-        <div class="key" id="key-s">S<span class="key-label">↓</span></div>
+        <div class="key" id="key-s">S<span class="key-label">STATS</span></div>
         <div class="key" id="key-d">D<span class="key-label">→</span></div>
-        <div class="key skill" id="key-g">G<span class="key-label">SKILL 4</span></div>
-        <div class="key" id="key-h">H</div>
-        <div class="key action" id="key-j">J<span class="key-label">GEMS</span></div>
-        <div class="key" id="key-k">K</div>
-        <div class="key action" id="key-l">L</div>
+        <div class="key action" id="key-f">F<span class="key-label">POTION</span></div>
+        <div class="key action" id="key-g">G<span class="key-label">GEMS</span></div>
+        <div class="key action" id="key-l">L<span class="key-label">LEADER</span></div>
+        <div class="key action" id="key-k">K<span class="key-label">SKILLS</span></div>
       </div>
       <div class="key-row">
-        <div class="key wider" id="key-shift">SHIFT<span class="key-label">SPRINT</span></div>
+        <div class="key" id="key-1">1<span class="key-label">SKILL 1</span></div>
+        <div class="key" id="key-2">2<span class="key-label">SKILL 2</span></div>
+        <div class="key" id="key-3">3<span class="key-label">SKILL 3</span></div>
+        <div class="key" id="key-4">4<span class="key-label">SKILL 4</span></div>
+        <div class="key" id="key-5">5<span class="key-label">SKILL 5</span></div>
+        <div class="key" id="key-6">6<span class="key-label">SKILL 6</span></div>
+        <div class="key" id="key-7">7<span class="key-label">SKILL 7</span></div>
+        <div class="key" id="key-8">8<span class="key-label">SKILL 8</span></div>
+      </div>
+      <div class="key-row">
+        <div class="key wide" id="key-shift">SHIFT<span class="key-label">SPRINT</span></div>
         <div class="key" id="key-z">Z<span class="key-label">ZOOM</span></div>
-        <div class="key" id="key-x">X</div>
-        <div class="key" id="key-c">C<span class="key-label">CHAR</span></div>
-        <div class="key" id="key-v">V</div>
-        <div class="key" id="key-b">B</div>
-        <div class="key" id="key-n">N</div>
+        <div class="key action" id="key-c">C<span class="key-label">CRAFT</span></div>
         <div class="key" id="key-m">M<span class="key-label">MAP</span></div>
       </div>
       <div class="key-row">
         <div class="key widest" id="key-space">SPACE<span class="key-label">DODGE ROLL</span></div>
         <div class="key" id="key-esc">ESC<span class="key-label">MENU</span></div>
+        <div class="key action" id="key-f5">F5<span class="key-label">SAVE</span></div>
       </div>
     </div>
 
@@ -176,19 +181,23 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">LMB</span><div class="binding-desc"><b>Attack</b> — Click to strike toward cursor</div></div>
       <div class="binding"><span class="key-badge red">RMB</span><div class="binding-desc"><b>Block</b> — Hold to raise shield and reduce damage</div></div>
       <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction</div></div>
-      <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Skill 1</b> — First equipped active skill</div></div>
-      <div class="binding"><span class="key-badge gold">R</span><div class="binding-desc"><b>Skill 2</b> — Second equipped active skill</div></div>
-      <div class="binding"><span class="key-badge gold">T</span><div class="binding-desc"><b>Skill 3</b> — Third equipped active skill</div></div>
-      <div class="binding"><span class="key-badge gold">G</span><div class="binding-desc"><b>Skill 4</b> — Fourth equipped active skill</div></div>
-      <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Use Potion</b> — Consume top potion from bag</div></div>
-      <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open/close item bag and equipment</div></div>
-      <div class="binding"><span class="key-badge">J</span><div class="binding-desc"><b>Gem Panel</b> — Open gem socketing interface</div></div>
-      <div class="binding"><span class="key-badge">U</span><div class="binding-desc"><b>AA HUD</b> — Show Ascendancy Ability cooldowns</div></div>
-      <div class="binding"><span class="key-badge">C</span><div class="binding-desc"><b>Character</b> — Stats, talents, and level info</div></div>
+      <div class="binding"><span class="key-badge">WASD</span><div class="binding-desc"><b>Move</b> — W/A/S/D for directional movement</div></div>
+      <div class="binding"><span class="key-badge gold">1–8</span><div class="binding-desc"><b>Skills</b> — Activate equipped skill in that slot</div></div>
+      <div class="binding"><span class="key-badge gold">K</span><div class="binding-desc"><b>Skill Loadout</b> — Open/manage full skill loadout screen</div></div>
+      <div class="binding"><span class="key-badge">F</span><div class="binding-desc"><b>Potion / Talk</b> — Use potion or interact with NPC</div></div>
+      <div class="binding"><span class="key-badge">S</span><div class="binding-desc"><b>Stat Points</b> — Open stat point allocation screen</div></div>
+      <div class="binding"><span class="key-badge">T</span><div class="binding-desc"><b>Inventory</b> — Open item bag and equipment slots</div></div>
+      <div class="binding"><span class="key-badge">G</span><div class="binding-desc"><b>Gem Panel</b> — Open gem socketing interface</div></div>
+      <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Quest Log</b> — Open quest log and objectives</div></div>
+      <div class="binding"><span class="key-badge">Y</span><div class="binding-desc"><b>Achievements</b> — View achievement progress</div></div>
+      <div class="binding"><span class="key-badge">C</span><div class="binding-desc"><b>Crafting Bench</b> — Open crafting (when near bench)</div></div>
+      <div class="binding"><span class="key-badge">L</span><div class="binding-desc"><b>Stats &amp; Leaderboard</b> — Session stats and rankings</div></div>
       <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>Map</b> — Toggle minimap zoom</div></div>
       <div class="binding"><span class="key-badge">Z</span><div class="binding-desc"><b>Zoom</b> — Scroll to adjust camera distance</div></div>
       <div class="binding"><span class="key-badge">SHIFT</span><div class="binding-desc"><b>Sprint</b> — Hold to move faster (drains stamina)</div></div>
       <div class="binding"><span class="key-badge">ENTER</span><div class="binding-desc"><b>Chat</b> — Open/send chat message</div></div>
+      <div class="binding"><span class="key-badge">F5</span><div class="binding-desc"><b>Save Game</b> — Manual save to local + cloud</div></div>
+      <div class="binding"><span class="key-badge red">ESC</span><div class="binding-desc"><b>Close Menu / Lobby</b> — Return to lobby or close panel</div></div>
     </div>
   </div>
 

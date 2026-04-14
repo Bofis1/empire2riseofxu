@@ -186,7 +186,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="skills" class="reveal">
         <h2><span class="icon">🧿</span>Skills & Classes</h2>
         <div class="section-bar"></div>
-        <p>Four skill slots on hotkeys <span class="hl">E / R / T / G</span>. Each class has a unique skill tree — pick any combination from your class pool. Skills have cooldowns managed with a mana cost. Some skills scale off ATK, others off INT.</p>
+        <p>Eight skill slots on hotkeys <span class="hl">1 / 2 / 3 / 4 / 5 / 6 / 7 / 8</span>, plus <span class="hl">K</span> to open the full skill loadout screen. Each class has a unique skill tree — pick any combination from your class pool. Skills have cooldowns managed with a mana cost. Some skills scale off ATK, others off INT.</p>
 
         <div class="class-block">
           <div class="class-title">⚔️ Warrior</div>
@@ -276,12 +276,13 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <table>
           <thead><tr><th>Stat</th><th>Effect</th><th>Scales</th></tr></thead>
           <tbody>
-            <tr><td>⚔️ ATK</td><td>Physical damage per hit</td><td>Warrior skills, melee weapons</td></tr>
+            <tr><td>⚔️ STR</td><td>Physical damage, carry weight</td><td>Warrior skills, heavy weapons</td></tr>
+            <tr><td>⚔️ ATK</td><td>Base attack damage per hit</td><td>Melee builds, weapon bonuses</td></tr>
             <tr><td>🛡️ DEF</td><td>Damage reduction (flat)</td><td>Armor, block stance</td></tr>
             <tr><td>🔮 INT</td><td>Magic damage, mana pool</td><td>Mage skills, staff weapons</td></tr>
-            <tr><td>❤️ VIT</td><td>Max HP (+20 HP per point)</td><td>Tanky builds, Ogre/Minotaur</td></tr>
-            <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue sub-class</td></tr>
-            <tr><td>🍀 LCK</td><td>Crit chance, loot quality</td><td>Scavenger talent, late game</td></tr>
+            <tr><td>❤️ VIT</td><td>Max HP</td><td>Tanky builds, Ogre/Minotaur</td></tr>
+            <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue, Gnome builds</td></tr>
+            <tr><td>🏃 AGI</td><td>Dodge chance, crit rate</td><td>Vampire, Rogue, late-game</td></tr>
           </tbody>
         </table>
         <p style="margin-top:1rem;"><span class="hl">Crit strikes</span> deal <span class="gold">2× damage</span> and create a screen flash. Critical hits can be forced with the <span class="hl">First-Hit Crit</span> talent.</p>
@@ -299,7 +300,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🟪</span><div class="m-card-title" style="color:#aa44ff">Epic</div><p>Build-defining items. Crafting materials required.</p></div>
           <div class="m-card"><span class="m-card-icon">🟨</span><div class="m-card-title" style="color:var(--xu-gold)">Legendary</div><p>Endgame power. Unique visuals. Boss-only drops.</p></div>
         </div>
-        <p style="margin-top:1.5rem;"><b>Gem Socketing</b> — Open the gem panel (<span class="hl">press J</span>) to slot gems into gear. Rubies boost ATK, Sapphires boost INT, Emeralds boost SPD, Void Gems add all stats.</p>
+        <p style="margin-top:1.5rem;"><b>Gem Socketing</b> — Open the gem panel (<span class="hl">press G</span>) to slot gems into gear. Rubies boost ATK, Sapphires boost INT, Emeralds boost SPD, Topaz boost SPD, Amethysts boost INT+VIT, Void Gems add all stats. Gems come in Small, Medium, and Large sizes.</p>
         <p><b>Crafting</b> — 28 craftable items across weapon, armor, and accessory benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
       </section>
 
@@ -327,8 +328,8 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p>Empire 2 supports <b>real-time cooperative multiplayer</b> via WebRTC peer-to-peer + a dedicated server. Up to <span class="hl">4 players</span> per game session.</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>All 17 zones are live on the server from the moment a game is created. Enter any zone and enemies are already there.</p></div>
-          <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll. Kills credit the killer. XP and gold from boss clears go to all party members in the zone.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>All 20 zones are live on the server from the moment a game is created. Enter any zone and enemies are already there, respawning on a 30-second timer.</p></div>
+          <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll on kills they land. XP and gold from enemy kills go to the killer only. Boss loot drops go to the player who lands the killing blow.</p></div>
           <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and dead status in real time. Trade items via the trade window (T key).</p></div>
         </div>
       </section>

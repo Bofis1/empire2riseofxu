@@ -10,10 +10,7 @@
 :root{--xu-black:#020408;--xu-deep:#060d18;--xu-navy:#0a1628;--xu-cyan:#00e5ff;--xu-gold:#ffcc20;--xu-red:#ff2244;--xu-purple:#8822ff;--xu-green:#00ff88;--xu-text:#c8d8e8;--xu-dim:#607080;--glow-cyan:0 0 20px rgba(0,229,255,0.6),0 0 60px rgba(0,229,255,0.2);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.9;overflow-x:hidden;cursor:none;}
-#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
-#cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
-#cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:17px;line-height:1.9;overflow-x:hidden;}
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
 .nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;letter-spacing:0.15em;color:var(--xu-cyan);text-decoration:none;text-shadow:var(--glow-cyan);}
 .nav-logo span{color:var(--xu-gold);}
@@ -89,7 +86,6 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
 </style>
 </head>
 <body>
-<div id="cursor"></div><div id="cursor-dot"></div>
 <nav>
   <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
   <ul class="nav-links">
@@ -214,9 +210,9 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
     <div class="boss-feature">
       <div class="boss-icon-lg">🍄</div>
       <div>
-        <div class="boss-title">The Fungal Sovereign — Something That Grew Wrong</div>
+        <div class="boss-title">The Mycelium Queen — Something That Grew Wrong</div>
         <div class="boss-location">Fungal Depths · Level 42+</div>
-        <p class="boss-desc">Deep below the Fungal Depths, in caverns that glow with bioluminescent organisms so old they have no classification in any biological catalogue, something grew. It grew slowly, over millennia, fed by the same warm mineral seepage that kept the Architect ruins warm to the touch. The <b>Fungal Sovereign</b> is not intelligent in any way the living understand the word. But it is aware. It is very, very aware. And it has been waiting with the patience of something that doesn't experience time the way organisms with heartbeats do. Xu scouts sent into the Depths to establish forward positions sent back one message before going silent: <em>"It already knew we were coming."</em></p>
+        <p class="boss-desc">Deep below the Fungal Depths, in caverns that glow with bioluminescent organisms so old they have no classification in any biological catalogue, something grew. It grew slowly, over millennia, fed by the same warm mineral seepage that kept the Architect ruins warm to the touch. The <b>Mycelium Queen</b> is not intelligent in any way the living understand the word. But she is aware. She is very, very aware — a single consciousness distributed across a fungal network that extends further beneath the Depths than anyone has mapped, with limbs that are tendrils and tendrils that are eyes. She has been waiting with the patience of something that doesn't experience time the way organisms with heartbeats do. Xu scouts sent into the Depths to establish forward positions sent back one message before going silent: <em>"It already knew we were coming."</em></p>
       </div>
     </div>
 
@@ -234,9 +230,9 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
     <div class="boss-feature">
       <div class="boss-icon-lg">❄️</div>
       <div>
-        <div class="boss-title">The Frostveil Warden — The Storm That Thinks</div>
+        <div class="boss-title">The Frostveil Colossus — The Storm That Thinks</div>
         <div class="boss-location">Frostveil · Level 50+</div>
-        <p class="boss-desc">The <b>Frostveil</b> is the northernmost zone in the known world — a region of permanent blizzard where visibility drops to zero and temperature to death within minutes of exposure without proper preparation. It is also, paradoxically, one of the most strategically valuable zones in the war, because Frostveil's storms hide an Architect complex of extraordinary size, and whoever controls the complex controls access to the most complete surviving record of whatever the Architects were actually building.<br><br>The Warden that protects the complex is not Xu. It is not Coalition. It is old — old the way the ruins are old — and it has one purpose: keep everyone out until whoever the Architects were waiting for finally arrives. It has been waiting a very long time.</p>
+        <p class="boss-desc">The <b>Frostveil</b> is the northernmost zone in the known world — a region of permanent blizzard where visibility drops to zero and temperature to death within minutes of exposure without proper preparation. It is also, paradoxically, one of the most strategically valuable zones in the war, because Frostveil's storms hide an Architect complex of extraordinary size, and whoever controls the complex controls access to the most complete surviving record of whatever the Architects were actually building.<br><br>The <b>Frostveil Colossus</b> that protects the complex is not Xu. It is not Coalition. It is old — old the way the ruins are old — and it has one purpose: keep everyone out until whoever the Architects were waiting for finally arrives. It has been waiting a very long time.</p>
       </div>
     </div>
 
@@ -266,7 +262,7 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
       <div class="boss-icon-lg">🐲</div>
       <div>
         <div class="boss-title">Vaeltharax The Undying — Five Phases, No Ceiling</div>
-        <div class="boss-location">Dragon Lair · Level 75+ · 5 Phases</div>
+        <div class="boss-location">Dragon Lair · Level 65+ · 5 Phases</div>
         <p class="boss-desc">The Dragon Lair is a cave system the size of a small city, and every surface of it is scorched. The bones of the things that tried to kill Vaeltharax are still there — Xu Dominion heavy infantry, Coalition strike teams, and things that aren't identifiable as either. They make a kind of archaeological record of failure.<br><br><b>Five phases.</b> Each one unlocks when you kill her. The first phase — the one that looks like a dragon — is the easiest. By phase three she stops using anything you've seen before. By phase four the fire has changed color twice. Phase five involves abilities that were not present in phases one through four, which researchers believe she synthesizes in real time from studying how you fight. The Lair has been entered over two hundred times. She has been killed in her final phase six times. Nobody knows what would happen if you succeeded a seventh.</p>
       </div>
     </div>
@@ -291,14 +287,14 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
     <div class="chapter-label">The Wyvern Wastes & the Heart of the Empire</div>
     <h2 class="chapter-title">The Road to <span class="accent">Xumen</span></h2>
 
-    <p class="lore-text">The <b class="hl">Wyvern Wastes</b> are what the Xu expansion left behind — a snow-covered wilderness between the outer occupied territories and the capital city that the Dominion decided wasn't worth pacifying, because the things that lived there were too large to be worth the casualties. The <b>Stonewyrm Colossus</b> is the largest of them. The Xu survey teams that mapped the region noted it as a geographical feature before they realized it was alive. It has been alive for longer than the Xu language has existed as a spoken thing.</p>
+    <p class="lore-text">The <b class="hl">Wyvern Wastes</b> are what the Xu expansion left behind — a snow-covered wilderness between the outer occupied territories and the capital city that the Dominion decided wasn't worth pacifying, because the things that lived there were too large to be worth the casualties. <b>Cryothar</b> is the largest of them. Xu survey teams that mapped the region marked it initially as a persistent blizzard formation before they realized the storm had a body inside it — and that the body was watching back.</p>
 
     <div class="boss-feature">
-      <div class="boss-icon-lg">🗿</div>
+      <div class="boss-icon-lg">🐉</div>
       <div>
-        <div class="boss-title">The Stonewyrm Colossus — Older Than Names</div>
-        <div class="boss-location">Wyvern Wastes · Level 80+</div>
-        <p class="boss-desc">The <b>Stonewyrm Colossus</b> does not have sides in this war. It does not have politics or ideology or grievance. What it has is territory, and a limbic system older than the concept of territory, and an extremely well-developed ability to flatten things that enter what it has decided is its space. The Xu tried to drive it out of the Wastes in the early years of the expansion. They lost six battalions before the Supreme Overlord issued the standing order: route around it. The Coalition discovered this order in captured Xu intelligence briefings and felt a complicated mixture of vindication and new respect for an adversary that knew when to stop fighting something unkillable.</p>
+        <div class="boss-title">Cryothar — The Storm That Circles</div>
+        <div class="boss-location">Wyvern Wastes · Level 80+ · 450,000 HP</div>
+        <p class="boss-desc"><b>Cryothar</b> is an icestorm wyvern — a creature so old that no Coalition or Xu document acknowledges when it was first sighted, because by the time anyone thought to write it down it had already been circling the Wastes for longer than the Wastes had carried a name. Its body is easily thirty meters at the wingspan, but the storm it generates around itself extends for kilometers, and the storm is the real problem. Xu expeditionary forces that entered the Wastes in pursuit of other objectives reported disorientation, hypothermia, and ice projectiles hitting them from directions that didn't have line-of-sight to any visible source. By the time Cryothar itself descended on the survivors, the fight was already functionally over.<br><br>The Xu tried to drive it out of the Wastes in the early years of the expansion. They lost six battalions before the Supreme Overlord issued the standing order: <em>route around it</em>. The Coalition discovered this order in captured Xu intelligence briefings and felt a complicated mixture of vindication and new respect for an adversary that knew when to stop fighting something unkillable.</p>
       </div>
     </div>
 
@@ -341,8 +337,8 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
       <div class="boss-icon-lg">🌑</div>
       <div>
         <div class="boss-title">Commandant Xerath — The One Who Stayed</div>
-        <div class="boss-location">Void Citadel · Level 70+ · 4 Phases</div>
-        <p class="boss-desc">The working theory — and it is uncomfortable to say this aloud — is that Commandant Xerath did not die when the rift opened. He merged with it. Not voluntarily, not intentionally, but the void-current that ran through the lower Citadel levels ran through him as well, and whatever process that involves, the result is something that occupies the Citadel's dimensional intersection and considers it home.<br><br><b>Xerath has four phases.</b> In the first, he appears as something that resembles a Xu officer in void-corrupted armor. By the third phase, the armor is gone and the void-current is visible through him. By the fourth, the question of whether there is a <em>him</em> or only a collapse with habits and a name becomes genuinely unresolvable. He has defended the Citadel against Xu attempts to reclaim it and Coalition attempts to shut down the rift with equal thoroughness. The void doesn't take sides. Neither does he, anymore.</p>
+        <div class="boss-location">Void Citadel · Level 70+ · 1,500,000 HP · 5 Phases</div>
+        <p class="boss-desc">The working theory — and it is uncomfortable to say this aloud — is that Commandant Xerath did not die when the rift opened. He merged with it. Not voluntarily, not intentionally, but the void-current that ran through the lower Citadel levels ran through him as well, and whatever process that involves, the result is something that occupies the Citadel's dimensional intersection and considers it home.<br><br><b>Xerath has five phases.</b> In the first, he appears as something that resembles a Xu officer in void-corrupted armor, issuing clipped commands to a garrison that no longer exists. By the third phase, the armor is gone and the void-current is visible through him. By the fifth, the question of whether there is a <em>him</em> or only a collapse with habits and a name becomes genuinely unresolvable. He has defended the Citadel against Xu attempts to reclaim it and Coalition attempts to shut down the rift with equal thoroughness. The void doesn't take sides. Neither does he, anymore.</p>
       </div>
     </div>
 
@@ -351,9 +347,9 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
 
   <div class="ch-divider"></div>
 
-  <!-- ══ CHAPTER IX — NECROPOLIS ══ (renumbered from VIII) -->
+  <!-- ══ CHAPTER IX — NECROPOLIS ══ -->
   <div class="lore-chapter reveal">
-    <div class="chapter-number">Chapter VIII</div>
+    <div class="chapter-number">Chapter IX</div>
     <div class="chapter-label">The End of All Things</div>
     <h2 class="chapter-title">The <span class="red">Necropolis</span> & The Bone Colossus</h2>
 
@@ -392,11 +388,6 @@ main{max-width:900px;margin:0 auto;padding:4rem 2rem 8rem;}
 </footer>
 
 <script>
-const cursor=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-(function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
-document.querySelectorAll('a,button,.boss-feature').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
 const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.06});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 </script>

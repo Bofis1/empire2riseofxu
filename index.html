@@ -16,11 +16,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
-#cur{width:18px;height:18px;border:1.5px solid var(--g);position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%) rotate(45deg);mix-blend-mode:screen;transition:width .12s,height .12s,border-color .12s;}
-#cur::after{content:'';position:absolute;width:4px;height:4px;background:var(--g);top:50%;left:50%;transform:translate(-50%,-50%);}
-#cur.h{width:30px;height:30px;border-color:var(--c);}
-#cur.h::after{background:var(--c);}
+body{background:var(--bg);color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
 nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:60px;background:linear-gradient(to bottom,rgba(1,0,10,0.97),rgba(1,0,10,0));backdrop-filter:blur(6px);border-bottom:1px solid rgba(57,255,138,0.08);}
 .nav-logo{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:0.9rem;letter-spacing:0.12em;color:var(--g);text-decoration:none;text-shadow:var(--glow);}
 .nav-logo em{color:var(--c);font-style:normal;}
@@ -141,7 +137,6 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 </style>
 </head>
 <body>
-<div id="cur"></div>
 <nav>
   <a href="index.html" class="nav-logo">EMPIRE<em>2</em></a>
   <ul class="nav-links">
@@ -246,12 +241,12 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   </div>
   <div class="boss-list reveal">
     <div class="br"><span class="br-icon">&#x2620;&#xFE0F;</span><div><div class="br-name">The Bone Colossus</div><div class="br-zone">Necropolis &middot; Level 100+</div></div><div class="br-hp">1,400,000 HP</div></div>
-    <div class="br"><span class="br-icon">&#x1F53A;</span><div><div class="br-name">The Apex Pyramid</div><div class="br-zone">Xumen Fortress &middot; Level 100+</div></div><div class="br-hp">1,200,000 HP</div></div>
-    <div class="br"><span class="br-icon">&#x1F5FF;</span><div><div class="br-name">The Stonewyrm Colossus</div><div class="br-zone">Wyvern Wastes &middot; Level 80+</div></div><div class="br-hp">450,000 HP</div></div>
+    <div class="br"><span class="br-icon">&#x1F53A;</span><div><div class="br-name">The Apex Pyramid</div><div class="br-zone">XU Fortress &middot; Level 100+</div></div><div class="br-hp">1,200,000 HP</div></div>
+    <div class="br"><span class="br-icon">&#x1F5FF;</span><div><div class="br-name">Cryothar</div><div class="br-zone">Wyvern Wastes &middot; Level 80+</div></div><div class="br-hp">450,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F916;</span><div><div class="br-name">XU Supreme Overlord</div><div class="br-zone">Xumen &middot; Level 80+</div></div><div class="br-hp">500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F432;</span><div><div class="br-name">Vaeltharax The Undying</div><div class="br-zone">Dragon Lair &middot; 5 Phases</div></div><div class="br-hp">270,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F300;</span><div><div class="br-name">The Rift Sovereign</div><div class="br-zone">Rift Vale &middot; Level 65+</div></div><div class="br-hp">225,000 HP</div></div>
-    <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+</div></div><div class="br-hp">320,000 HP</div></div>
+    <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+ &middot; 5 Phases</div></div><div class="br-hp">1,500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F480;</span><div><div class="br-name">Khepri The Sand Colossus</div><div class="br-zone">Sunken Sands &middot; Level 60+</div></div><div class="br-hp">120,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x2744;&#xFE0F;</span><div><div class="br-name">Frostveil Colossus</div><div class="br-zone">Frostveil &middot; Level 50+</div></div><div class="br-hp">96,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1FAA8;</span><div><div class="br-name">The Elder Architect</div><div class="br-zone">Ancient Realm &middot; Level 55+</div></div><div class="br-hp">120,000 HP</div></div>
@@ -278,13 +273,6 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   <p class="ft-cr">Created by <a href="https://tehbofis.itch.io" target="_blank">Tehbofis</a> &middot; Built with Three.js &amp; PeerJS</p>
 </footer>
 <script>
-// CURSOR
-const cur=document.getElementById('cur');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-(function aC(){cx+=(mx-cx)*0.16;cy+=(my-cy)*0.16;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(aC);})();
-document.querySelectorAll('a,button,.fc,.rc,.br').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('h'));el.addEventListener('mouseleave',()=>cur.classList.remove('h'));});
-
 // SEEDED RNG
 function mkR(seed){let s=seed;return()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/0xffffffff;};}
 
@@ -404,7 +392,7 @@ function loop(){t++;draw(t);drawParts();requestAnimationFrame(loop);}
 resize();loop();
 
 // TICKER
-const zones=[{l:'XU Outpost · Safe Hub',c:false},{l:'Patrol Zone · Lv 5+',c:false},{l:'XU Cemetery · Lv 20+',c:'warn'},{l:'Void Wastes · Lv 15+',c:false},{l:'XU Citadel · Lv 25+',c:'warn'},{l:'Ashlands · Lv 35+',c:'warn'},{l:'Caves of Despair · Lv 40+',c:'warn'},{l:'Fungal Depths · Lv 42+',c:'warn'},{l:'Frostveil · Lv 50+',c:'warn'},{l:'Ancient Realm · Lv 55+',c:'dead'},{l:'Sanctuary of Aelun · Safe Zone · Lv 40+',c:false},{l:'Sunken Sands · Lv 60+',c:'dead'},{l:'Rift Vale · Lv 65+',c:'dead'},{l:'Dragon Lair · Lv 65+ · VAELTHARAX',c:'dead'},{l:'Void Citadel · Lv 70+ · COMMANDANT XERATH',c:'dead'},{l:'Wyvern Wastes · Lv 80+',c:'dead'},{l:'Xumen · Lv 80+',c:'dead'},{l:'Xumen Fortress · Lv 100+',c:'dead'},{l:'THE NECROPOLIS · Lv 100+ · SKY JOINS THE FIGHT',c:'dead'},{l:'Riftvale · Lv 65+ · DIMENSIONAL COLLAPSE',c:'dead'}];
+const zones=[{l:'XU Outpost · Safe Hub',c:false},{l:'Patrol Zone · Lv 5+',c:false},{l:'Void Wastes · Lv 15+',c:false},{l:'XU Cemetery · Lv 20+',c:'warn'},{l:'XU Citadel · Lv 25+',c:'warn'},{l:'Ashlands · Lv 35+',c:'warn'},{l:'Caves of Despair · Lv 40+ · FOREMAN DRAX',c:'warn'},{l:'Sanctuary of Aelun · Safe Zone · Lv 40+',c:false},{l:'Fungal Depths · Lv 42+ · MYCELIUM QUEEN',c:'warn'},{l:'Frostveil Tundra · Lv 50+ · FROSTVEIL COLOSSUS',c:'warn'},{l:'Ancient Realm · Lv 55+ · THE ELDER ARCHITECT',c:'dead'},{l:'Sunken Sands · Lv 60+ · KHEPRI THE SAND COLOSSUS',c:'dead'},{l:'Rift Vale · Lv 65+ · THE RIFT SOVEREIGN',c:'dead'},{l:'Dragon Lair · Lv 65+ · VAELTHARAX THE UNDYING',c:'dead'},{l:'Void Citadel · Lv 70+ · COMMANDANT XERATH · 1.5M HP',c:'dead'},{l:'Wyvern Wastes · Lv 80+ · CRYOTHAR',c:'dead'},{l:'Xumen · Lv 80+ · THE XU SUPREME OVERLORD',c:'dead'},{l:'XU Fortress · Lv 100+ · THE APEX PYRAMID · 1.2M HP',c:'dead'},{l:'THE NECROPOLIS · Lv 100+ · THE BONE COLOSSUS · 1.4M HP',c:'dead'}];
 const tt=document.getElementById('tt');
 [...zones,...zones].forEach(z=>{const el=document.createElement('div');el.className='t-item'+(z.c?' '+z.c:'');el.innerHTML='<div class="d"></div>'+z.l;tt.appendChild(el);});
 

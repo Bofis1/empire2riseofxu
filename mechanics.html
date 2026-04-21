@@ -17,10 +17,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;}
-#cursor{width:20px;height:20px;border:2px solid var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.1s,height 0.1s,border-color 0.1s;mix-blend-mode:screen;}
-#cursor-dot{width:4px;height:4px;background:var(--xu-cyan);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);}
-#cursor.hover{width:36px;height:36px;border-color:var(--xu-gold);}
+body{background:var(--xu-black);color:var(--xu-text);font-family:'Rajdhani',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(2,4,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,229,255,0.08);}
 .nav-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;letter-spacing:0.15em;color:var(--xu-cyan);text-decoration:none;text-shadow:var(--glow-cyan);}
@@ -104,8 +101,6 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 </style>
 </head>
 <body>
-<div id="cursor"></div>
-<div id="cursor-dot"></div>
 
 <nav>
   <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
@@ -190,58 +185,81 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <div class="class-block">
           <div class="class-title">⚔️ Warrior</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> is core to the class.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> and <b style="color:var(--xu-text)">Berserker Fury</b> are core to the class.</p>
           <div class="class-skills">
             <span class="skill-chip">🌀 Whirlwind</span>
             <span class="skill-chip">⚔️ Rending Slash</span>
-            <span class="skill-chip">🔪 Blade Flurry</span>
+            <span class="skill-chip">🗡 Blade Flurry</span>
             <span class="skill-chip red">💀 Execute</span>
             <span class="skill-chip">🦘 Leap Strike</span>
-            <span class="skill-chip gold">🛡️ Counter Strike</span>
-            <span class="skill-chip">⚙️ Iron Stance</span>
-            <span class="skill-chip red">🔥 Berserker Fury</span>
+            <span class="skill-chip">💢 Shockwave</span>
+            <span class="skill-chip">🌋 Ground Slam</span>
+            <span class="skill-chip red">🩸 Blood Rage</span>
+            <span class="skill-chip">⚡ Frenzy</span>
+            <span class="skill-chip gold">🛡 Counter Strike</span>
+            <span class="skill-chip gold">🛡 Force Shield</span>
+            <span class="skill-chip gold">💠 Aether Bulwark</span>
+            <span class="skill-chip">🗿 Iron Stance</span>
+            <span class="skill-chip gold">📣 War Rally</span>
+            <span class="skill-chip red">😤 Berserker Fury</span>
+            <span class="skill-chip">🦴 Battle Hardened</span>
           </div>
         </div>
 
         <div class="class-block">
           <div class="class-title">🔮 Mage</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">Highest burst damage, area denial, mobility. Glass cannon. <b style="color:var(--xu-text)">INT scaling</b> makes late-game Mages terrifying.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Highest burst damage, area denial, mobility. Glass cannon. <b style="color:var(--xu-text)">INT scaling</b> makes late-game Mages terrifying — especially the <b style="color:var(--xu-text)">Armageddon</b> one-shot build.</p>
           <div class="class-skills">
-            <span class="skill-chip purple">⚡ Chain Lightning</span>
+            <span class="skill-chip purple">🌩 Chain Lightning</span>
             <span class="skill-chip red">☄️ Void Meteor</span>
             <span class="skill-chip" style="background:#1488cc;color:#fff">❄️ Cryo Pulse</span>
+            <span class="skill-chip" style="background:#1488cc;color:#fff">🧊 Ice Comet</span>
+            <span class="skill-chip red">🔥 Fire Wave</span>
+            <span class="skill-chip red">🌠 Meteor Shower</span>
+            <span class="skill-chip red">💥 Armageddon</span>
             <span class="skill-chip purple">🔮 Aether Nova</span>
+            <span class="skill-chip purple">🔱 Void Pierce</span>
             <span class="skill-chip purple">🌀 Void Blink</span>
-            <span class="skill-chip gold">✨ Aether Sigil</span>
-            <span class="skill-chip red">🌩️ Meteor Shower</span>
-            <span class="skill-chip purple">🔦 Void Pierce</span>
+            <span class="skill-chip gold">🔮 Aether Sigil</span>
+            <span class="skill-chip" style="background:#0088cc;color:#fff">🔵 Aether Conduit</span>
           </div>
         </div>
 
         <div class="class-block">
           <div class="class-title">🗡️ Rogue</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">Long-range, high mobility, utility-heavy. Best sustained DPS at distance. <b style="color:var(--xu-text)">Precision Shot</b> is the signature ability.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Long-range, high mobility, utility-heavy. Best sustained DPS at distance. <b style="color:var(--xu-text)">Precision Shot</b> and <b style="color:var(--xu-text)">Marked for Death</b> are the signature crit setups.</p>
           <div class="class-skills">
             <span class="skill-chip">🏹 Aether Volley</span>
             <span class="skill-chip gold">🎯 Precision Shot</span>
+            <span class="skill-chip red">🎯 Marked for Death</span>
+            <span class="skill-chip">🌪 Blade Storm</span>
+            <span class="skill-chip">🔱 Void Pierce</span>
             <span class="skill-chip" style="background:#226622;color:#fff">☠️ Venom Coat</span>
-            <span class="skill-chip">👁️ Tactical Scan</span>
-            <span class="skill-chip">💨 Swiftfoot</span>
-            <span class="skill-chip gold">🎒 Scavenger</span>
-            <span class="skill-chip">🌑 Shadow Veil</span>
+            <span class="skill-chip" style="background:#226622;color:#fff">☠ Poison Nova</span>
+            <span class="skill-chip">👁 Tactical Scan</span>
+            <span class="skill-chip">💨 Smoke Bomb</span>
             <span class="skill-chip">⚡ Aether Dash</span>
+            <span class="skill-chip">👁 Shadow Veil</span>
+            <span class="skill-chip">👤 Shadow Clone</span>
+            <span class="skill-chip">👟 Swiftfoot</span>
+            <span class="skill-chip gold">💰 Scavenger</span>
           </div>
         </div>
 
         <div class="class-block">
           <div class="class-title">💚 Healer</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">Party support, sustain, aura buffs. In multiplayer, a Healer changes everything. <b style="color:var(--xu-text)">War Rally</b> buffs the whole party simultaneously.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Party support, sustain, aura buffs. In multiplayer, a Healer changes everything. <b style="color:var(--xu-text)">War Rally</b> buffs the whole party, <b style="color:var(--xu-text)">Smite</b> deals holy damage as a ranged staple.</p>
           <div class="class-skills">
             <span class="skill-chip" style="background:#22aa44;color:#fff">💚 Heal Pulse</span>
+            <span class="skill-chip" style="background:#22aa44;color:#fff">💚 Void Mend</span>
+            <span class="skill-chip gold">✨ Smite</span>
             <span class="skill-chip red">🩸 Life Drain</span>
-            <span class="skill-chip gold">🛡️ Holy Barrier</span>
-            <span class="skill-chip" style="background:#22aa44;color:#fff">♻️ Void Regeneration</span>
-            <span class="skill-chip gold">🏋️ War Rally</span>
+            <span class="skill-chip gold">🔆 Holy Barrier</span>
+            <span class="skill-chip gold">💠 Aether Bulwark</span>
+            <span class="skill-chip" style="background:#22aa44;color:#fff">🌿 Void Regeneration</span>
+            <span class="skill-chip gold">📣 War Rally</span>
+            <span class="skill-chip" style="background:#0088cc;color:#fff">🔵 Aether Conduit</span>
+            <span class="skill-chip">🦴 Battle Hardened</span>
           </div>
         </div>
       </section>
@@ -256,14 +274,14 @@ tr:hover td{background:rgba(0,229,255,0.03);}
             <tr><th>Race</th><th>Identity</th><th>Signature Ability</th></tr>
           </thead>
           <tbody>
-            <tr><td>🦎 Xu</td><td>Warrior — 12% phys reduction, fear aura</td><td>Crest Flare — AoE Fear</td></tr>
-            <tr><td>🧑 Human</td><td>Adaptive — equip any weapon class</td><td>+5% XP from all sources</td></tr>
-            <tr><td>⚙️ Gnome</td><td>Highest INT+SPD — engineer builds</td><td>Deploy Combat Automaton</td></tr>
-            <tr><td>💪 Ogre</td><td>Heaviest hitter — 18% phys reduction</td><td>War Chant — party buff</td></tr>
-            <tr><td>🐴 Centaur</td><td>Fastest race — minimap enemy reveal</td><td>Charge — massive single hit</td></tr>
-            <tr><td>🐂 Minotaur</td><td>Earthbound — damage reflection</td><td>Vreth Stance — reflect 30%</td></tr>
-            <tr><td>🧝 Elf</td><td>Best mage — -20% mana cost</td><td>Void-Sight — see through walls</td></tr>
-            <tr><td>🧛 Vampire</td><td>Life steal melee — short range teleport</td><td>Void-Step — 6s blink</td></tr>
+            <tr><td>🦎 Xu</td><td>Scale Plating — 12% phys reduction · +20% damage below 30% HP</td><td>Crest Flare — AoE Fear</td></tr>
+            <tr><td>🧑 Human</td><td>Adaptive — equip any weapon · +5% XP · skill CDs 15% shorter</td><td>Balanced — no stat penalties</td></tr>
+            <tr><td>⚙️ Gnome</td><td>Precision — +25% skill damage · Tinker · fragile</td><td>Deploy Combat Automaton</td></tr>
+            <tr><td>💪 Ogre</td><td>Thick Hide — 18% phys reduction · largest hitbox</td><td>War Chant — party attack speed buff</td></tr>
+            <tr><td>🐴 Centaur</td><td>Swift — fastest race · minimap enemy reveal</td><td>Charge — massive run-up strike</td></tr>
+            <tr><td>🐂 Minotaur</td><td>Natural Healer — +40% healing · AoE heal every 30s</td><td>Vreth Stance — immovable, reflect damage 8s</td></tr>
+            <tr><td>🧝 Elf</td><td>Aether-Weaving — -20% mana cost · +30% magic damage</td><td>Void-Sight — see through walls</td></tr>
+            <tr><td>🧛 Vampire</td><td>Blood Drain — melee lifesteal · Night Sense</td><td>Void-Step — short teleport, 6s CD</td></tr>
           </tbody>
         </table>
       </section>
@@ -272,17 +290,15 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="stats" class="reveal">
         <h2><span class="icon">📊</span>Stats & Scaling</h2>
         <div class="section-bar"></div>
-        <p>Six core stats govern your character. Every level-up grants stat points to spend. Gear bonuses stack additively with base stats.</p>
+        <p>Five core stats govern your character. Every level-up grants stat points to spend. Gear bonuses add on top of base stats — gear rolls include ATK (weapon damage) and other stats independently of your core spread.</p>
         <table>
           <thead><tr><th>Stat</th><th>Effect</th><th>Scales</th></tr></thead>
           <tbody>
             <tr><td>⚔️ STR</td><td>Physical damage, carry weight</td><td>Warrior skills, heavy weapons</td></tr>
-            <tr><td>⚔️ ATK</td><td>Base attack damage per hit</td><td>Melee builds, weapon bonuses</td></tr>
             <tr><td>🛡️ DEF</td><td>Damage reduction (flat)</td><td>Armor, block stance</td></tr>
             <tr><td>🔮 INT</td><td>Magic damage, mana pool</td><td>Mage skills, staff weapons</td></tr>
-            <tr><td>❤️ VIT</td><td>Max HP</td><td>Tanky builds, Ogre/Minotaur</td></tr>
+            <tr><td>❤️ VIT</td><td>Max HP, physical resistance</td><td>Tanky builds, Ogre/Minotaur</td></tr>
             <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue, Gnome builds</td></tr>
-            <tr><td>🏃 AGI</td><td>Dodge chance, crit rate</td><td>Vampire, Rogue, late-game</td></tr>
           </tbody>
         </table>
         <p style="margin-top:1rem;"><span class="hl">Crit strikes</span> deal <span class="gold">2× damage</span> and create a screen flash. Critical hits can be forced with the <span class="hl">First-Hit Crit</span> talent.</p>
@@ -308,16 +324,38 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="ascendancy" class="reveal">
         <h2><span class="icon">🌟</span>Ascendancy System</h2>
         <div class="section-bar"></div>
-        <p>At <span class="gold">Level 100</span>, the level cap is reached — but your character is not done. The <b>Ascendancy System</b> unlocks power beyond the cap via <span class="hl">Ascendancy Ability Points (AA Points)</span> earned through kills and boss clears.</p>
+        <p>At <span class="gold">Level 100</span>, the level cap is reached — but your character is not done. The <b>Ascendancy System</b> unlocks power beyond the cap via <span class="hl">Ascendancy Ability Points (AA Points)</span> earned through kills and boss clears. AA abilities split into two categories: <b>universal</b> (any class) and <b>class-specific</b>. Each ability has an AA-point requirement and a point cost to slot.</p>
+        <p style="margin-top:1rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Universal (all classes)</p>
         <div class="mechanic-grid">
-          <div class="m-card"><span class="m-card-icon">👤</span><div class="m-card-title">Shadow Step</div><p>Teleport behind target, deal 400% ATK. Brief stun on arrival.</p></div>
-          <div class="m-card"><span class="m-card-icon">🗡️</span><div class="m-card-title">Assassinate</div><p>Execute targets below 30% HP. Instant kill. No cooldown on kill.</p></div>
-          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Death Mark</div><p>Mark an enemy. All attacks on it deal +40% damage for 8 seconds.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Aether Surge</div><p>Next ability deals 250% damage and costs no mana. 45s cooldown.</p></div>
-          <div class="m-card"><span class="m-card-icon">🦅</span><div class="m-card-title">Elusive</div><p>Dodge chance increases with each consecutive dodge. Stacks to 70%.</p></div>
-          <div class="m-card"><span class="m-card-icon">🩸</span><div class="m-card-title">Hemorrhage</div><p>Bleed attacks stack up to 8×. Bleed damage scales with ATK.</p></div>
-          <div class="m-card"><span class="m-card-icon">🛡️</span><div class="m-card-title">Iron Will</div><p>After death, revive once with 30% HP. 10-minute cooldown.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚙️</span><div class="m-card-title">Overcharge</div><p>Attacks charge an overload bar. At full, next hit deals 500% damage.</p></div>
+          <div class="m-card"><span class="m-card-icon">💨</span><div class="m-card-title">Second Wind</div><p>When HP drops below 20%, instantly recover 25% Max HP. 90s internal cooldown.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎖</span><div class="m-card-title">Veteran's Edge</div><p>Each zone boss killed permanently grants +2 ATK and +5 Max HP. Stacks forever.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌪</span><div class="m-card-title">Momentum</div><p>3-kill streak in 4 seconds: +8% SPD and +10% DMG for 8 seconds.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Aether Surge</div><p>For 6 seconds, all attacks ignore 40% of enemy damage reduction. 45s CD.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗿</span><div class="m-card-title">Iron Will</div><p>-50% death gold loss. On respawn, +10% XP gain for 2 minutes.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔋</span><div class="m-card-title">Overcharge</div><p>While above 80% HP, deal +12% bonus damage on all attacks.</p></div>
+        </div>
+        <p style="margin-top:1.5rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Warrior-Only</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">💥</span><div class="m-card-title">Titan's Blow</div><p>Devastating melee strike: 2000-3000 DMG, sends enemies flying 5 tiles. 30s CD.</p></div>
+          <div class="m-card"><span class="m-card-icon">🩸</span><div class="m-card-title">Undying Rage</div><p>Below 15% HP: +60% attack speed, +30% damage, -2 HP/s drain.</p></div>
+          <div class="m-card"><span class="m-card-icon">📣</span><div class="m-card-title">Ancient Warcry</div><p>Terrify enemies 3s, then +25% damage rally for 5s. 5-tile radius.</p></div>
+          <div class="m-card"><span class="m-card-icon">🏛</span><div class="m-card-title">Colossus Stance</div><p>Permanently -8% damage taken and +200 Max HP.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚔</span><div class="m-card-title">Unlimited Cleave</div><p>All melee attacks hit every enemy within 2.5 tiles with no target limit.</p></div>
+        </div>
+        <p style="margin-top:1.5rem;color:var(--xu-purple);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Mage-Only</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🌌</span><div class="m-card-title">Arcane Mastery</div><p>All spells ignore 20% magic resist and deal +8% per 100 INT.</p></div>
+          <div class="m-card"><span class="m-card-icon">🕳</span><div class="m-card-title">Singularity</div><p>Pull all enemies within 8 tiles to a point, then explode for 1500-2500 DMG. 35s CD.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔊</span><div class="m-card-title">Spell Echo</div><p>20% chance on skill use to fire a free echo at 50% power, 0 MP cost.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔷</span><div class="m-card-title">Mana Fortress</div><p>When HP hits 0, consume 200 MP instead to survive with 1 HP. 60s ICD.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌀</span><div class="m-card-title">Void Lord's Grasp</div><p>Summon a void rift for 8s firing homing bolts at all nearby enemies. 50s CD.</p></div>
+        </div>
+        <p style="margin-top:1.5rem;color:#39ff8a;font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Healer-Only</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Divine Ward</div><p>Heal skills have 25% chance to apply a shield = 15% Max HP for 10s.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌿</span><div class="m-card-title">Life Weave</div><p>Every kill heals you for 3% of the enemy's max HP.</p></div>
+          <div class="m-card"><span class="m-card-icon">💛</span><div class="m-card-title">Salvation</div><p>Restore full HP and MP, become invulnerable for 2s. 90s CD.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔆</span><div class="m-card-title">Sanctuary Aura</div><p>Radiate 8 HP/s healing to all allies within 4 tiles at all times.</p></div>
         </div>
       </section>
 
@@ -347,11 +385,6 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 </footer>
 
 <script>
-const cursor=document.getElementById('cursor'),dot=document.getElementById('cursor-dot');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-(function a(){cx+=(mx-cx)*0.18;cy+=(my-cy)*0.18;cursor.style.left=cx+'px';cursor.style.top=cy+'px';dot.style.left=mx+'px';dot.style.top=my+'px';requestAnimationFrame(a);})();
-document.querySelectorAll('a,button,.m-card,.class-block').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hover'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hover'));});
 const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible');}),{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 // TOC active state

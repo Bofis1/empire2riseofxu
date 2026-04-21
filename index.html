@@ -212,7 +212,7 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="fc reveal"><span class="fc-icon">&#x1F9EC;</span><div class="fc-title">8 Playable Races</div><p class="fc-desc">Every race plays differently. Xu warriors, Gnome artificers, Vampire assassins, Elf spellweavers. Your race defines your build.</p><span class="fc-tag">BUILD</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F48E;</span><div class="fc-title">Gem Socketing</div><p class="fc-desc">Socket rubies, sapphires, emeralds, void gems into gear. 28 craftable items across weapon, armour and accessory benches.</p><span class="fc-tag">CRAFTING</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F31F;</span><div class="fc-title">Ascendancy System</div><p class="fc-desc">Hit level 100 and unlock powers beyond the cap. Shadow Step, Assassinate, Aether Surge, Iron Will and more.</p><span class="fc-tag">ENDGAME</span></div>
-    <div class="fc reveal"><span class="fc-icon">&#x1F30D;</span><div class="fc-title">20 Zones</div><p class="fc-desc">From the ruined Outpost to the Necropolis where the sky hunts you. Hand-crafted zones. No two feel the same. The Void Citadel awaits at dimensional zero.</p><span class="fc-tag">WORLD</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F30D;</span><div class="fc-title">20 Zones</div><p class="fc-desc">From the ruined Outpost to Neon Hollow where a 5000-year-old city is still running. Hand-crafted zones. No two feel the same. The Curator awaits at the end of the map.</p><span class="fc-tag">WORLD</span></div>
   </div>
 </section>
 <section id="races">
@@ -236,17 +236,18 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 <section id="bosses">
   <div class="sec-head reveal">
     <p class="sec-pre">They Are Waiting</p>
-    <h2 class="sec-title" style="color:#e8f5e0;">17 <em style="color:#ff2244;font-style:normal;">Bosses</em></h2>
+    <h2 class="sec-title" style="color:#e8f5e0;">18 <em style="color:#ff2244;font-style:normal;">Bosses</em></h2>
     <div class="divbar" style="background:linear-gradient(to right,transparent,#ff2244,transparent)"></div>
   </div>
   <div class="boss-list reveal">
+    <div class="br"><span class="br-icon">&#x26A1;</span><div><div class="br-name">The Curator</div><div class="br-zone">Neon Hollow &middot; Level 100+ Post-Cap AA &middot; 5 Phases</div></div><div class="br-hp">1,600,000 HP</div></div>
+    <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+ &middot; 5 Phases</div></div><div class="br-hp">1,500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x2620;&#xFE0F;</span><div><div class="br-name">The Bone Colossus</div><div class="br-zone">Necropolis &middot; Level 100+</div></div><div class="br-hp">1,400,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F53A;</span><div><div class="br-name">The Apex Pyramid</div><div class="br-zone">XU Fortress &middot; Level 100+</div></div><div class="br-hp">1,200,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F5FF;</span><div><div class="br-name">Cryothar</div><div class="br-zone">Wyvern Wastes &middot; Level 80+</div></div><div class="br-hp">450,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F916;</span><div><div class="br-name">XU Supreme Overlord</div><div class="br-zone">Xumen &middot; Level 80+</div></div><div class="br-hp">500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F432;</span><div><div class="br-name">Vaeltharax The Undying</div><div class="br-zone">Dragon Lair &middot; 5 Phases</div></div><div class="br-hp">270,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F300;</span><div><div class="br-name">The Rift Sovereign</div><div class="br-zone">Rift Vale &middot; Level 65+</div></div><div class="br-hp">225,000 HP</div></div>
-    <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+ &middot; 5 Phases</div></div><div class="br-hp">1,500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F480;</span><div><div class="br-name">Khepri The Sand Colossus</div><div class="br-zone">Sunken Sands &middot; Level 60+</div></div><div class="br-hp">120,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x2744;&#xFE0F;</span><div><div class="br-name">Frostveil Colossus</div><div class="br-zone">Frostveil &middot; Level 50+</div></div><div class="br-hp">96,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1FAA8;</span><div><div class="br-name">The Elder Architect</div><div class="br-zone">Ancient Realm &middot; Level 55+</div></div><div class="br-hp">120,000 HP</div></div>
@@ -392,7 +393,7 @@ function loop(){t++;draw(t);drawParts();requestAnimationFrame(loop);}
 resize();loop();
 
 // TICKER
-const zones=[{l:'XU Outpost · Safe Hub',c:false},{l:'Patrol Zone · Lv 5+',c:false},{l:'Void Wastes · Lv 15+',c:false},{l:'XU Cemetery · Lv 20+',c:'warn'},{l:'XU Citadel · Lv 25+',c:'warn'},{l:'Ashlands · Lv 35+',c:'warn'},{l:'Caves of Despair · Lv 40+ · FOREMAN DRAX',c:'warn'},{l:'Sanctuary of Aelun · Safe Zone · Lv 40+',c:false},{l:'Fungal Depths · Lv 42+ · MYCELIUM QUEEN',c:'warn'},{l:'Frostveil Tundra · Lv 50+ · FROSTVEIL COLOSSUS',c:'warn'},{l:'Ancient Realm · Lv 55+ · THE ELDER ARCHITECT',c:'dead'},{l:'Sunken Sands · Lv 60+ · KHEPRI THE SAND COLOSSUS',c:'dead'},{l:'Rift Vale · Lv 65+ · THE RIFT SOVEREIGN',c:'dead'},{l:'Dragon Lair · Lv 65+ · VAELTHARAX THE UNDYING',c:'dead'},{l:'Void Citadel · Lv 70+ · COMMANDANT XERATH · 1.5M HP',c:'dead'},{l:'Wyvern Wastes · Lv 80+ · CRYOTHAR',c:'dead'},{l:'Xumen · Lv 80+ · THE XU SUPREME OVERLORD',c:'dead'},{l:'XU Fortress · Lv 100+ · THE APEX PYRAMID · 1.2M HP',c:'dead'},{l:'THE NECROPOLIS · Lv 100+ · THE BONE COLOSSUS · 1.4M HP',c:'dead'}];
+const zones=[{l:'XU Outpost · Safe Hub',c:false},{l:'Patrol Zone · Lv 5+',c:false},{l:'Void Wastes · Lv 15+',c:false},{l:'XU Cemetery · Lv 20+',c:'warn'},{l:'XU Citadel · Lv 25+',c:'warn'},{l:'Ashlands · Lv 35+',c:'warn'},{l:'Caves of Despair · Lv 40+ · FOREMAN DRAX',c:'warn'},{l:'Sanctuary of Aelun · Safe Zone · Lv 40+',c:false},{l:'Fungal Depths · Lv 42+ · MYCELIUM QUEEN',c:'warn'},{l:'Frostveil Tundra · Lv 50+ · FROSTVEIL COLOSSUS',c:'warn'},{l:'Ancient Realm · Lv 55+ · THE ELDER ARCHITECT',c:'dead'},{l:'Sunken Sands · Lv 60+ · KHEPRI THE SAND COLOSSUS',c:'dead'},{l:'Rift Vale · Lv 65+ · THE RIFT SOVEREIGN',c:'dead'},{l:'Dragon Lair · Lv 65+ · VAELTHARAX THE UNDYING',c:'dead'},{l:'Void Citadel · Lv 70+ · COMMANDANT XERATH · 1.5M HP',c:'dead'},{l:'Wyvern Wastes · Lv 80+ · CRYOTHAR',c:'dead'},{l:'Xumen · Lv 80+ · THE XU SUPREME OVERLORD',c:'dead'},{l:'XU Fortress · Lv 100+ · THE APEX PYRAMID · 1.2M HP',c:'dead'},{l:'THE NECROPOLIS · Lv 100+ · THE BONE COLOSSUS · 1.4M HP',c:'dead'},{l:'NEON HOLLOW · Lv 100+ POST-CAP · THE CURATOR · 1.6M HP',c:'dead'}];
 const tt=document.getElementById('tt');
 [...zones,...zones].forEach(z=>{const el=document.createElement('div');el.className='t-item'+(z.c?' '+z.c:'');el.innerHTML='<div class="d"></div>'+z.l;tt.appendChild(el);});
 

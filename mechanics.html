@@ -374,6 +374,13 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll on kills they land. XP and gold from enemy kills go to the killer only. Boss loot drops go to the player who lands the killing blow.</p></div>
           <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and dead status in real time. Trade items via the trade window (T key).</p></div>
         </div>
+
+        <div style="margin-top:2rem;padding:1.25rem 1.5rem;border:1px solid rgba(255,176,32,0.25);background:rgba(20,12,2,0.5);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.18em;color:#ffb020;text-transform:uppercase;margin-bottom:0.6rem;">⚠ Network Compatibility</div>
+          <p style="font-size:0.92rem;color:var(--xu-text);margin-bottom:0.6rem;">Multiplayer uses <b>WebRTC peer-to-peer</b> connections, the same technology that powers Discord voice, Google Meet, and most browser-based games. The connection is established through STUN and TURN servers (including TLS-encrypted TURNS over port 443) so it works on the vast majority of home, mobile, and public networks.</p>
+          <p style="font-size:0.88rem;color:var(--xu-dim);margin-bottom:0.6rem;">However, some <b style="color:var(--xu-text)">strict corporate, university, or security-hardened networks</b> block all WebRTC peer connections — even encrypted ones — as part of deep packet inspection or "no tunneling" policies. If you're on one of these networks, joining or hosting may fail with a connection timeout.</p>
+          <p style="font-size:0.88rem;color:var(--xu-dim);margin-bottom:0;"><b style="color:var(--xu-text)">If you can't connect:</b> try a different network (phone hotspot, home wifi instead of work/school), or contact your network administrator. Solo play and the persistent server systems (guilds, leaderboards, achievements, daily login) work fine on any network, since those use standard HTTPS only.</p>
+        </div>
       </section>
 
       <!-- GUILDS (v90) -->

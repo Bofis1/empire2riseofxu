@@ -111,6 +111,22 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 .ft-cr{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;color:rgba(58,92,64,0.5);}
 .ft-cr a{color:var(--c);text-decoration:none;}
 .play-box{max-width:860px;margin:0 auto;position:relative;}
+.trailer-wrap{max-width:960px;margin:0 auto 5rem;text-align:center;position:relative;}
+.trailer-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.32em;color:var(--g);text-transform:uppercase;margin-bottom:1.25rem;opacity:0.8;}
+.trailer-box{position:relative;width:100%;padding-top:56.25%;background:#000;border:1px solid rgba(57,255,138,0.25);box-shadow:0 0 60px rgba(57,255,138,0.08),0 30px 80px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(0,0,0,0.5);overflow:hidden;}
+.trailer-box iframe{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.trailer-corner{position:absolute;width:22px;height:22px;z-index:5;pointer-events:none;}
+.trailer-corner.tl{top:-1px;left:-1px;border-top:2px solid var(--g);border-left:2px solid var(--g);}
+.trailer-corner.tr{top:-1px;right:-1px;border-top:2px solid var(--g);border-right:2px solid var(--g);}
+.trailer-corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--g);border-left:2px solid var(--g);}
+.trailer-corner.br{bottom:-1px;right:-1px;border-bottom:2px solid var(--g);border-right:2px solid var(--g);}
+.trailer-sub{margin-top:1.25rem;font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.12em;color:var(--dim);text-transform:uppercase;}
+.trailer-sub b{color:var(--g);font-weight:400;}
+@media (max-width:720px){
+  .trailer-wrap{margin:0 1rem 4rem;}
+  .trailer-eyebrow{font-size:0.62rem;}
+  .trailer-sub{font-size:0.68rem;}
+}
 .play-box-inner{background:rgba(2,20,8,0.95);border:1px solid rgba(57,255,138,0.25);padding:5rem 3rem;text-align:center;position:relative;overflow:hidden;}
 .play-box-inner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(57,255,138,0.06) 0%,transparent 70%);pointer-events:none;}
 .play-corner{position:absolute;width:24px;height:24px;}
@@ -166,8 +182,8 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
       <div><div class="st-num">100</div><div class="st-lab">Max Level</div></div>
     </div>
     <div class="hero-btns">
-      <a href="#play" class="btn-p">PLAY NOW FREE</a>
-      <a href="lore.html" class="btn-s">READ THE LORE</a>
+      <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank" class="btn-p">PLAY NOW FREE</a>
+      <a href="#play" class="btn-s">▶ WATCH TRAILER</a>
     </div>
   </div>
   <div class="scroll-hint"><span>SCROLL</span><div class="scroll-arr"></div></div>
@@ -179,6 +195,26 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <h2 class="sec-title">Enter the <em>Xu Dominion</em></h2>
     <div class="divbar"></div>
   </div>
+
+  <!-- ── TRAILER ── -->
+  <div class="trailer-wrap reveal">
+    <div class="trailer-eyebrow">Watch the Trailer</div>
+    <div class="trailer-box">
+      <div class="trailer-corner tl"></div>
+      <div class="trailer-corner tr"></div>
+      <div class="trailer-corner bl"></div>
+      <div class="trailer-corner br"></div>
+      <iframe
+        src="https://www.youtube.com/embed/V-0YBZCGRdc?rel=0&modestbranding=1&color=white"
+        title="Empire 2: Rise of Xu - Official Trailer"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen></iframe>
+    </div>
+    <p class="trailer-sub">Real gameplay footage. Lv 100 raid encounter against <b>Vaeltharax the Undying</b>.</p>
+  </div>
+
   <div class="play-box reveal">
     <div class="play-box-inner">
       <div class="play-corner tl"></div>

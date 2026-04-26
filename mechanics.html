@@ -131,6 +131,10 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#loot">Loot & Crafting</a></li>
         <li><a href="#ascendancy">Ascendancy</a></li>
         <li><a href="#multiplayer">Multiplayer</a></li>
+        <li><a href="#guilds">Guild System</a></li>
+        <li><a href="#daily">Daily Rewards</a></li>
+        <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#controller">Controller Support</a></li>
       </ul>
     </aside>
 
@@ -370,6 +374,83 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll on kills they land. XP and gold from enemy kills go to the killer only. Boss loot drops go to the player who lands the killing blow.</p></div>
           <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and dead status in real time. Trade items via the trade window (T key).</p></div>
         </div>
+      </section>
+
+      <!-- GUILDS (v90) -->
+      <section id="guilds" class="reveal">
+        <h2><span class="icon">🏰</span>Guild System</h2>
+        <div class="section-bar"></div>
+        <p>Form a permanent <b>cross-session guild</b> that survives logins, server restarts, and zone changes. Guilds are server-side and persist on Railway with cloud backup. Press <span class="hl">G</span> to open the guild panel.</p>
+
+        <div class="mechanic-grid" style="margin-top:1.5rem;">
+          <div class="m-card"><span class="m-card-icon">⚒️</span><div class="m-card-title">Create or Join</div><p>Found your own guild for <b style="color:var(--xu-gold)">20,000 gold</b>. Choose a name (3+ characters) and a 2-4 character tag like [BFIS]. Or browse the public guild list and join an existing one.</p></div>
+          <div class="m-card"><span class="m-card-icon">📊</span><div class="m-card-title">Guild Levels 1-7</div><p>Earn guild XP from every kill — solo or grouped. Each member contributes. Guild XP curves: 100 → 500 → 1,500 → 5,000 → 15,000 → 40,000 → 100,000 to reach Lv 7.</p></div>
+          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Guild Chat &amp; MOTD</div><p>Real-time guild chat across zones and servers. Leaders set a Message of the Day visible to all members. System messages announce joins and leaves.</p></div>
+          <div class="m-card"><span class="m-card-icon">🛡️</span><div class="m-card-title">Tag &amp; Identity</div><p>Your guild tag appears beside your name above your character — visible to all nearby players. Status symbol earned through grind.</p></div>
+        </div>
+
+        <h3 style="color:var(--xu-gold);font-family:'Orbitron',monospace;font-size:0.85rem;letter-spacing:0.1em;margin:2rem 0 0.75rem;text-transform:uppercase;">Guild Perks by Level</h3>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">⭐</span><div class="m-card-title">Lv 2 — Apprentice</div><p>+5% XP gain on all sources for every member.</p></div>
+          <div class="m-card"><span class="m-card-icon">⭐</span><div class="m-card-title">Lv 3 — Journeyman</div><p>+5% gold gain on all sources stacked with above.</p></div>
+          <div class="m-card"><span class="m-card-icon">⭐</span><div class="m-card-title">Lv 4 — Veteran</div><p>+10% XP gain (replaces Lv 2 bonus).</p></div>
+          <div class="m-card"><span class="m-card-icon">🌟</span><div class="m-card-title">Lv 5 — Champion</div><p>+10% gold gain stacked. <b style="color:var(--xu-gold)">Rare loot drop boost.</b></p></div>
+          <div class="m-card"><span class="m-card-icon">🌟</span><div class="m-card-title">Lv 6 — Master</div><p>+15% XP gain stacked.</p></div>
+          <div class="m-card" style="border-color:rgba(255,204,32,0.3)"><span class="m-card-icon">👑</span><div class="m-card-title" style="color:var(--xu-gold)">Lv 7 — Sovereign</div><p><b style="color:var(--xu-gold)">+20% XP, +15% gold, epic loot drop boost.</b> The peak of guild power.</p></div>
+        </div>
+      </section>
+
+      <!-- DAILY LOGIN (v91) -->
+      <section id="daily" class="reveal">
+        <h2><span class="icon">📅</span>Daily Login Rewards</h2>
+        <div class="section-bar"></div>
+        <p>Show up every day and the Outpost rewards you. A <b>7-day cycling reward calendar</b> grants escalating loot. Build a streak — miss a single day and it resets to Day 1. The reward modal appears the first time you enter the world each day; click <span class="hl">CLAIM</span> to receive it.</p>
+
+        <div class="mechanic-grid" style="margin-top:1.5rem;">
+          <div class="m-card"><span class="m-card-icon">1️⃣</span><div class="m-card-title">Day 1</div><p>500 Gold</p></div>
+          <div class="m-card"><span class="m-card-icon">2️⃣</span><div class="m-card-title">Day 2</div><p>1,200 Gold</p></div>
+          <div class="m-card"><span class="m-card-icon">3️⃣</span><div class="m-card-title">Day 3</div><p>3× Health Potions</p></div>
+          <div class="m-card"><span class="m-card-icon">4️⃣</span><div class="m-card-title">Day 4</div><p>3,000 Gold</p></div>
+          <div class="m-card"><span class="m-card-icon">5️⃣</span><div class="m-card-title">Day 5</div><p>1× Ruby (Rare Gem)</p></div>
+          <div class="m-card"><span class="m-card-icon">6️⃣</span><div class="m-card-title">Day 6</div><p>7,500 Gold</p></div>
+          <div class="m-card" style="border-color:rgba(255,204,32,0.3)"><span class="m-card-icon">7️⃣</span><div class="m-card-title" style="color:var(--xu-gold)">Day 7</div><p><b style="color:var(--xu-gold)">2× Titan Blood Vials + 5,000 Gold</b></p></div>
+          <div class="m-card"><span class="m-card-icon">🔄</span><div class="m-card-title">Day 8+</div><p>Cycle restarts at Day 1 — but your streak counter keeps climbing for achievements.</p></div>
+        </div>
+        <p style="margin-top:1.25rem;color:var(--xu-dim);font-size:0.85rem;font-style:italic;">Streak achievements unlock at 3, 7, and 30 consecutive days — and the "Devoted" title is yours forever.</p>
+      </section>
+
+      <!-- ACHIEVEMENTS (v91) -->
+      <section id="achievements" class="reveal">
+        <h2><span class="icon">🏆</span>Achievements &amp; Titles</h2>
+        <div class="section-bar"></div>
+        <p>Over <b>60 achievements</b> spread across eight categories: Combat, Bosses, Exploration, Progression, Survival, Social, Itemization, and Prestige. Each unlock comes with a paired <b>Title</b> you can display above your character. Press <span class="hl">Y</span> to view the achievement panel.</p>
+
+        <div class="mechanic-grid" style="margin-top:1.5rem;">
+          <div class="m-card"><span class="m-card-icon">⚔️</span><div class="m-card-title">Combat Tiers</div><p>Kill 10 → 100 → 500 → 1K → 5K → 10K → 25K → 50K → 100K enemies. Earn titles from "Soldier" all the way to "Empire Slayer".</p></div>
+          <div class="m-card"><span class="m-card-icon">👑</span><div class="m-card-title">Boss Hunting</div><p>Track first boss kill, 5/10/50/100 boss totals, plus per-boss achievements for Apex Pyramid, The Curator, and "Throne Breaker" — defeat all 18.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗺️</span><div class="m-card-title">Exploration</div><p>Visit 3, 8, 15, or all 20 zones. Special achievements for reaching Frostveil, Dragon's Lair, Xumen, and the Necropolis.</p></div>
+          <div class="m-card"><span class="m-card-icon">⭐</span><div class="m-card-title">Progression</div><p>Lv 10/25/50/75/100 milestones. Earn 1M gold for "Empire Builder". Complete all 58 quests for "Champion of the People".</p></div>
+          <div class="m-card"><span class="m-card-icon">🤝</span><div class="m-card-title">Social</div><p>Join a guild (Sworn). Belong to Lv 5+ guild (Brotherhood). Trade with another player (Merchant). Group up (Brothers in Arms).</p></div>
+          <div class="m-card"><span class="m-card-icon">💎</span><div class="m-card-title">Itemization</div><p>Loot 10 legendaries (Mythic Hoarder). Activate 6-piece set bonus (Full Regalia). Socket 10 gems (Master Jeweler).</p></div>
+          <div class="m-card"><span class="m-card-icon">🔱</span><div class="m-card-title">Prestige</div><p>First Ascendancy point (Ascended). 25 points (Ascending Power). 100 points (Beyond Mortal).</p></div>
+          <div class="m-card"><span class="m-card-icon">📅</span><div class="m-card-title">Daily Streaks</div><p>3 days (Regular). 7 days (Faithful). 30 days (Devoted).</p></div>
+        </div>
+        <p style="margin-top:1.25rem;color:var(--xu-dim);font-size:0.85rem;font-style:italic;">Titles auto-equip when first earned. Switch any time from the Titles tab — the new one appears above your character's name immediately.</p>
+      </section>
+
+      <!-- CONTROLLER (v91.1) -->
+      <section id="controller" class="reveal">
+        <h2><span class="icon">🎮</span>Controller Support</h2>
+        <div class="section-bar"></div>
+        <p>Empire 2 supports any <b>Xbox</b> or <b>PlayStation</b> controller (or any Standard-mapped gamepad) via the browser's Web Gamepad API. Plug in, open <span class="hl">Settings (⚙)</span>, and toggle <b>🎮 GAMEPAD / CONTROLLER</b>. The setting persists across sessions, and a small 🎮 icon appears in the HUD when active. Mouse and keyboard remain fully functional alongside.</p>
+
+        <div class="mechanic-grid" style="margin-top:1.5rem;">
+          <div class="m-card"><span class="m-card-icon">🕹</span><div class="m-card-title">Twin-Stick Combat</div><p>Left stick moves, right stick aims. Combat feels like a top-down shooter. Right stick deflection drives the cursor — all skills and attacks fire in that direction.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎯</span><div class="m-card-title">Auto-Aim Forward</div><p>No right-stick deflection? The character automatically aims in the direction you're moving. Single-stick play works for casual sessions.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚙</span><div class="m-card-title">Skill Cycling</div><p>LB / RB cycle through skill slots 1-8. RT fires the selected skill. LT is a quick potion. D-pad maps to item bar slots Z/X/C/V.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎛</span><div class="m-card-title">Modal-Aware</div><p>B (Cancel) closes the topmost open menu. Combat input is automatically suppressed while panels are open — no accidental swings while reading inventory.</p></div>
+        </div>
+        <p style="margin-top:1.25rem;color:var(--xu-dim);font-size:0.85rem;font-style:italic;">Full bindings reference is in the Settings panel itself, and on the <a href="controls.html#controller" style="color:var(--xu-cyan);">Controls</a> page.</p>
       </section>
     </div><!-- /content -->
   </div><!-- /layout -->

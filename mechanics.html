@@ -130,10 +130,14 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#stats">Stats & Scaling</a></li>
         <li><a href="#loot">Loot & Crafting</a></li>
         <li><a href="#ascendancy">Ascendancy</a></li>
+        <li><a href="#apex">Apex Trials</a></li>
+        <li><a href="#worldbosses">World Bosses</a></li>
+        <li><a href="#vault">Gold Vault</a></li>
         <li><a href="#multiplayer">Multiplayer</a></li>
         <li><a href="#guilds">Guild System</a></li>
         <li><a href="#daily">Daily Rewards</a></li>
         <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#audio">Audio System</a></li>
         <li><a href="#controller">Controller Support</a></li>
       </ul>
     </aside>
@@ -364,6 +368,85 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       </section>
 
       <!-- MULTIPLAYER -->
+      <section id="apex" class="reveal">
+        <h2><span class="icon">🌀</span>Apex Trials</h2>
+        <div class="section-bar"></div>
+        <p>The endgame after Ascendancy. <b>Apex portals</b> spawn periodically across high-level zones (Lv 60+), each opening into a sealed rift. Step through, fight, clear — get rewards. The portal closes after one party clears it.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">7 Tier Difficulty</p>
+        <p>Each portal is one of 7 tiers. Higher tier = tougher enemies, more stacked modifiers, better loot. Tier scales the dungeon's name, monster levels, drop rates, and the shards you can earn.</p>
+        <ul>
+          <li><b>Tier I–II</b> — Apprentice rifts. Single modifier. Bronze/Silver shards.</li>
+          <li><b>Tier III–IV</b> — Adept rifts. 2 stacked modifiers. Gold/Sapphire shards.</li>
+          <li><b>Tier V–VI</b> — Master rifts. 3 stacked modifiers. Emerald/Ruby shards.</li>
+          <li><b>Tier VII</b> — Sovereign tier. 4 stacked modifiers + Mirrored. Best loot in the game.</li>
+        </ul>
+
+        <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Modifiers — Stack On Top of Tier</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Burning</div><p>Enemies leave fire pools on death. Walk through = sustained damage over time. +20% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">❄️</span><div class="m-card-title">Frozen</div><p>Enemies have a freeze aura that slows player movement and attack speed. +20% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Charged</div><p>Enemies emit lightning chains on hit, jumping to nearby targets and the player. +20% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">☣️</span><div class="m-card-title">Toxic</div><p>Enemy hits apply stacking poison. Stacks tick for damage and slow MP regen. +20% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">🐝</span><div class="m-card-title">Swarm</div><p>+50% enemy count. Smaller enemies spawn in waves. The dungeon feels relentless. +25% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Cursed</div><p>Player heal effects are halved. Potions and Life Steal both reduced. +25% loot.</p></div>
+          <div class="m-card"><span class="m-card-icon">👥</span><div class="m-card-title">Mirrored</div><p>Tier VII only. Boss spawns a perfect duplicate at 50% HP. Two bosses, one room. +50% loot.</p></div>
+        </div>
+
+        <p style="margin-top:1.25rem;color:#39ff8a;font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">The Curator's Apprentice</p>
+        <p>An NPC found in <b>XU Outpost</b>. Trade Apex Shards for tier-locked legendaries through a 3-tab vendor:</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🏷</span><div class="m-card-title">TRADE</div><p>Spend shards directly for tier-locked legendaries. Shop refreshes as you climb tiers.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎲</span><div class="m-card-title">REROLL</div><p>Pay shards to reroll an item's affixes. Higher-tier items cost more shards.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚒</span><div class="m-card-title">FORGE</div><p>Combine 3 lower-tier shards into 1 higher-tier shard. Slow but reliable progression.</p></div>
+        </div>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">25 Dungeon Legendaries</p>
+        <p>Apex Trials drop a unique pool of 25 legendaries that can ONLY be obtained from rifts and the Curator. Highlights: <b>Spore Architect's Staff</b> (T3), <b>Frostfang of the Sovereign</b> (T5), <b>Lich Sovereign's Scepter</b> (T6), <b>Voidlord's Crown</b> (T7).</p>
+      </section>
+
+      <!-- WORLD BOSSES -->
+      <section id="worldbosses" class="reveal">
+        <h2><span class="icon">👹</span>World Bosses</h2>
+        <div class="section-bar"></div>
+        <p>Four <b>roaming apex threats</b> that don't respect zone boundaries. Each spawns periodically across the world map, picks a zone, broadcasts a global announcement, and stays for a limited window before despawning. Cross-zone — you have to <em>travel to them</em>.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">The Four</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Forge Tyrant</div><p>Often Citadel · 2,200,000 HP. Molten armor, dual hammers, magma quake AOE. Drops fire-themed legendaries.</p></div>
+          <div class="m-card"><span class="m-card-icon">🐉</span><div class="m-card-title">Ancient Wyrm</div><p>Often Dragon Lair · 2,400,000 HP. Elder dragon, fire breath cones, dive attacks. Older than Vaeltharax.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Hollow Reaper</div><p>Often Necropolis · 2,600,000 HP. Soul-tearing scythe, void teleports. Cold beyond absolute zero.</p></div>
+          <div class="m-card"><span class="m-card-icon">🕳</span><div class="m-card-title">Void Behemoth</div><p>Often Neon Hollow · 2,800,000 HP. Reality-warping. Dimensional rifts. The size of a city block.</p></div>
+        </div>
+
+        <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">How Spawning Works</p>
+        <ul>
+          <li><b>Random selection</b> — When a world boss spawn timer fires, the game picks one of the four at random.</li>
+          <li><b>Cross-zone defer</b> — If you're not in the boss's zone, the boss is "pending" — it materializes the moment you arrive.</li>
+          <li><b>Global announcement</b> — A chat broadcast tells everyone where it spawned. Travel there to engage.</li>
+          <li><b>Despawn timer</b> — Bosses don't wait forever. Get there fast or miss the window.</li>
+          <li><b>Manual spawn</b> — Console command <span class="hl">spawnWorldBoss(0–3)</span> for testing or community events.</li>
+        </ul>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
+        <p>Killing a world boss drops a guaranteed pile: tier-appropriate <b>Apex Shards</b>, 1–2 random legendaries from the dungeon pool, and a <b>+50% gold bonus</b> applied to every kill in the next 60 seconds.</p>
+      </section>
+
+      <!-- GOLD VAULT -->
+      <section id="vault" class="reveal">
+        <h2><span class="icon">🏦</span>Gold Vault</h2>
+        <div class="section-bar"></div>
+        <p>A death-proof savings system. Death costs <b>15% of your wallet gold</b> (<b>7.5%</b> with the <span class="hl">Iron Will</span> AA). Vault gold is <em>never</em> touched.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">💰</span><div class="m-card-title">No Fees</div><p>Deposit and withdraw at no cost. Vault and wallet are both pure gold — only difference is who can take from each.</p></div>
+          <div class="m-card"><span class="m-card-icon">👤</span><div class="m-card-title">Per Character</div><p>Each character has their own vault. The Vampire's vault is not the Warrior's vault. Saved to localStorage.</p></div>
+          <div class="m-card"><span class="m-card-icon">🛡</span><div class="m-card-title">Death-Proof</div><p>You die — wallet gold drops, vault gold stays exactly as it was. The number does not move.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔁</span><div class="m-card-title">Persistent</div><p>Survives every save reload, every zone change, every server reset. The bank is permanent.</p></div>
+        </div>
+        <p style="margin-top:1.25rem;color:var(--xu-dim);font-size:0.85rem;font-style:italic;">Talk to the Vault Keeper NPC in any major city to deposit or withdraw.</p>
+      </section>
+
+      <!-- MULTIPLAYER -->
       <section id="multiplayer" class="reveal">
         <h2><span class="icon">🌐</span>Multiplayer</h2>
         <div class="section-bar"></div>
@@ -443,6 +526,45 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">📅</span><div class="m-card-title">Daily Streaks</div><p>3 days (Regular). 7 days (Faithful). 30 days (Devoted).</p></div>
         </div>
         <p style="margin-top:1.25rem;color:var(--xu-dim);font-size:0.85rem;font-style:italic;">Titles auto-equip when first earned. Switch any time from the Titles tab — the new one appears above your character's name immediately.</p>
+      </section>
+
+      <section id="audio" class="reveal">
+        <h2><span class="icon">🔊</span>Audio System</h2>
+        <div class="section-bar"></div>
+        <p>Empire 2 features a fully procedural audio engine — every sound is generated in-browser via Web Audio API oscillators and noise buffers. No audio files. No bandwidth cost. The entire soundtrack is code.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Audio Mixer</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🎚</span><div class="m-card-title">Master Volume</div><p>0–100% global volume control. Multiplies with Music and SFX channels.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎵</span><div class="m-card-title">Music Channel</div><p>Independent control for zone tracks. Set music to 0 to play in silence with full SFX feedback.</p></div>
+          <div class="m-card"><span class="m-card-icon">💥</span><div class="m-card-title">SFX Channel</div><p>Independent control for combat, UI, and event sounds.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔇</span><div class="m-card-title">Mute Toggle</div><p>Press <span class="hl">M</span> to instantly mute everything. Press M again to restore. Slider state preserved.</p></div>
+          <div class="m-card"><span class="m-card-icon">💾</span><div class="m-card-title">Per-Character</div><p>Settings save to localStorage <em>per character</em>. Your Mage can have music low; your Warrior can have it loud.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚙</span><div class="m-card-title">Settings Panel</div><p>Open via the Gear icon (⚙) in the top-right HUD. All sliders live there alongside other game options.</p></div>
+        </div>
+
+        <p style="margin-top:1.25rem;color:#39ff8a;font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">20 Unique Zone Tracks</p>
+        <p>Every zone has its own dedicated procedural track — no music is reused. Each is generated from a unique combination of pads, basslines, lead synths, percussion, and shimmer harmonics, in a key and tempo specific to the zone's mood.</p>
+        <ul>
+          <li><b>Xu Cemetery</b> — Bm 48bpm, mournful chimes + tolling bell</li>
+          <li><b>The Necropolis</b> — Cm 56bpm, ancient processional + funeral march</li>
+          <li><b>Void Citadel</b> — Bbm 64bpm, dimensional dread + military grandeur</li>
+          <li><b>Caves of Despair</b> — Em 50bpm, water drips + cavernous moans</li>
+          <li><b>Neon Hollow</b> — Am pent 84bpm, cyberpunk synth grid</li>
+          <li><b>Xu Fortress</b> — Dm 96bpm, militant march</li>
+          <li>...and 14 more unique zone tracks</li>
+        </ul>
+
+        <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Event SFX</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🔔</span><div class="m-card-title">World Boss Spawn</div><p>Long ominous bell with deep harmonics. You hear it the moment a world boss appears.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎺</span><div class="m-card-title">World Boss Kill</div><p>Triumphant rising fanfare. Em → G → B → high E with a crescendo sweep.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌀</span><div class="m-card-title">Apex Portal Spawn</div><p>Descending dimensional rip — distinct from regular zone portals.</p></div>
+          <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Apex Trial Clear</div><p>Major triad cascade — C → E → G → high C with a shimmer sustain.</p></div>
+        </div>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">17 Unique Staff Projectile FX</p>
+        <p>Every legendary staff fires its own visual signature. Voidheart pulses purple void. Dragonbreath leaves a flickering ember trail. Lich Sovereign's Scepter shoots a black hole with three counter-rotating purple corona rings. The 3-way spread is preserved on every staff.</p>
       </section>
 
       <!-- CONTROLLER (v91.1) -->

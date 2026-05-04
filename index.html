@@ -103,6 +103,37 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:cen
 .br-name{font-family:'Cinzel Decorative',serif;font-size:0.8rem;font-weight:700;color:#e8f5e0;}
 .br-zone{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;color:rgba(255,34,68,0.6);text-transform:uppercase;}
 .br-hp{font-family:'Share Tech Mono',monospace;font-size:0.65rem;font-weight:700;color:rgba(255,34,68,0.8);white-space:nowrap;text-align:right;}
+/* WHAT'S NEW — Patch notes section */
+#whatsnew{padding:6rem 2rem;background:var(--bg2);position:relative;}
+#whatsnew::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent);}
+.wn-wrap{max-width:880px;margin:0 auto;}
+.wn-controls{display:flex;justify-content:center;gap:0.6rem;margin-bottom:2rem;flex-wrap:wrap;}
+.wn-tab{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;color:var(--dim);background:transparent;border:1px solid rgba(57,255,138,0.15);padding:0.55rem 1.1rem;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.wn-tab:hover{color:var(--g);border-color:rgba(57,255,138,0.4);}
+.wn-tab.active{color:var(--bg);background:var(--g);border-color:var(--g);}
+.wn-list{display:flex;flex-direction:column;gap:1.4rem;}
+.wn-entry{background:var(--bg3);border:1px solid rgba(57,255,138,0.10);padding:1.6rem 1.8rem;position:relative;transition:border-color .25s;}
+.wn-entry:hover{border-color:rgba(57,255,138,0.25);}
+.wn-entry::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--g);}
+.wn-entry.major::before{background:var(--c);}
+.wn-entry.fix::before{background:var(--or);}
+.wn-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:0.4rem;flex-wrap:wrap;}
+.wn-ver{font-family:'Cinzel Decorative',serif;font-weight:900;font-size:1.05rem;color:var(--g);letter-spacing:0.06em;}
+.wn-entry.major .wn-ver{color:var(--c);}
+.wn-entry.fix .wn-ver{color:var(--or);}
+.wn-date{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;color:var(--dim);text-transform:uppercase;}
+.wn-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.05rem;color:#e8f5e0;margin-bottom:0.85rem;letter-spacing:0.02em;}
+.wn-notes{list-style:none;padding:0;margin:0;}
+.wn-notes li{font-size:0.88rem;color:var(--tx);line-height:1.65;padding:0.18rem 0 0.18rem 1.2rem;position:relative;opacity:0.85;}
+.wn-notes li::before{content:'▸';position:absolute;left:0;color:var(--g);font-size:0.7rem;}
+.wn-entry.major .wn-notes li::before{color:var(--c);}
+.wn-entry.fix .wn-notes li::before{color:var(--or);}
+.wn-notes li ul{margin-top:0.3rem;list-style:none;padding:0;}
+.wn-notes li ul li{padding:0.12rem 0 0.12rem 1.2rem;font-size:0.82rem;opacity:0.7;}
+.wn-notes li ul li::before{content:'·';color:var(--dim);}
+.wn-foot{text-align:center;margin-top:2.5rem;font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;}
+.wn-foot a{color:var(--c);text-decoration:none;}
+.wn-foot a:hover{color:var(--g);}
 footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,138,0.08);text-align:center;}
 .ft-logo{font-family:'Cinzel Decorative',serif;font-size:1.2rem;font-weight:900;color:var(--g);text-shadow:var(--glow);margin-bottom:0.4rem;}
 .ft-nav{display:flex;justify-content:center;gap:2rem;list-style:none;margin:1.2rem 0;}
@@ -157,6 +188,7 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   <a href="index.html" class="nav-logo">EMPIRE<em>2</em></a>
   <ul class="nav-links">
     <li><a href="#play">Play</a></li>
+    <li><a href="#whatsnew">What's New</a></li>
     <li><a href="mechanics.html">Mechanics</a></li>
     <li><a href="lore.html">Lore</a></li>
     <li><a href="controls.html">Controls</a></li>
@@ -174,10 +206,10 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <p class="hero-pre">Browser Action RPG &middot; Free to Play &middot; No Download</p>
     <h1 class="hero-title"><span class="l1">EMPIRE 2</span><span class="l2">Rise of Xu</span></h1>
     <div class="hero-div"></div>
-    <p class="hero-sub">Fight through <b>20 zones</b>. Slay <b>18 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
+    <p class="hero-sub">Fight through <b>20 zones</b>. Slay <b>22 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
     <div class="hero-stats">
       <div><div class="st-num">20</div><div class="st-lab">Zones</div></div>
-      <div><div class="st-num">18</div><div class="st-lab">Bosses</div></div>
+      <div><div class="st-num">22</div><div class="st-lab">Bosses</div></div>
       <div><div class="st-num">8</div><div class="st-lab">Races</div></div>
       <div><div class="st-num">100</div><div class="st-lab">Max Level</div></div>
     </div>
@@ -212,14 +244,14 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
         referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen></iframe>
     </div>
-    <p class="trailer-sub">Eighteen bosses are still alive. Each has its own arena, its own phases, its own way of taking you apart.</p>
+    <p class="trailer-sub">Twenty-two bosses. Apex Trials. World Bosses. Each has its own arena, its own phases, its own way of taking you apart.</p>
   </div>
 
   <div class="play-box reveal">
     <div class="play-box-inner">
       <div class="play-corner tl"></div>
       <div class="play-corner br"></div>
-      <p class="play-tagline">20 zones. 18 bosses. Endgame that will destroy you.</p>
+      <p class="play-tagline">20 zones. 22 bosses. Apex Trials. Endgame that will destroy you.</p>
       <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank" class="play-mega-btn">
         <span class="play-mega-icon">&#x2694;</span>
         PLAY NOW &mdash; FREE
@@ -252,6 +284,12 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="fc reveal"><span class="fc-icon">&#x1F3F0;</span><div class="fc-title">Guild System</div><p class="fc-desc">Form guilds with up to 50 members. Real-time guild chat, MOTD, persistent guild XP. Level perks unlock at Lv 2/3/5/7: +20% XP, +15% gold, epic loot boost.</p><span class="fc-tag">SOCIAL</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F3C6;</span><div class="fc-title">Achievements &amp; Titles</div><p class="fc-desc">60+ achievements scaling from first kill to 100,000-kill empire slayer. Earn titles like "the Reaper" or "Apex Conqueror" — display them above your name.</p><span class="fc-tag">PROGRESSION</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F4C5;</span><div class="fc-title">Daily Login Rewards</div><p class="fc-desc">7-day cycling reward calendar. Gold, potions, gems, legendary loot. Build a streak — miss a day, it resets. Unlock the "Devoted" title at 30 days.</p><span class="fc-tag">RETENTION</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F300;</span><div class="fc-title">Apex Trials</div><p class="fc-desc">Endgame portals open into 7-tier rifts with stacking modifiers — Burning, Frozen, Charged, Toxic, Swarm, Cursed, Mirrored. Higher tier = harder mods + better loot. Curator's Apprentice trades shards for tier-locked legendaries.</p><span class="fc-tag">v92.13–v92.17</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F47A;</span><div class="fc-title">World Bosses</div><p class="fc-desc">Four cross-zone roaming bosses — Forge Tyrant, Ancient Wyrm, Hollow Reaper, Void Behemoth. Spawn periodically across the map. Drop tier-appropriate Apex Shards plus 1–2 legendaries on kill.</p><span class="fc-tag">v92.20</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F3E6;</span><div class="fc-title">Gold Vault</div><p class="fc-desc">Death-proof savings. Deposit gold safely — die and lose 15% of your wallet, but vault gold survives. No fees. Per-character storage that persists through every wipe.</p><span class="fc-tag">v92.25</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F4A0;</span><div class="fc-title">Apex Shards &amp; Forge</div><p class="fc-desc">Six-tier shard currency dropped from Apex Trials and World Bosses. Trade at the Curator's Apprentice for 25 dungeon-only legendaries — including the Lich Sovereign's Scepter and Frostfang of the Sovereign.</p><span class="fc-tag">v92.16–v92.17</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x2728;</span><div class="fc-title">17 Unique Staff FX</div><p class="fc-desc">Every legendary staff fires a different bolt. Voidheart pulses purple void. Dragonbreath leaves an ember trail. Architect orbits 4 crystal shards. Lich Sovereign's Scepter shoots a black hole with 3 counter-rotating coronas.</p><span class="fc-tag">v92.33</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F50A;</span><div class="fc-title">Audio Mixer + 6 New Tracks</div><p class="fc-desc">Master / Music / SFX sliders, mute toggle, M-key shortcut, per-character settings. Six new dedicated zone tracks — Cemetery, Necropolis, Void Citadel, Caves of Despair, Neon Hollow, Xumen Fortress — each musically distinct.</p><span class="fc-tag">v92.31</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F3AE;</span><div class="fc-title">Controller Support</div><p class="fc-desc">Full Xbox &amp; PlayStation controller support via the Web Gamepad API. Right stick aim, twin-stick combat, all panels accessible. Toggleable in Settings.</p><span class="fc-tag">v91.1</span></div>
   </div>
 </section>
@@ -276,10 +314,16 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 <section id="bosses">
   <div class="sec-head reveal">
     <p class="sec-pre">They Are Waiting</p>
-    <h2 class="sec-title" style="color:#e8f5e0;">18 <em style="color:#ff2244;font-style:normal;">Bosses</em></h2>
+    <h2 class="sec-title" style="color:#e8f5e0;">22 <em style="color:#ff2244;font-style:normal;">Bosses</em></h2>
     <div class="divbar" style="background:linear-gradient(to right,transparent,#ff2244,transparent)"></div>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;margin-top:0.4rem;">18 zone bosses &middot; 4 roaming world bosses</p>
   </div>
   <div class="boss-list reveal">
+    <!-- v92.20 — World Bosses (roaming, cross-zone) -->
+    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F525;</span><div><div class="br-name" style="color:#ffcc88;">Forge Tyrant</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Citadel &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">2,200,000 HP</div></div>
+    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F409;</span><div><div class="br-name" style="color:#ffcc88;">Ancient Wyrm</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Dragon Lair &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">2,400,000 HP</div></div>
+    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F480;</span><div><div class="br-name" style="color:#d4aaff;">Hollow Reaper</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Necropolis &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">2,600,000 HP</div></div>
+    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F573;</span><div><div class="br-name" style="color:#d4aaff;">Void Behemoth</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Neon Hollow &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">2,800,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x26A1;</span><div><div class="br-name">The Curator</div><div class="br-zone">Neon Hollow &middot; Level 100+ Post-Cap AA &middot; 5 Phases</div></div><div class="br-hp">1,600,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+ &middot; 5 Phases</div></div><div class="br-hp">1,500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x2620;&#xFE0F;</span><div><div class="br-name">The Bone Colossus</div><div class="br-zone">Necropolis &middot; Level 100+</div></div><div class="br-hp">1,400,000 HP</div></div>
@@ -299,8 +343,26 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="br"><span class="br-icon">&#x1F4A0;</span><div><div class="br-name">Void Wraith Prime</div><div class="br-zone">Void Wastes &middot; Level 15+</div></div><div class="br-hp">54,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F40D;</span><div><div class="br-name">Serpent Titan MK-VII</div><div class="br-zone">Patrol Zone &middot; Level 5+</div></div><div class="br-hp">18,000 HP</div></div>
   </div>
-  <div style="text-align:center;margin-top:2.5rem;" class="reveal"><a href="lore.html" class="btn-s">All 18 Bosses + Full Lore &rarr;</a></div>
+  <div style="text-align:center;margin-top:2.5rem;" class="reveal"><a href="lore.html" class="btn-s">All 22 Bosses + Full Lore &rarr;</a></div>
 </section>
+<section id="whatsnew">
+  <div class="sec-head reveal">
+    <p class="sec-pre">Active Development</p>
+    <h2 class="sec-title">What's <em style="color:var(--c)">New</em></h2>
+    <div class="divbar" style="background:linear-gradient(to right,transparent,var(--c),transparent)"></div>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;margin-top:0.4rem;">Patch notes &middot; Updated regularly</p>
+  </div>
+  <div class="wn-wrap reveal">
+    <div class="wn-controls">
+      <button class="wn-tab active" data-filter="all">All</button>
+      <button class="wn-tab" data-filter="major">Major</button>
+      <button class="wn-tab" data-filter="content">Content</button>
+      <button class="wn-tab" data-filter="fix">Fixes</button>
+    </div>
+    <div class="wn-list" id="wn-list"></div>
+    <p class="wn-foot">Live patch notes from the in-game changelog &middot; <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank">Play the latest build</a></p>
+  </div>
+</section><!-- End #whatsnew -->
 <footer>
   <div class="ft-logo">EMPIRE 2: RISE OF XU</div>
   <p style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.22em;color:var(--dim);">BROWSER ACTION RPG &middot; FREE TO PLAY</p>
@@ -441,6 +503,113 @@ const tt=document.getElementById('tt');
 const obs=new IntersectionObserver(e=>e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('vis');}),{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(i%3)*0.08+'s';});
+
+// ── PATCH NOTES — mirrors in-game CHANGELOG ──
+// Categories: 'major' (cyan accent), 'content' (green, default), 'fix' (orange)
+const PATCH_NOTES = [
+  {ver:'v92.33', date:'May 2026', cat:'content', title:'17 Unique Staff Projectiles',
+   notes:[
+     'Every legendary &amp; epic staff now fires its own unique projectile',
+     'No more identical cyan orbs — each weapon FEELS different',
+     'Voidheart pulses purple void · Voidweaver helixes magenta coils',
+     'Undying Light radiates a golden sun bolt with 6 spike rays',
+     'Aether/Commandant Lances are elongated crystals aligned to direction',
+     'Dragonbreath &amp; Embersoul leave flickering ember trails',
+     'Architect orbits 4 white crystal shards · Spore Architect drifts mushroom spores',
+     'Lich Sovereign\'s Scepter — BLACK HOLE bolt with 3 counter-rotating purple coronas',
+     '3-way spread preserved throughout',
+   ]},
+  {ver:'v92.32', date:'May 2026', cat:'fix', title:'UI Fix — HUD Icons',
+   notes:[
+     'Gear &amp; Help icons no longer cover the zone name',
+     'Moved inline into the HUD bar, right after gold display',
+     'Hover effect added — green glow on mouseover',
+   ]},
+  {ver:'v92.31', date:'May 2026', cat:'major', title:'Audio Overhaul — Mixer + 6 New Tracks',
+   notes:[
+     'Master / Music / SFX volume sliders + mute toggle',
+     'M-key shortcut for instant mute · Settings persist per-character',
+     '6 new dedicated zone tracks (no more reused music):',
+     '<ul><li>Xu Cemetery — mournful chimes + tolling bell</li><li>The Necropolis — ancient processional</li><li>Void Citadel — dimensional dread + grandeur</li><li>Caves of Despair — water drips + cavern moans</li><li>Neon Hollow — cyberpunk synth grid</li><li>Xu Fortress — militant march</li></ul>',
+     '4 new event SFX — World Boss spawn (ominous bell), World Boss kill (triumphant fanfare), Apex Portal spawn, Apex Trial clear',
+   ]},
+  {ver:'v92.25', date:'May 2026', cat:'content', title:'Gold Vault — Death-Proof Savings',
+   notes:[
+     'Deposit gold safely — die and lose 15% of your wallet, vault gold survives',
+     'No fees · No taxes · Per-character storage that persists through every wipe',
+     'Accessible from any zone via the vault keeper NPC',
+   ]},
+  {ver:'v92.24', date:'May 2026', cat:'content', title:'Shop Bulk-Sell',
+   notes:[
+     'New 1 / 5 / 10 / 50 / ALL quantity buttons in shop',
+     'ALL TRASH · ALL MATERIALS · ALL CONSUMABLES — clear your inventory in one click',
+     'Rarity colors fixed in shop tooltips',
+   ]},
+  {ver:'v92.20', date:'May 2026', cat:'major', title:'World Bosses — 4 Cross-Zone Roaming Threats',
+   notes:[
+     '<b>Forge Tyrant</b> (Citadel · 2.2M HP) — molten armor, dual hammers, magma quakes',
+     '<b>Ancient Wyrm</b> (Dragon Lair · 2.4M HP) — elder dragon with fire breath cones',
+     '<b>Hollow Reaper</b> (Necropolis · 2.6M HP) — soul-tearing scythe, void teleports',
+     '<b>Void Behemoth</b> (Neon Hollow · 2.8M HP) — dimensional rifts, reality-warping',
+     'Spawn periodically across the map · Despawn after a timer',
+     'Drop tier-appropriate Apex Shards plus 1–2 legendaries on kill + bonus gold',
+   ]},
+  {ver:'v92.18–v92.19', date:'Apr 2026', cat:'content', title:'Apex Achievements + Dialogue Log',
+   notes:[
+     '12 new Apex achievements — first trial, 10 trials, 50 trials, 100 trials, all 7 tiers, all modifiers',
+     'NPC Dialogue Log — press O to review the last 200 lines of NPC dialog',
+     'Exportable for sharing or keeping a story log',
+   ]},
+  {ver:'v92.16–v92.17', date:'Apr 2026', cat:'major', title:'Apex Shards &amp; Forge — 25 Dungeon Legendaries',
+   notes:[
+     'Six-tier shard currency — Bronze, Silver, Gold, Sapphire, Emerald, Ruby',
+     'Drop from Apex Trials (tier-scaled) and World Bosses',
+     '<b>Curator\'s Apprentice NPC</b> — 3-tab vendor (TRADE / REROLL / FORGE)',
+     '25 dungeon-only legendaries unlock at Tier I–VII',
+     'Includes Lich Sovereign\'s Scepter, Frostfang of the Sovereign, Spore Architect\'s Staff',
+   ]},
+  {ver:'v92.13–v92.15', date:'Apr 2026', cat:'major', title:'Apex Trials Phase 3 — Modifiers + Tutorial 2.0',
+   notes:[
+     '6 stacking modifiers — <b>Burning</b>, <b>Frozen</b>, <b>Charged</b>, <b>Toxic</b>, <b>Swarm</b>, <b>Cursed</b>',
+     'Each modifier adds difficulty &amp; loot multiplier',
+     'Mirrored modifier — duplicates of bosses',
+     'Dynamic stat tooltips show modifier effects in real-time',
+     'Tutorial 2.0 — 10-stage onboarding + persistent HELP button',
+   ]},
+  {ver:'v91.1', date:'Apr 2026', cat:'content', title:'Controller Support',
+   notes:[
+     'Full Xbox &amp; PlayStation controller support via the Web Gamepad API',
+     'Right stick aim · Twin-stick combat · All panels accessible',
+     'Toggleable in Settings · Auto-detects connected controllers',
+   ]},
+];
+
+function renderPatchNotes(filter){
+  const list = document.getElementById('wn-list');
+  if(!list) return;
+  list.innerHTML = '';
+  PATCH_NOTES.filter(n => filter==='all' || n.cat===filter).forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'wn-entry ' + n.cat;
+    el.innerHTML =
+      '<div class="wn-head">'+
+        '<div class="wn-ver">'+n.ver+'</div>'+
+        '<div class="wn-date">'+n.date+'</div>'+
+      '</div>'+
+      '<div class="wn-title">'+n.title+'</div>'+
+      '<ul class="wn-notes">'+n.notes.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+    list.appendChild(el);
+  });
+}
+
+document.querySelectorAll('.wn-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.wn-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPatchNotes(btn.dataset.filter);
+  });
+});
+renderPatchNotes('all');
 </script>
 </body>
 </html>

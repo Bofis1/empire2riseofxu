@@ -320,10 +320,10 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   </div>
   <div class="boss-list reveal">
     <!-- v92.20 — World Bosses (roaming, cross-zone) -->
-    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F525;</span><div><div class="br-name" style="color:#ffcc88;">Forge Tyrant</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Citadel &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">2,200,000 HP</div></div>
-    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F409;</span><div><div class="br-name" style="color:#ffcc88;">Ancient Wyrm</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Dragon Lair &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">2,400,000 HP</div></div>
-    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F480;</span><div><div class="br-name" style="color:#d4aaff;">Hollow Reaper</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Necropolis &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">2,600,000 HP</div></div>
-    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F573;</span><div><div class="br-name" style="color:#d4aaff;">Void Behemoth</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Neon Hollow &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">2,800,000 HP</div></div>
+    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F525;</span><div><div class="br-name" style="color:#ffcc88;">Forge Tyrant</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Citadel &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">~1.3M HP @ L100</div></div>
+    <div class="br" style="border-color:rgba(255,120,0,0.18);background:rgba(20,8,2,0.85);"><span class="br-icon">&#x1F409;</span><div><div class="br-name" style="color:#ffcc88;">Ancient Wyrm</div><div class="br-zone" style="color:rgba(255,120,0,0.7);">World Boss &middot; Dragon Lair &middot; Roaming</div></div><div class="br-hp" style="color:rgba(255,180,80,0.85);">~2.3M HP @ L100</div></div>
+    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F480;</span><div><div class="br-name" style="color:#d4aaff;">Hollow Reaper</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Necropolis &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">~2.0M HP @ L100</div></div>
+    <div class="br" style="border-color:rgba(140,0,255,0.22);background:rgba(14,2,20,0.85);"><span class="br-icon">&#x1F573;</span><div><div class="br-name" style="color:#d4aaff;">Void Behemoth</div><div class="br-zone" style="color:rgba(180,80,255,0.7);">World Boss &middot; Neon Hollow &middot; Roaming</div></div><div class="br-hp" style="color:rgba(220,160,255,0.85);">~3.6M HP @ L100</div></div>
     <div class="br"><span class="br-icon">&#x26A1;</span><div><div class="br-name">The Curator</div><div class="br-zone">Neon Hollow &middot; Level 100+ Post-Cap AA &middot; 5 Phases</div></div><div class="br-hp">1,600,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x1F31D;</span><div><div class="br-name">Commandant Xerath</div><div class="br-zone">Void Citadel &middot; Level 70+ &middot; 5 Phases</div></div><div class="br-hp">1,500,000 HP</div></div>
     <div class="br"><span class="br-icon">&#x2620;&#xFE0F;</span><div><div class="br-name">The Bone Colossus</div><div class="br-zone">Necropolis &middot; Level 100+</div></div><div class="br-hp">1,400,000 HP</div></div>
@@ -507,6 +507,15 @@ document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(
 // ── PATCH NOTES — mirrors in-game CHANGELOG ──
 // Categories: 'major' (cyan accent), 'content' (green, default), 'fix' (orange)
 const PATCH_NOTES = [
+  {ver:'v92.34', date:'May 2026', cat:'major', title:'World Boss Buff — Bigger, Tankier, Threatening',
+   notes:[
+     'Mesh scale 1.6× → <b>3.5×</b> — they finally LOOK like world bosses',
+     'Base HP buffed <b>20×</b> across all four:',
+     '<ul><li>Forge Tyrant: 8K → 160K (~1.3M at L100)</li><li>Hollow Reaper: 12K → 240K (~2.0M at L100)</li><li>Ancient Wyrm: 14K → 280K (~2.3M at L100)</li><li>Void Behemoth: 22K → 440K (~3.6M at L100)</li></ul>',
+     'Base ATK ~50% higher · Level scaling +5%/lvl → +8%/lvl past L10',
+     'Hit radius scaled to match the 3.5× visual — no more swinging through giant bosses',
+     'Aggro range 12 → 18 — they spot you from further away now',
+   ]},
   {ver:'v92.33', date:'May 2026', cat:'content', title:'17 Unique Staff Projectiles',
    notes:[
      'Every legendary &amp; epic staff now fires its own unique projectile',

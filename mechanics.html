@@ -129,9 +129,12 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#races">Races</a></li>
         <li><a href="#stats">Stats & Scaling</a></li>
         <li><a href="#loot">Loot & Crafting</a></li>
+        <li><a href="#inventory">Inventory & Item Bar</a></li>
         <li><a href="#ascendancy">Ascendancy</a></li>
         <li><a href="#apex">Apex Trials</a></li>
         <li><a href="#worldbosses">World Bosses</a></li>
+        <li><a href="#blooming">Blooming Wilds</a></li>
+        <li><a href="#sanctuary">Veiled Sanctuary</a></li>
         <li><a href="#vault">Gold Vault</a></li>
         <li><a href="#multiplayer">Multiplayer</a></li>
         <li><a href="#guilds">Guild System</a></li>
@@ -328,11 +331,36 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p><b>Crafting</b> — 28 craftable items across weapon, armor, and accessory benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
       </section>
 
+      <!-- INVENTORY & ITEM BAR (v92.47–v92.53) -->
+      <section id="inventory" class="reveal">
+        <h2><span class="icon">🎒</span>Inventory &amp; Item Bar</h2>
+        <div class="section-bar"></div>
+        <p>The inventory is a draggable, resizable, persistent panel. Open it with <span class="hl">I</span>. The default size is <b>1100×680</b>, capped at 96vw × 90vh, and the layout is saved per character.</p>
+
+        <div class="mechanic-grid" style="margin-top:1.25rem;">
+          <div class="m-card"><span class="m-card-icon">🤚</span><div class="m-card-title">Draggable</div><p>Click and hold the header bar to move the panel anywhere on screen. Position is clamped — at least 50px stays visible.</p></div>
+          <div class="m-card"><span class="m-card-icon">↘️</span><div class="m-card-title">Resizable</div><p>Drag the bottom-right corner handle. Min 560×400, max viewport-bounded. Useful when you want to see the item bar underneath.</p></div>
+          <div class="m-card"><span class="m-card-icon">💾</span><div class="m-card-title">Persistent</div><p>Position + size saved to localStorage per character. Reopening keeps your layout. RESET button restores defaults.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔍</span><div class="m-card-title">Sort &amp; Filter</div><p>Sort by Rarity, Type, Name, or Newest. Filter by Weapon, Armour, Accessory, Use, Quest. Sell Junk button sells all common items.</p></div>
+        </div>
+
+        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Item Bar Bindings</p>
+        <p>The bottom item bar has 5 consumable slots (<span class="hl">Z X C V G</span>) for potions, scrolls, food, and other consumables. Two ways to assign:</p>
+        <div class="mechanic-grid" style="margin-top:1rem;">
+          <div class="m-card"><span class="m-card-icon">🖱️</span><div class="m-card-title">Drag &amp; Drop</div><p>Drag a consumable from the inventory bag onto a Z/X/C/V/G slot. Move the inventory panel out of the way first if it's covering the bar.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Shift+Right-Click</div><p>One-step keyboard shortcut. Shift+RClick a consumable in the inventory and it auto-assigns to the first empty bar slot.</p></div>
+        </div>
+
+        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Quick Actions</p>
+        <p><b>Right-click</b> in inventory → instant equip. <b>Shift+click</b> → sell. <b>Middle-click</b> → toggle lock (locked items can't be sold or junked). <b>Hover</b> any item for tooltip with stats and live comparison vs your equipped piece.</p>
+      </section>
+
       <!-- ASCENDANCY -->
       <section id="ascendancy" class="reveal">
         <h2><span class="icon">🌟</span>Ascendancy System</h2>
         <div class="section-bar"></div>
         <p>At <span class="gold">Level 100</span>, the level cap is reached — but your character is not done. The <b>Ascendancy System</b> unlocks power beyond the cap via <span class="hl">Ascendancy Ability Points (AA Points)</span> earned through kills and boss clears. AA abilities split into two categories: <b>universal</b> (any class) and <b>class-specific</b>. Each ability has an AA-point requirement and a point cost to slot.</p>
+        <p style="margin-top:1rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.85rem;background:rgba(255,208,96,0.06);border-left:2px solid var(--xu-gold);padding:0.6rem 0.9rem;">⚡ As of v92.48, all 9 active abilities are fully functional — including <b>Void Lord's Grasp</b>, <b>Singularity</b>, <b>Ancient Warcry</b>, <b>Salvation</b>, and <b>Titan's Blow</b>. Bind any active to <span class="hl">U</span> (or <span class="hl">Shift+U</span> for the secondary) for one-press combat use.</p>
         <p style="margin-top:1rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Universal (all classes)</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">💨</span><div class="m-card-title">Second Wind</div><p>When HP drops below 20%, instantly recover 25% Max HP. 90s internal cooldown.</p></div>
@@ -430,6 +458,57 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
         <p>Killing a world boss drops a guaranteed pile: tier-appropriate <b>Apex Shards</b>, 1–2 random legendaries from the dungeon pool, and a <b>+50% gold bonus</b> applied to every kill in the next 60 seconds.</p>
+      </section>
+
+      <!-- BLOOMING WILDS (v92.49) -->
+      <section id="blooming" class="reveal">
+        <h2><span class="icon">🌸</span>The Blooming Wilds</h2>
+        <div class="section-bar"></div>
+        <p>A pre-Xu fey garden that the war never reached. Lv 10+ entry zone, accessed from the <b>north wall of the Patrol Zone</b>. The colors are too bright in a way that feels wrong. The fairies are not helping you.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Six new enemies</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🧚</span><div class="m-card-title">Bloom Sprite</div><p>Pink fairy with petal skirt. Fires petal projectiles. 380 HP. Fast and fragile.</p></div>
+          <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Glimmer Fairy</div><p>Cyan orb with trailing sparkles. Fastest enemy in the zone. 280 HP. Evasive.</p></div>
+          <div class="m-card"><span class="m-card-icon">🍄</span><div class="m-card-title">Mushroom Brute</div><p>Fungal warrior with red cap and white spots. Heavy melee slammer. 880 HP, 10% damage reduction.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌿</span><div class="m-card-title">Vine Stalker</div><p>Tall plant-creature with whip vines for arms and a flower head. 550 HP. Mid-range whip attacks.</p></div>
+          <div class="m-card"><span class="m-card-icon">☁️</span><div class="m-card-title">Pollen Wraith</div><p>Hovering purple spore-cloud with floating particles. 420 HP. Drains MP on hit.</p></div>
+          <div class="m-card" style="border-color:rgba(255,102,204,0.35);"><span class="m-card-icon">🌹</span><div class="m-card-title" style="color:#ffaadd;">Thorn Knight (Mini-Boss)</div><p>Armored rose-creature with thorn crown and rose-emblem chestplate. <b>3,200 HP</b>, 20% damage reduction. Found in the rose garden, guarded by 3 vine stalkers.</p></div>
+        </div>
+
+        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Five garden rooms</p>
+        <p>Player walks south to north through: <b>Entrance Glade</b> (fairy camps + brute pair) → <b>Petal Clearing</b> (vine groves + brutes) → <b>Rose Garden</b> (Thorn Knight mini-boss + court) → <b>Mushroom Ring</b> (signature 4-brute formation around 2 wraiths) → <b>Wildmother's Approach</b> (final guard wave).</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Wildmother — 35,000 HP</p>
+        <p>Ancient willow tree-being with two whip-vine arms ending in flower-blossom hands. Crown of layered leaves with a giant central purple flower and 8 pink/gold side flowers. <b>Four moonstones orbit her crown</b> and fire when the player stands still. Her face is in the bark — two glowing eyes, a horizontal mouth-split that glows orange when she speaks. Vine arms have tremendous reach; stay outside and fire from range.</p>
+      </section>
+
+      <!-- VEILED SANCTUARY (v92.37–v92.46) -->
+      <section id="sanctuary" class="reveal">
+        <h2><span class="icon">⛪</span>The Veiled Sanctuary</h2>
+        <div class="section-bar"></div>
+        <p>Hidden raid accessed from the <b>Necropolis</b>. Lv 90+ recommended. A monastery of the Forsaken Order, frozen mid-ritual when their attempt to seal a void rift went wrong six years ago. Heavy purple-gold thunderstorm, sacred lightning, drifting void tornadoes.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Eight new enemies</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">⛪</span><div class="m-card-title">Veiled Acolyte</div><p>Low-rank monks frozen mid-prayer. 42K HP. Slow but persistent.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚔</span><div class="m-card-title">Penitent Striker</div><p>Order martial guards with purple-gold staves. 38K HP. Don't feel pain.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗿</span><div class="m-card-title">Stone Inquisitor</div><p>Senior monks petrified entirely. Mobile despite the stone. 65K HP, 25% damage reduction.</p></div>
+          <div class="m-card"><span class="m-card-icon">🕯️</span><div class="m-card-title">Censer Bearer</div><p>Swings incense in arcs that scorch the floor. 48K HP. Telegraphed AOE.</p></div>
+          <div class="m-card"><span class="m-card-icon">🛡</span><div class="m-card-title">Ritual Guardian</div><p>Holds cardinal points of the central nave. Will not break formation. 80K HP, 30% damage reduction.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎵</span><div class="m-card-title">Halo-Cantor</div><p>Singing damages the player in a register that bypasses normal shielding. 52K HP. Range threat.</p></div>
+          <div class="m-card"><span class="m-card-icon">👻</span><div class="m-card-title">Choir Wraith</div><p>What's left of the singing monks who lost the rest of themselves. 38K HP. Phases through walls.</p></div>
+          <div class="m-card" style="border-color:rgba(255,208,96,0.35);"><span class="m-card-icon">👑</span><div class="m-card-title" style="color:#ffeeaa;">Veiled Cardinal (Mini-Boss)</div><p>Senior officiants who were closest to the altar at the moment the seal failed. <b>240,000 HP</b>, 15% damage reduction.</p></div>
+        </div>
+
+        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Final Abbot — 850,000 HP</p>
+        <p>The senior officiant of the Forsaken Order, still attempting to complete the ritual after six years. Robed figure with a halo, wielding twin staves — left radiates void, right radiates gold. <b>Twin censers fire void + gold beams that meet in front of him in a column of light</b> — the unfinished work of the ritual. Stand in the column long enough and the ritual accepts you. Members lost to the column do not come back.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Atmosphere</p>
+        <p><b>Purple-gold thunderstorm</b> with sacred lightning that strikes vertically with a 3-tier branching pattern. Up to <b>2 active void tornadoes</b> at any time, drifting through the courtyard with hand-tuned curving paths. <b>14 frozen monks</b> still kneeling in the central nave. <b>24 dead trees</b> in the courtyard with leaves frozen mid-fall a meter above the ground. The bell in the tower rings once every 23 minutes.</p>
+
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
+        <p><b>Six unique legendaries</b> drop only here. The Coalition's senior command has been quietly funneling their best strike teams toward the Sanctuary because these legendaries are the difference between strike teams surviving Wandering Apex encounters and not surviving them. Sacred choir music underscores every fight in the zone.</p>
       </section>
 
       <!-- GOLD VAULT -->

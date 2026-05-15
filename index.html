@@ -275,6 +275,10 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="divbar"></div>
   </div>
   <div class="feat-grid">
+    <!-- v93.0 — NEW: The Convergence + Echo Shards + Lightstones -->
+    <div class="fc reveal" style="border-color:rgba(176,136,255,0.35);background:linear-gradient(135deg,rgba(8,4,20,0.92),rgba(16,8,32,0.92));"><span class="fc-icon" style="color:#b088ff;">&#x221E;</span><div class="fc-title" style="color:#d4b8ff;">The Convergence</div><p class="fc-desc">The endgame zone where reality cracked when Overseer Zero died. Procedural BSP layouts, infinite depth scaling, 13 modifiers stacking into cataclysms every 5 depths. The Depth Sentinel waits at every floor — kill it, take the magenta portal, go deeper. The deeper you go, the meaner it gets.</p><span class="fc-tag" style="background:rgba(176,136,255,0.18);color:#d4b8ff;border-color:rgba(176,136,255,0.4);">v93.0 ENDGAME</span></div>
+    <div class="fc reveal" style="border-color:rgba(176,136,255,0.35);background:linear-gradient(135deg,rgba(8,4,20,0.92),rgba(16,8,32,0.92));"><span class="fc-icon" style="color:#b088ff;">&#x1F48E;</span><div class="fc-title" style="color:#d4b8ff;">Echo Shards &amp; The Archivist</div><p class="fc-desc">Convergence-only currency that persists across deaths. Spend at The Archivist in the Outpost — a 15-node meta-progression tree across three tiers. Tier I boosts you forever; Tier II buffs you only in the Convergence; Tier III is game-changing (Glass Cannon, Lucky Star, Boss Slayer, Reroll Token).</p><span class="fc-tag" style="background:rgba(176,136,255,0.18);color:#d4b8ff;border-color:rgba(176,136,255,0.4);">v93.0 META</span></div>
+    <div class="fc reveal" style="border-color:rgba(255,224,128,0.35);background:linear-gradient(135deg,rgba(20,12,4,0.92),rgba(28,18,8,0.92));"><span class="fc-icon" style="color:#ffe080;">&#x1F4A1;</span><div class="fc-title" style="color:#ffe6a0;">Lightstones</div><p class="fc-desc">A 9th equipment slot. Five tiers from Tallow (common, 6 illum) to Void Lantern (mythic, 48 illum). A halo orb floats above your head, a PointLight radiates from it color-matched to the tier. The Convergence + Void zones eat unprepared adventurers — the dark is no longer just atmosphere.</p><span class="fc-tag" style="background:rgba(255,224,128,0.18);color:#ffe6a0;border-color:rgba(255,224,128,0.4);">v93.0 GEAR</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x2694;&#xFE0F;</span><div class="fc-title">Real-Time Combat</div><p class="fc-desc">Click to attack, aim with mouse. Chain hits into x3, x6, x10 combo multipliers. Block, parry, counter with timing-based defense.</p><span class="fc-tag">CORE</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F310;</span><div class="fc-title">Multiplayer Co-op</div><p class="fc-desc">Real-time WebRTC multiplayer. Create or join games from the lobby. Party up to 4. MMO-style persistent enemy state.</p><span class="fc-tag">ONLINE</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F9EC;</span><div class="fc-title">8 Playable Races</div><p class="fc-desc">Every race plays differently. Xu warriors, Gnome artificers, Vampire assassins, Elf spellweavers. Your race defines your build.</p><span class="fc-tag">BUILD</span></div>
@@ -323,6 +327,8 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <p style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;margin-top:0.4rem;">21 zone bosses &middot; 4 roaming world bosses</p>
   </div>
   <div class="boss-list reveal">
+    <!-- v93.0 — The Depth Sentinel (Convergence boss, endless scaling) -->
+    <div class="br" style="border-color:rgba(176,136,255,0.42);background:linear-gradient(135deg,rgba(12,4,24,0.94),rgba(24,8,40,0.94));"><span class="br-icon" style="color:#ff60ff;">&#x25C6;</span><div><div class="br-name" style="color:#d4b8ff;">The Depth Sentinel</div><div class="br-zone" style="color:rgba(212,184,255,0.7);">THE CONVERGENCE &middot; Procedural endgame &middot; Level 100+ &middot; HP scales every depth</div></div><div class="br-hp" style="color:rgba(212,184,255,0.85);">2M &times; depth &times; modifier</div></div>
     <!-- v92.55 — Overseer Zero (final boss / Xeron) -->
     <div class="br" style="border-color:rgba(0,229,255,0.32);background:linear-gradient(135deg,rgba(8,14,28,0.92),rgba(20,4,30,0.92));"><span class="br-icon">&#x1F451;</span><div><div class="br-name" style="color:#9be7ff;">Overseer Zero</div><div class="br-zone" style="color:rgba(155,231,255,0.7);">XERON &middot; Orbital Citadel &middot; Level 100+ &middot; 8 Phases &middot; FINAL BOSS</div></div><div class="br-hp" style="color:rgba(190,235,255,0.85);">3,000,000 HP</div></div>
     <!-- v92.20 — World Bosses (roaming, cross-zone) -->
@@ -517,6 +523,40 @@ document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(
 // ── PATCH NOTES — mirrors in-game CHANGELOG ──
 // Categories: 'major' (cyan accent), 'content' (green, default), 'fix' (orange)
 const PATCH_NOTES = [
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v93.0 — THE WOUND IN AETHON. Convergence endgame + Lightstone equipment slot.
+  // 37 builds shipped, 12 phases of feature work, 6 deep bugfixes.
+  // ═══════════════════════════════════════════════════════════════════════════
+  {ver:'v93.0', date:'May 2026', cat:'major', title:'THE CONVERGENCE — Procedural Endgame &amp; Echo Shard Meta-Progression',
+   notes:[
+     '<b>THE CONVERGENCE</b> — endgame zone unlocked after Lv 100. Reality cracked when Overseer Zero died and every zone of Aethon now overlaps inside one violet wound. 240×240 procgen BSP layouts, every run unique.',
+     '<b>Depth chain</b> — kill THE DEPTH SENTINEL, take the magenta portal, descend. Boss HP scales 2M × depth × modifier multiplier. No cap on depth.',
+     '<b>13 modifiers</b> roll per depth: Burning Ground, Famine, Veiled, Storm Cell, Bleeding Reality, Marked, Brutal, Vital, Density, Bounty &middot; plus 3 CATACLYSM modifiers every 5 depths: Volatile (enemies explode on death), Frenzied, Hardened Echo.',
+     '<b>Echo Shards</b> — Convergence-only currency. Drops scale with depth. Persists through deaths.',
+     '<b>The Archivist</b> — new NPC at Outpost center. 15-node upgrade tree across Tier I (base stats, all zones), Tier II (Convergence-only buffs), Tier III (game-changers like Glass Cannon, Lucky Star, Reroll Token).',
+     '<b>The Depth Sentinel</b> — unique boss mesh: hooded violet figure with floating crown shard, twin orbital shards, glowing eye slits. 7 ominous dialogue lines that scale by depth.',
+     '<b>Boss arena monolith</b> + <b>treasure rooms</b> — 1-in-12 BSP rooms roll as treasure rooms with gold mound, floating shards, light beam, free potion drop.',
+     '<b>Apocalyptic Tech soundtrack</b> — original D-minor track at 95 BPM, 7-layer synth with sub-drone and glitch percussion.',
+     'Fog-of-war, mesh merging, prop animations all optimized to maintain 60fps even at zone scale.',
+   ]},
+  {ver:'v93.0', date:'May 2026', cat:'content', title:'LIGHTSTONES — 9th Equipment Slot &amp; Dynamic Illumination',
+   notes:[
+     '<b>New equipment slot</b> — Lightstone. Joins weapon/offhand/helmet/chest/legs/boots/ring/amulet.',
+     '<b>Five tiers</b> — Tallow (common, 6 illum, +2 VIT) &middot; Amber (rare, 12 illum, +4 VIT/INT) &middot; Aether (epic, 20 illum, +8 VIT/INT) &middot; Star (legendary, 32 illum, +15 VIT/INT/+5 SPD) &middot; Void Lantern (mythic, 48 illum, +25 VIT/INT/+8 SPD).',
+     '<b>Halo + PointLight</b> — floating glow orb hovers above your head, ring rotates, color-matched to lightstone tier. A real Three.js PointLight radiates from the orb — the world around you actually illuminates.',
+     '<b>Vendor stock</b> — Hessek Scale-Weaver sells the first three tiers for gold (800g / 4,500g / 18,000g). Higher tiers come from drops.',
+     '<b>Drops</b> — 1.2% per kill in dark zones (Convergence, Void, Void Citadel, Riftvale, Dragonlair, Caves of Despair, Necropolis, Xeron). 0.3% in other zones. Tier weighted: 60% common, 28% rare, 10% epic, 2% legendary.',
+     'Convergence and Void zones are now <i>dramatically</i> more playable — and tactical. The dark used to be atmosphere. Now it is a resource.',
+   ]},
+  {ver:'v93.0', date:'May 2026', cat:'fix', title:'CONVERGENCE — Critical Bugfixes &amp; Performance',
+   notes:[
+     '<b>Boss desync fix</b> — boss "immortal" after depth descent. Damage numbers popped but HP never dropped. Root cause: server set boss.spawned=false on depth bump but never broadcast respawn. Fixed.',
+     '<b>Depth portal stacking fix</b> — old portals persisted across boss kills. You could skip fights by walking through old portals to higher depths. Fixed: portalTo array now replaces, not concats.',
+     '<b>Terrain leak fix</b> — Convergence walls followed you into the Outpost in an L-shape across spawn. Fixed.',
+     '<b>Fog canvas stutter fix</b> — periodic stutter while exploring Convergence. Root cause: minimap fog rebuilt the entire 240×240 grid (~115,000 fillRect ops) every reveal. Fixed: skip soft-edge pass on huge zones, 20-frame rebuild cooldown.',
+     '<b>Lightstone login fix</b> — equipped lightstone halo missing on fresh login until re-equip. Fixed: stale-cache detection + force-refresh after playerMesh rebuild.',
+     '<b>Animation hot-loop optimization</b> — prop animations iterated all 5000+ merged terrain meshes per frame. Fixed: separate cached array of only-animated meshes (~30 items typical), half-rate animations with cached trig.',
+   ]},
   {ver:'v92.74', date:'May 2026', cat:'major', title:'AETHON Planet Map — 3D Spinning World',
    notes:[
      'The post-lobby world map is now a 3D rotating planet — drag to spin, wheel to zoom',

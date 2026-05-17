@@ -277,24 +277,25 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
       <!-- RACES -->
       <section id="races" class="reveal">
-        <h2><span class="icon">🧬</span>Races</h2>
+        <h2><span class="icon">🧬</span>Races &mdash; 32 Traits Total</h2>
         <div class="section-bar"></div>
-        <p>Your race is chosen once and cannot be changed. Each race has unique <b>passive bonuses</b>, a <b>stat spread</b>, and a <b>racial ability</b> that defines your playstyle from level 1 to level 100.</p>
+        <p>Your race is chosen once and cannot be changed. Each race has <b>4 traits</b>: typically 2 passives, 1 active skill (on Hotkey 9), and 1 flaw. Updated in v93.0-a41 through a49 &mdash; every advertised racial actually works now.</p>
         <table>
           <thead>
-            <tr><th>Race</th><th>Identity</th><th>Signature Ability</th></tr>
+            <tr><th>Race</th><th>Trait 1</th><th>Trait 2</th><th>Active (Hotkey 9)</th><th>Flaw</th></tr>
           </thead>
           <tbody>
-            <tr><td>🦎 Xu</td><td>Scale Plating — 12% phys reduction · +20% damage below 30% HP</td><td>Crest Flare — AoE Fear</td></tr>
-            <tr><td>🧑 Human</td><td>Adaptive — equip any weapon · +5% XP · skill CDs 15% shorter</td><td>Balanced — no stat penalties</td></tr>
-            <tr><td>⚙️ Gnome</td><td>Precision — +25% skill damage · Tinker · fragile</td><td>Deploy Combat Automaton</td></tr>
-            <tr><td>💪 Ogre</td><td>Thick Hide — 18% phys reduction · largest hitbox</td><td>War Chant — party attack speed buff</td></tr>
-            <tr><td>🐴 Centaur</td><td>Swift — fastest race · minimap enemy reveal</td><td>Charge — massive run-up strike</td></tr>
-            <tr><td>🐂 Minotaur</td><td>Natural Healer — +40% healing · AoE heal every 30s</td><td>Vreth Stance — immovable, reflect damage 8s</td></tr>
-            <tr><td>🧝 Elf</td><td>Aether-Weaving — -20% mana cost · +30% magic damage</td><td>Void-Sight — see through walls</td></tr>
-            <tr><td>🧛 Vampire</td><td>Blood Drain — melee lifesteal · Night Sense</td><td>Void-Step — short teleport, 6s CD</td></tr>
+            <tr><td>🦎 <b>Xu</b></td><td>Scale Plating — 12% phys DR</td><td>Warrior Blood — +20% dmg below 30% HP</td><td>Crest Flare — 6-tile fear cone, 30s CD</td><td>-8% move speed</td></tr>
+            <tr><td>🧑 <b>Human</b></td><td>Adaptability — +1 all stats</td><td>Fast Learner — +8% XP</td><td>Any Weapon — no proficiency penalties</td><td>Balanced (no standout)</td></tr>
+            <tr><td>⚙️ <b>Gnome</b></td><td>Automaton Pet — persistent clockwork ally</td><td>Precision — +15% crit chance</td><td>Tinker — +25% gold &amp; rare drops</td><td>-10% max HP</td></tr>
+            <tr><td>💪 <b>Ogre</b></td><td>Thick Hide — 18% phys DR (highest)</td><td>Colossus — +30% max HP</td><td>War Chant — 8-tile party buff +25% atk, 45s CD</td><td>-12% move speed</td></tr>
+            <tr><td>🐴 <b>Centaur</b></td><td>Swift — +15% base speed (fastest)</td><td>Wind-Read — +8 tile aggro detect</td><td>Charge — 2× sprint + next melee +200%, 18s CD</td><td>-10% def from chest/legs/boots</td></tr>
+            <tr><td>🐂 <b>Minotaur</b></td><td>Natural Healer — +40% healing all sources</td><td>Earthsense — chests glow brighter</td><td>Vreth Stance — 60% DR + 30% reflect 3s, 25s CD</td><td>-6% move speed</td></tr>
+            <tr><td>🧝 <b>Elf</b></td><td>Aether-Weaving — -20% mana cost</td><td>Ancient Knowledge — +12% spell dmg</td><td>Void-Sight — 8s minimap-wide reveal, 50s CD</td><td>-15% max HP</td></tr>
+            <tr><td>🧛 <b>Vampire</b></td><td>Blood Drain — 5% melee lifesteal</td><td>Supernatural Speed — +12% spd, +25% backstab</td><td>Void-Step — 5-tile teleport, 12s CD</td><td>Aether Light — -15% stats in bright zones, scales with own illum</td></tr>
           </tbody>
         </table>
+        <p style="margin-top:1rem;"><b>Active skills</b> are bound to Hotkey 9. Cooldown bar shows in the upper HUD. Press it once and you can feel the difference — Charge slingshots you across a room into a one-shot, Crest Flare clears 6 tiles of enemies, Automaton Pet does damage even when you're not attacking.</p>
       </section>
 
       <!-- STATS -->
@@ -458,19 +459,46 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       </section>
 
       <section id="lightstones" class="reveal">
-        <h2><span class="icon">💡</span>Lightstones</h2>
-        <p>A 9th equipment slot introduced in v93.0. Equipped Lightstones cast a real dynamic point light around your character — a halo orb floats above your head, and a Three.js <code>PointLight</code> radiates outward. In dark zones (Convergence, Void, Void Citadel, Riftvale, Dragonlair, Caves of Despair, Necropolis, Xeron), this is the difference between fighting effectively and stumbling blind.</p>
-        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Five Tiers</h3>
+        <h2><span class="icon">💡</span>Lightstones &mdash; Phase 2 Complete (11 Items, 10 Affixes)</h2>
+        <p>A 9th equipment slot, fully evolved in v93.0-a50 through a54. Equipped Lightstones cast a real dynamic point light — halo orb above your head, Three.js <code>PointLight</code> radiating outward, MP-synced so your party sees it too. In dark zones (Convergence, Void, Void Citadel, Riftvale, Dragonlair, Caves of Despair, Necropolis, Xeron) lightstones are now a tactical pillar, not atmosphere.</p>
+
+        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Base Tiers (5)</h3>
         <ul>
-          <li><b>Tallow Lightstone</b> <span style="color:#fff0a8;">(common)</span> — 6 illum &middot; +2 VIT &middot; pale gold halo &middot; <b>800g</b> at Hessek</li>
-          <li><b>Amber Lightstone</b> <span style="color:#ffcc60;">(rare)</span> — 12 illum &middot; +4 VIT/INT &middot; amber halo &middot; <b>4,500g</b> at Hessek</li>
-          <li><b>Aether Lightstone</b> <span style="color:#88eeff;">(epic)</span> — 20 illum &middot; +8 VIT/INT &middot; ice-cyan halo &middot; <b>18,000g</b> at Hessek</li>
-          <li><b>Star Lightstone</b> <span style="color:#ffffff;">(legendary)</span> — 32 illum &middot; +15 VIT/INT/+5 SPD &middot; white halo &middot; drops only</li>
-          <li><b>Void Lantern</b> <span style="color:#ff60ff;">(mythic)</span> — 48 illum &middot; +25 VIT/INT/+8 SPD &middot; violet halo &middot; not yet in any drop pool</li>
+          <li><b>Tallow Lightstone</b> <span style="color:#fff0a8;">(common)</span> — 6 illum &middot; +2 VIT &middot; pale gold &middot; <b>800g</b></li>
+          <li><b>Amber Lightstone</b> <span style="color:#ffcc60;">(rare)</span> — 12 illum &middot; +4 VIT/INT &middot; amber &middot; <b>4,500g</b></li>
+          <li><b>Aether Lightstone</b> <span style="color:#88eeff;">(epic)</span> — 20 illum &middot; +8 VIT/INT &middot; ice-cyan &middot; <b>18,000g</b></li>
+          <li><b>Star Lightstone</b> <span style="color:#ffffff;">(legendary)</span> — 32 illum &middot; +15 VIT/INT/+5 SPD &middot; white &middot; <b>75,000g</b></li>
+          <li><b>Void Lantern</b> <span style="color:#ff60ff;">(mythic)</span> — 48 illum &middot; +25 VIT/INT/+8 SPD &middot; violet &middot; <b>250,000g</b></li>
         </ul>
-        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Drop Rates</h3>
-        <p>Per enemy kill: <b>1.2%</b> in dark zones. <b>0.3%</b> in any other zone. Tier weights: 60% common, 28% rare, 10% epic, 2% legendary. Mythic (Void Lantern) is not in the drop pool yet — endgame future content.</p>
-        <p>Hessek Scale-Weaver stocks the first three tiers in the Outpost armorer&#39;s shop. He has a new line: <i>&quot;Take a Lightstone before you go deep. The dark down there bites.&quot;</i></p>
+
+        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Echo Shard Lightstones (3, bespoke effects)</h3>
+        <ul>
+          <li><b>Echo Filament</b> <span style="color:#aaffe0;">(rare)</span> — 14 illum +1 per completed quest. Late-game accounts with 50+ quests get more illumination than mythics. <b>35,000g</b></li>
+          <li><b>Convergent Lens</b> <span style="color:#ddaaff;">(epic)</span> — 22 illum. In MP, refracts your halo to allied lightstones within 6 tiles (their orbs scale 1.4×, light intensity boosts 1.3×). Party-support. <b>120,000g</b></li>
+          <li><b>Sentinel's Eye</b> <span style="color:#ff8866;">(legendary)</span> — 36 illum BUT only emits light when an enemy is within 8 tiles. Lets you sneak past wraiths then BLAZES on combat. <b>280,000g</b></li>
+        </ul>
+
+        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Mythic Lightstones (3, build-defining)</h3>
+        <ul>
+          <li><b>Aether Beacon</b> <span style="color:#60ffcc;">(mythic)</span> — 42 illum. Drops an 8s glowing light puddle wherever you take damage. Mark safe zones tactically. <b>400,000g</b></li>
+          <li><b>Aether Forge</b> <span style="color:#ff8030;">(mythic)</span> — 40 illum. AOE damage burst every 12 seconds in dark zones. 18 base dmg in 5-tile radius. The "I am the dungeon" lightstone. <b>450,000g</b></li>
+          <li><b>Communal Lantern</b> <span style="color:#ffd060;">(mythic)</span> — 24 base illum BUT +12 per ally in same zone, max 60 illum at 4 players. Party-meta. <b>350,000g</b></li>
+        </ul>
+
+        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Affixes (10, rolled on rare/epic/legendary drops)</h3>
+        <p>Lightstones use their own affix pool (a51 bugfix &mdash; previously rolled weapon affixes silently). Same 1-3 roll count as weapons by rarity.</p>
+        <ul>
+          <li><b>Rare:</b> of Brilliance (+6 illum), of Sight (+3 darksight), of Warmth, of Clarity</li>
+          <li><b>Epic:</b> of the Beacon (+12 illum +10 VIT), of Far Sight, <b>Pulsing</b> (orb scales + light throbs on 2s cycle), <b>Iridescent</b> (HSL hue rainbow cycle)</li>
+          <li><b>Legendary:</b> of the Sun (+20 illum), <b>Burning</b> (damages enemies in your illum radius, deals 3× damage to the Depth Sentinel)</li>
+        </ul>
+
+        <h3 style="margin-top:1.2rem;color:#ffe6a0;">Light-vs-Dark Mechanics (a52)</h3>
+        <ul>
+          <li><b>Light Fear</b> — 22 enemy types (wraiths, specters, skeletons, void stalkers, grave crawlers, etc.) flee from lightstones with illum ≥ 16 in dark zones. Reuses Crest Flare fear infrastructure.</li>
+          <li><b>Burning damage tick</b> — affix-equipped lightstones tick damage to all enemies in your illumination radius every 60 frames.</li>
+          <li><b>Vampire self-light penalty</b> — Vampire's Aether Light penalty now scales with own equipped lightstone illumination. Floor: -50%. Lore-tax for glowing.</li>
+        </ul>
       </section>
 
       <section id="apex" class="reveal">

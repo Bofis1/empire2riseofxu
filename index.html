@@ -85,15 +85,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:cen
 .fc-desc{font-size:0.92rem;color:var(--dim);line-height:1.75;}
 .fc-tag{display:inline-block;margin-top:1rem;font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;color:rgba(57,255,138,0.6);border:1px solid rgba(57,255,138,0.2);padding:0.2rem 0.7rem;}
 #races{padding:6rem 2rem;background:var(--bg2);}
-.race-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;max-width:1100px;margin:0 auto;}
-@media(max-width:900px){.race-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:500px){.race-grid{grid-template-columns:1fr;}}
-.rc{background:var(--bg3);border:1px solid rgba(57,255,138,0.07);padding:1.5rem;text-align:center;transition:all .3s;position:relative;overflow:hidden;}
-.rc:hover{border-color:rgba(57,255,138,0.22);transform:translateY(-2px);}
-.rc-em{font-size:2.4rem;margin-bottom:0.7rem;display:block;}
-.rc-name{font-family:'Cinzel Decorative',serif;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;color:#e8f5e0;margin-bottom:0.4rem;}
-.rc-tag{font-size:0.8rem;color:var(--dim);line-height:1.5;}
-.rc-bonus{margin-top:0.6rem;font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.06em;color:var(--g);}
+.race-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;max-width:1200px;margin:0 auto;}
+@media(max-width:850px){.race-grid{grid-template-columns:1fr;}}
+.rc{background:var(--bg3);border:1px solid rgba(57,255,138,0.07);padding:1.6rem 1.4rem;transition:all .3s;position:relative;overflow:hidden;}
+.rc:hover{border-color:rgba(57,255,138,0.28);transform:translateY(-2px);box-shadow:0 6px 30px rgba(57,255,138,0.06);}
+.rc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--g),transparent);opacity:0;transition:opacity .3s;}
+.rc:hover::before{opacity:1;}
+.rc-head{display:flex;align-items:center;gap:0.9rem;margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:1px solid rgba(57,255,138,0.08);}
+.rc-em{font-size:2.2rem;display:block;line-height:1;}
+.rc-meta{flex:1;}
+.rc-name{font-family:'Cinzel Decorative',serif;font-size:0.85rem;font-weight:900;letter-spacing:0.12em;color:#e8f5e0;margin-bottom:0.3rem;}
+.rc-tag{font-size:0.78rem;color:var(--dim);line-height:1.4;font-style:italic;}
+.rc-traits{display:flex;flex-direction:column;gap:0.55rem;}
+.rc-trait{display:flex;gap:0.7rem;align-items:flex-start;padding:0.45rem 0.65rem;background:rgba(2,13,5,0.5);border-left:2px solid rgba(57,255,138,0.25);transition:border-color .25s;}
+.rc-trait:hover{border-left-color:var(--g);}
+.rc-trait.t-active{border-left-color:var(--c);background:rgba(0,40,55,0.32);}
+.rc-trait.t-active:hover{border-left-color:#88ddff;}
+.rct-icon{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;color:rgba(57,255,138,0.65);min-width:38px;padding-top:0.1rem;}
+.rc-trait.t-active .rct-icon{color:rgba(0,200,255,0.75);}
+.rct-body{flex:1;}
+.rct-name{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;color:#e8f5e0;text-transform:uppercase;margin-bottom:0.18rem;}
+.rct-desc{font-size:0.74rem;color:rgba(184,212,176,0.75);line-height:1.45;}
+.rc-flaw{margin-top:0.7rem;padding:0.45rem 0.65rem;background:rgba(40,8,8,0.35);border-left:2px solid rgba(255,80,80,0.35);font-size:0.7rem;color:rgba(255,160,160,0.7);line-height:1.4;}
+.rc-flaw b{color:rgba(255,200,200,0.9);font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;}
 #bosses{padding:6rem 2rem;background:var(--bg);position:relative;}
 #bosses::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,34,68,0.6),transparent);}
 .boss-list{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:0.5rem;}
@@ -208,10 +222,11 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="hero-div"></div>
     <p class="hero-sub">Fight through <b>23 zones</b>. Slay <b>25 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
     <div class="hero-stats">
-      <div><div class="st-num">23</div><div class="st-lab">Zones</div></div>
+      <div><div class="st-num">24</div><div class="st-lab">Zones</div></div>
       <div><div class="st-num">25</div><div class="st-lab">Bosses</div></div>
-      <div><div class="st-num">8</div><div class="st-lab">Races</div></div>
-      <div><div class="st-num">100</div><div class="st-lab">Max Level</div></div>
+      <div><div class="st-num">32</div><div class="st-lab">Race Traits</div></div>
+      <div><div class="st-num">11</div><div class="st-lab">Lightstones</div></div>
+      <div><div class="st-num">∞</div><div class="st-lab">Depth</div></div>
     </div>
     <div class="hero-btns">
       <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank" class="btn-p">PLAY NOW FREE</a>
@@ -278,10 +293,12 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <!-- v93.0 — NEW: The Convergence + Echo Shards + Lightstones -->
     <div class="fc reveal" style="border-color:rgba(176,136,255,0.35);background:linear-gradient(135deg,rgba(8,4,20,0.92),rgba(16,8,32,0.92));"><span class="fc-icon" style="color:#b088ff;">&#x221E;</span><div class="fc-title" style="color:#d4b8ff;">The Convergence</div><p class="fc-desc">The endgame zone where reality cracked when Overseer Zero died. Procedural BSP layouts, infinite depth scaling, 13 modifiers stacking into cataclysms every 5 depths. The Depth Sentinel waits at every floor — kill it, take the magenta portal, go deeper. The deeper you go, the meaner it gets.</p><span class="fc-tag" style="background:rgba(176,136,255,0.18);color:#d4b8ff;border-color:rgba(176,136,255,0.4);">v93.0 ENDGAME</span></div>
     <div class="fc reveal" style="border-color:rgba(176,136,255,0.35);background:linear-gradient(135deg,rgba(8,4,20,0.92),rgba(16,8,32,0.92));"><span class="fc-icon" style="color:#b088ff;">&#x1F48E;</span><div class="fc-title" style="color:#d4b8ff;">Echo Shards &amp; The Archivist</div><p class="fc-desc">Convergence-only currency that persists across deaths. Spend at The Archivist in the Outpost — a 15-node meta-progression tree across three tiers. Tier I boosts you forever; Tier II buffs you only in the Convergence; Tier III is game-changing (Glass Cannon, Lucky Star, Boss Slayer, Reroll Token).</p><span class="fc-tag" style="background:rgba(176,136,255,0.18);color:#d4b8ff;border-color:rgba(176,136,255,0.4);">v93.0 META</span></div>
-    <div class="fc reveal" style="border-color:rgba(255,224,128,0.35);background:linear-gradient(135deg,rgba(20,12,4,0.92),rgba(28,18,8,0.92));"><span class="fc-icon" style="color:#ffe080;">&#x1F4A1;</span><div class="fc-title" style="color:#ffe6a0;">Lightstones</div><p class="fc-desc">A 9th equipment slot. Five tiers from Tallow (common, 6 illum) to Void Lantern (mythic, 48 illum). A halo orb floats above your head, a PointLight radiates from it color-matched to the tier. The Convergence + Void zones eat unprepared adventurers — the dark is no longer just atmosphere.</p><span class="fc-tag" style="background:rgba(255,224,128,0.18);color:#ffe6a0;border-color:rgba(255,224,128,0.4);">v93.0 GEAR</span></div>
+    <div class="fc reveal" style="border-color:rgba(255,224,128,0.35);background:linear-gradient(135deg,rgba(20,12,4,0.92),rgba(28,18,8,0.92));"><span class="fc-icon" style="color:#ffe080;">&#x1F4A1;</span><div class="fc-title" style="color:#ffe6a0;">Lightstones &mdash; 11 Items, 10 Affixes</div><p class="fc-desc">A 9th equipment slot, fully evolved. Eleven items from Tallow (common) to mythics like Aether Beacon (drops light puddles on damage), Aether Forge (AOE damage burst every 12s), Communal Lantern (scales with party size). Plus 10 lightstone-only affixes: Pulsing (orb throbs), Iridescent (rainbow shift), Burning (damages enemies in range). MP-synced &mdash; your party glows too.</p><span class="fc-tag" style="background:rgba(255,224,128,0.18);color:#ffe6a0;border-color:rgba(255,224,128,0.4);">v93.0 PHASE 2</span></div>
+    <div class="fc reveal" style="border-color:rgba(0,200,255,0.35);background:linear-gradient(135deg,rgba(0,16,28,0.92),rgba(0,28,42,0.92));"><span class="fc-icon" style="color:#00ccff;">&#x26A1;</span><div class="fc-title" style="color:#88ddff;">Racial Active Skills</div><p class="fc-desc">Every race now has a bespoke ACTIVE skill on Hotkey 9. Xu's Crest Flare fears enemies. Centaur's Charge sprints with +200% next-hit. Vampire's Void-Step teleports through walls. Gnome's Automaton fights beside you. Ogre's War Chant buffs the whole party. Minotaur's Vreth Stance reflects damage. Elf's Void-Sight reveals everything on the minimap. 32 total racial traits.</p><span class="fc-tag" style="background:rgba(0,200,255,0.18);color:#88ddff;border-color:rgba(0,200,255,0.4);">v93.0 RACES</span></div>
+    <div class="fc reveal" style="border-color:rgba(160,80,255,0.35);background:linear-gradient(135deg,rgba(14,4,24,0.92),rgba(20,8,32,0.92));"><span class="fc-icon" style="color:#b066ff;">&#x1F441;&#xFE0F;</span><div class="fc-title" style="color:#d4b8ff;">The Depth Sentinel &mdash; Custom AI</div><p class="fc-desc">The Convergence boss now has a bespoke kit designed around the lightstone system. 5 phases (Awakening &rarr; Fracture &rarr; Cascade &rarr; Collapse &rarr; Void), 5 attacks, 5 passives. Lightstone Echo damages you LESS if you're brightly lit. Light Drain feeds on your illumination. Darkness Curse temporarily disables your lightstone for 4s. Burning affix lightstones deal 3&times; damage to it &mdash; gear matters.</p><span class="fc-tag" style="background:rgba(160,80,255,0.18);color:#d4b8ff;border-color:rgba(160,80,255,0.4);">v93.0 BOSS</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x2694;&#xFE0F;</span><div class="fc-title">Real-Time Combat</div><p class="fc-desc">Click to attack, aim with mouse. Chain hits into x3, x6, x10 combo multipliers. Block, parry, counter with timing-based defense.</p><span class="fc-tag">CORE</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F310;</span><div class="fc-title">Multiplayer Co-op</div><p class="fc-desc">Real-time WebRTC multiplayer. Create or join games from the lobby. Party up to 4. MMO-style persistent enemy state.</p><span class="fc-tag">ONLINE</span></div>
-    <div class="fc reveal"><span class="fc-icon">&#x1F9EC;</span><div class="fc-title">8 Playable Races</div><p class="fc-desc">Every race plays differently. Xu warriors, Gnome artificers, Vampire assassins, Elf spellweavers. Your race defines your build.</p><span class="fc-tag">BUILD</span></div>
+    <div class="fc reveal"><span class="fc-icon">&#x1F9EC;</span><div class="fc-title">8 Races &middot; 32 Traits &middot; 4 Classes</div><p class="fc-desc">Every race brings 4 hand-built traits &mdash; 3 powers and 1 weakness. Stacked with 4 class kits (Warrior, Mage, Rogue, Ranger), no two builds play the same.</p><span class="fc-tag">BUILD</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F48E;</span><div class="fc-title">Gem Socketing</div><p class="fc-desc">Socket rubies, sapphires, emeralds, void gems into gear. 28 craftable items across weapon, armour and accessory benches.</p><span class="fc-tag">CRAFTING</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F31F;</span><div class="fc-title">Ascendancy System</div><p class="fc-desc">Hit level 100 and unlock powers beyond the cap. Shadow Step, Assassinate, Aether Surge, Iron Will and more.</p><span class="fc-tag">ENDGAME</span></div>
     <div class="fc reveal"><span class="fc-icon">&#x1F30D;</span><div class="fc-title">22 Zones</div><p class="fc-desc">From the ruined Outpost to Neon Hollow where a 5000-year-old city is still running. Hand-crafted zones from Lv 5 fey gardens to Lv 100+ post-cap raids. The Curator awaits at the end of the map.</p><span class="fc-tag">WORLD</span></div>
@@ -304,18 +321,148 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 <section id="races">
   <div class="sec-head reveal">
     <p class="sec-pre">Choose Your Heritage</p>
-    <h2 class="sec-title">Eight <em style="color:var(--g)">Races</em></h2>
+    <h2 class="sec-title">Eight <em style="color:var(--g)">Races</em> &middot; <em style="color:var(--c)">32 Traits</em></h2>
     <div class="divbar"></div>
+    <p style="max-width:680px;margin:1.2rem auto 0;color:rgba(184,212,176,0.7);font-size:0.95rem;">Every race brings four hand-built traits — three powerful, one weakness. Pick your heritage carefully. <em style="color:var(--c);font-style:normal;">Active skills</em> in blue, <em style="color:var(--g);font-style:normal;">passives</em> in green, <em style="color:#ff6060;font-style:normal;">flaws</em> in red.</p>
   </div>
   <div class="race-grid">
-    <div class="rc reveal"><span class="rc-em">&#x1F98E;</span><div class="rc-name">XU</div><div class="rc-tag">Warrior Race</div><div class="rc-bonus">12% phys reduction</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F9D1;</span><div class="rc-name">HUMAN</div><div class="rc-tag">Adaptive</div><div class="rc-bonus">+5% XP all sources</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x2699;&#xFE0F;</span><div class="rc-name">GNOME</div><div class="rc-tag">Artificer</div><div class="rc-bonus">Highest INT+SPD</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F4AA;</span><div class="rc-name">OGRE</div><div class="rc-tag">The Unbroken</div><div class="rc-bonus">18% phys reduction</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F434;</span><div class="rc-name">CENTAUR</div><div class="rc-tag">Wind Rider</div><div class="rc-bonus">Fastest Race</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F402;</span><div class="rc-name">MINOTAUR</div><div class="rc-tag">Earthbound</div><div class="rc-bonus">AOE Heal Pulse</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F9DD;</span><div class="rc-name">ELF</div><div class="rc-tag">Aether Weaver</div><div class="rc-bonus">-20% Mana Cost</div></div>
-    <div class="rc reveal"><span class="rc-em">&#x1F9DB;</span><div class="rc-name">VAMPIRE</div><div class="rc-tag">Deep Houses</div><div class="rc-bonus">Life Steal + Blink</div></div>
+
+    <!-- XU -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F98E;</span>
+        <div class="rc-meta">
+          <div class="rc-name">XU</div>
+          <div class="rc-tag">The Warrior Race &middot; built for the front line</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Scale Plating</div><div class="rct-desc">12% physical damage reduction. Their scales aren't decorative.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Warrior Blood</div><div class="rct-desc">+20% damage while below 30% HP. The lower you bleed, the harder you swing.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Crest Flare</div><div class="rct-desc">Fear-strike. Enemies in a 6-tile cone flee at 1.3× speed for 4 seconds. <b>Hotkey 9</b>, 30s cooldown.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; SLOW</b> &mdash; 8% movement speed penalty. Built for war, not for marathons.</div>
+    </div>
+
+    <!-- HUMAN -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F9D1;</span>
+        <div class="rc-meta">
+          <div class="rc-name">HUMAN</div>
+          <div class="rc-tag">The Adaptable &middot; jack of all trades, master of most</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Adaptability</div><div class="rct-desc">+1 to every base stat. Generalist by design.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Fast Learner</div><div class="rct-desc">+8% XP from every source. The xp you earn xp other races would have walked past.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Any Weapon</div><div class="rct-desc">No proficiency penalties. Whatever you pick up, you swing well.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; BALANCED</b> &mdash; No standout exceptional stat. Solid everywhere, dominant nowhere.</div>
+    </div>
+
+    <!-- GNOME -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x2699;&#xFE0F;</span>
+        <div class="rc-meta">
+          <div class="rc-name">GNOME</div>
+          <div class="rc-tag">The Artificer &middot; small, sharp, and accompanied</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Automaton Pet</div><div class="rct-desc">A clockwork companion that fights with you, taking aggro and dealing damage. Persists across zones. <b>Hotkey 9</b>, 60s respawn.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Precision</div><div class="rct-desc">+15% critical hit chance. Calibrated for the killing blow.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Tinker</div><div class="rct-desc">+25% gold from chests and rare drops from automaton mobs. The world coughs up secrets for you.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; FRAGILE</b> &mdash; -10% maximum HP. You break easily. The pet is your hit-stick.</div>
+    </div>
+
+    <!-- OGRE -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F4AA;</span>
+        <div class="rc-meta">
+          <div class="rc-name">OGRE</div>
+          <div class="rc-tag">The Unbroken &middot; immovable object personified</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Thick Hide</div><div class="rct-desc">18% physical damage reduction. Highest in the game.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">War Chant</div><div class="rct-desc">8-tile radius buff &mdash; +25% damage and +15% damage reduction to you and all nearby allies for 8s. <b>Hotkey 9</b>, 45s cooldown.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Colossus</div><div class="rct-desc">+30% maximum HP. You don't go down. They go down.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; SLOW</b> &mdash; 12% movement speed penalty. Steady. Inexorable. Tedious.</div>
+    </div>
+
+    <!-- CENTAUR -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F434;</span>
+        <div class="rc-meta">
+          <div class="rc-name">CENTAUR</div>
+          <div class="rc-tag">Wind Rider &middot; the gallop is the weapon</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Swift</div><div class="rct-desc">+15% base movement speed. Fastest race in the game.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Wind-Read</div><div class="rct-desc">+8 tiles aggro detection range. You see them before they see you.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Charge</div><div class="rct-desc">Sprint at 2× speed for 1.5s. The next melee hit during or just after deals +200% damage. <b>Hotkey 9</b>, 18s cooldown.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; NO HEAVY ARMOUR</b> &mdash; -10% defense from chest/legs/boots. Built for speed, not protection.</div>
+    </div>
+
+    <!-- MINOTAUR -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F402;</span>
+        <div class="rc-meta">
+          <div class="rc-name">MINOTAUR</div>
+          <div class="rc-tag">Earthbound &middot; the bull who heals the herd</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Natural Healer</div><div class="rct-desc">+40% healing from ALL sources &mdash; potions, regen, Heal Pulse skill, even ambient HP recovery.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Earthsense</div><div class="rct-desc">Nearby treasure chests glow brighter. You feel the buried gold.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Vreth Stance</div><div class="rct-desc">For 3 seconds, take 60% less damage and reflect 30% back. Lower your head, hold the line. <b>Hotkey 9</b>, 25s cooldown.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; SLOW</b> &mdash; 6% movement speed penalty. Steady on hooves.</div>
+    </div>
+
+    <!-- ELF -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F9DD;</span>
+        <div class="rc-meta">
+          <div class="rc-name">ELF</div>
+          <div class="rc-tag">Aether Weaver &middot; the eldest, still listening to the wound</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Aether-Weaving</div><div class="rct-desc">-20% mana cost on all spells. The aether bends easier for them.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Ancient Knowledge</div><div class="rct-desc">+12% damage with spells (magic damage). They remember when these incantations were taught.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Void-Sight</div><div class="rct-desc">For 8 seconds, reveal all enemies on the minimap including invisible/cloaked targets. <b>Hotkey 9</b>, 50s cooldown.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; FRAGILE</b> &mdash; -15% maximum HP. Don't get hit. Or if you must, get hit once.</div>
+    </div>
+
+    <!-- VAMPIRE -->
+    <div class="rc reveal">
+      <div class="rc-head">
+        <span class="rc-em">&#x1F9DB;</span>
+        <div class="rc-meta">
+          <div class="rc-name">VAMPIRE</div>
+          <div class="rc-tag">Deep Houses &middot; you sneak, you kill, you don't ask permission</div>
+        </div>
+      </div>
+      <div class="rc-traits">
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Blood Drain</div><div class="rct-desc">5% lifesteal on melee. The kill heals you. Built into every swing.</div></div></div>
+        <div class="rc-trait"><span class="rct-icon">PASSIVE</span><div class="rct-body"><div class="rct-name">Supernatural Speed</div><div class="rct-desc">+12% movement speed and +25% backstab damage. You strike from behind and you're gone before they turn.</div></div></div>
+        <div class="rc-trait t-active"><span class="rct-icon">ACTIVE</span><div class="rct-body"><div class="rct-name">Void-Step</div><div class="rct-desc">Teleport 5 tiles in your facing direction. Brief invincibility on dash exit. <b>Hotkey 9</b>, 12s cooldown.</div></div></div>
+      </div>
+      <div class="rc-flaw"><b>FLAW &middot; AETHER LIGHT</b> &mdash; -15% stats in bright zones (Outpost, Sanctuary). Penalty scales further with your own equipped lightstone illumination. Floor: -50%. Lore-tax for the strongest race.</div>
+    </div>
+
   </div>
   <div style="text-align:center;margin-top:3rem;" class="reveal"><a href="mechanics.html" class="btn-s">Full Race &amp; Class Guide &rarr;</a></div>
 </section>
@@ -524,8 +671,47 @@ document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(
 // Categories: 'major' (cyan accent), 'content' (green, default), 'fix' (orange)
 const PATCH_NOTES = [
   // ═══════════════════════════════════════════════════════════════════════════
+  // v93.0-a41 through a58 — RACIAL TRAITS, LIGHTSTONE PHASE 2, DEPTH SENTINEL,
+  // COMBAT JUICE. The biggest gameplay-depth refresh since the v93.0 base ship.
+  // ═══════════════════════════════════════════════════════════════════════════
+  {ver:'v93.0-a57–a58', date:'May 2026', cat:'major', title:'Combat Juice &mdash; Scaled Shake, Slow-Mo, Damage Number Punch',
+   notes:[
+     'New <b>JUICE module</b> centralises combat feedback so every system inherits the same upgrade.',
+     '<b>Screenshake</b> scales with damage ratio &mdash; small wobble on light hits, violent shake on big crits.',
+     '<b>Slow-mo cinematic</b> on boss kills &mdash; 450ms at 0.30&times; time-scale. All particles + animations ride the curve.',
+     '<b>Damage numbers</b> now scale 13px&rarr;28px with damage ratio. Big hits wiggle. Huge hits flash.',
+     'Hit-stop was tested in a57 and pulled in a58 &mdash; at high power levels every basic attack feels "big" so it strobed the screen.',
+   ]},
+  {ver:'v93.0-a55–a56', date:'May 2026', cat:'major', title:'The Depth Sentinel &mdash; Custom Boss AI',
+   notes:[
+     'The Convergence boss had its unique mesh since a11 but ran Commandant Xerath\'s kit. <b>Finally has its own ~250-line bespoke AI.</b>',
+     '<b>5 phases</b> &mdash; Awakening, Fracture, Cascade, Collapse, Void. Each shouts its own lore line on transition.',
+     '<b>5 lightstone-aware passives</b>: Lightstone Echo (damages you less if bright), Light Drain (consumes your illum as dmg), Refraction Rain, Darkness Curse (suppresses your lightstone 4s), The Stillness (fog spikes 3.5&times;).',
+     '<b>5 attacks</b>: Shard Throw, Fracture Echo (4 cones), Shard Swarm, Void Vacuum (pulls + curses), Crown Detonation (14-tile AoE).',
+     'Burning-affix lightstones deal <b>3&times; damage to the Sentinel</b> &mdash; boss-killer interaction.',
+   ]},
+  {ver:'v93.0-a50–a54', date:'May 2026', cat:'major', title:'LIGHTSTONE PHASE 2 &mdash; 5 Waves, 11 Items, 10 Affixes',
+   notes:[
+     '<b>Wave 1 (a50)</b> &mdash; MP sync. Your party now sees your halo + PointLight. New <code>lightstone_equip</code> message + state-packet integration.',
+     '<b>Wave 2 (a51)</b> &mdash; 10 lightstone-specific affixes. <b>Pulsing</b> throbs on 2s cycle. <b>Iridescent</b> cycles rainbow hue. <b>Burning</b> damages enemies in radius. Also fixed a latent bug where lightstones silently rolled weapon affixes.',
+     '<b>Wave 3 (a52)</b> &mdash; Light-vs-dark mechanics. 22 undead/void enemy types FLEE from high-illum lightstones (illum ≥ 16). Vampire Aether Light penalty now scales with own equipped lightstone.',
+     '<b>Wave 4 (a53)</b> &mdash; 3 Echo Shard lightstones. <b>Echo Filament</b> +1 illum per completed quest. <b>Convergent Lens</b> refracts to allied halos in MP. <b>Sentinel\'s Eye</b> only emits light when an enemy is within 8 tiles.',
+     '<b>Wave 5 (a54)</b> &mdash; 3 mythics. <b>Aether Beacon</b> drops 8s light puddles on damage. <b>Aether Forge</b> AOE damage burst every 12s in dark zones. <b>Communal Lantern</b> scales with party size up to 60 illum at 4 players.',
+   ]},
+  {ver:'v93.0-a41–a49', date:'May 2026', cat:'major', title:'32 Racial Traits Audited &mdash; 9 Actives Built',
+   notes:[
+     'Every race now has 4 traits (3 powers + 1 flaw) <b>and the active skills actually work.</b> 9-ship arc fixing or building from scratch every advertised racial.',
+     '<b>Xu Crest Flare</b> &mdash; 6-tile fear cone, enemies flee at 1.3&times; speed.',
+     '<b>Gnome Automaton Pet</b> &mdash; clockwork companion, persists across zones.',
+     '<b>Ogre War Chant</b> &mdash; 8-tile party-wide +25% atk, +15% DR for 8s.',
+     '<b>Centaur Charge</b> &mdash; 2&times; sprint sprint + next melee deals +200% damage.',
+     '<b>Minotaur Vreth Stance</b> &mdash; 60% damage reduction + 30% reflect for 3s.',
+     '<b>Elf Void-Sight</b> &mdash; 8s minimap-wide enemy reveal.',
+     '<b>Vampire Void-Step</b> &mdash; 5-tile teleport in facing direction, brief i-frames.',
+     'Plus passives: Vampire Blood Drain (5% lifesteal), Minotaur Natural Healer (+40% healing across 5 sites), Centaur Wind-Read, Ogre Colossus, Vampire Aether Light, more.',
+   ]},
+  // ═══════════════════════════════════════════════════════════════════════════
   // v93.0 — THE WOUND IN AETHON. Convergence endgame + Lightstone equipment slot.
-  // 37 builds shipped, 12 phases of feature work, 6 deep bugfixes.
   // ═══════════════════════════════════════════════════════════════════════════
   {ver:'v93.0', date:'May 2026', cat:'major', title:'THE CONVERGENCE — Procedural Endgame &amp; Echo Shard Meta-Progression',
    notes:[

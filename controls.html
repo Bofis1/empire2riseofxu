@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Controls — Empire 2: Rise of Xu</title>
+<title>Controls &amp; Controller Guide — Empire 2: Rise of Xu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Cinzel:wght@400;600;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -79,6 +79,14 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
 .key-badge{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--xu-cyan);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);padding:0.25rem 0.6rem;border-radius:3px;white-space:nowrap;min-width:44px;text-align:center;}
 .key-badge.gold{color:var(--xu-gold);background:rgba(255,204,32,0.08);border-color:rgba(255,204,32,0.3);}
 .key-badge.red{color:var(--xu-red);background:rgba(255,34,68,0.08);border-color:rgba(255,34,68,0.3);}
+.key-badge.purple{color:var(--xu-purple);background:rgba(136,34,255,0.08);border-color:rgba(136,34,255,0.3);}
+.key-badge.green{color:var(--xu-green);background:rgba(0,255,136,0.08);border-color:rgba(0,255,136,0.3);}
+.combo-callout{margin-top:1.5rem;padding:1.25rem 1.5rem;background:linear-gradient(135deg,rgba(136,34,255,0.06),rgba(0,229,255,0.04));border:1px solid rgba(136,34,255,0.25);border-left:3px solid var(--xu-purple);border-radius:3px;}
+.combo-callout h4{font-family:'Cinzel',serif;font-size:0.95rem;color:#fff;margin-bottom:0.5rem;letter-spacing:0.06em;}
+.combo-callout p{font-size:0.85rem;color:var(--xu-text);line-height:1.65;}
+.combo-callout .pair{display:inline-flex;align-items:center;gap:0.35rem;margin:0 0.5rem;}
+.combo-callout .plus{color:var(--xu-dim);font-family:'Share Tech Mono',monospace;}
+.ctrl-subhead{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.25em;color:var(--xu-cyan);text-transform:uppercase;margin:1.75rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(0,229,255,0.15);}
 .binding-desc{font-size:0.92rem;color:var(--xu-dim);}
 .binding-desc b{color:var(--xu-text);}
 
@@ -230,34 +238,126 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
     </div>
   </div>
 
-  <!-- CONTROLLER / GAMEPAD SECTION -->
+  <!-- CONTROLLER / GAMEPAD SECTION (rewritten for v93.0-a77) -->
   <div class="ctrl-section reveal">
-    <div class="section-eyebrow">v91.1 Update</div>
+    <div class="section-eyebrow">Full Guide for New Players</div>
     <h2 class="section-title">Controller <span>Support</span></h2>
-    <p style="color:var(--xu-dim);font-size:0.95rem;margin-bottom:1.5rem;max-width:760px;">
-      Empire 2 supports any standard <b style="color:var(--xu-text)">Xbox</b> or <b style="color:var(--xu-text)">PlayStation</b> controller via the Web Gamepad API. Plug in, open <span class="hl">Settings (⚙)</span>, and toggle <b style="color:var(--xu-text)">🎮 GAMEPAD / CONTROLLER</b> to enable. The setting persists across sessions. Mouse and keyboard remain fully functional alongside.
+    <p style="color:var(--xu-dim);font-size:0.95rem;margin-bottom:1rem;max-width:760px;">
+      Empire 2 supports any standard <b style="color:var(--xu-text)">Xbox</b> or <b style="color:var(--xu-text)">PlayStation</b> controller via the Web Gamepad API. Plug in the controller, open <span class="hl">Settings (⚙)</span>, and toggle <b style="color:var(--xu-text)">🎮 GAMEPAD / CONTROLLER</b> on. The setting persists. Mouse and keyboard keep working alongside the controller, so you can switch any time.
+    </p>
+    <p style="color:var(--xu-dim);font-size:0.95rem;margin-bottom:2rem;max-width:760px;">
+      The whole game is playable end-to-end on a controller: combat, menus, inventory, settings, the lobby, the works. Below is the full button guide.
     </p>
 
+    <!-- ── Movement, aim, triggers ── -->
+    <div class="ctrl-subhead">Movement &amp; Aim</div>
     <div class="binding-grid">
-      <div class="binding"><span class="key-badge">L STICK</span><div class="binding-desc"><b>Move</b> — replaces WASD</div></div>
-      <div class="binding"><span class="key-badge gold">R STICK</span><div class="binding-desc"><b>Aim</b> — drives cursor / facing direction</div></div>
-      <div class="binding"><span class="key-badge">A / ✕</span><div class="binding-desc"><b>Attack</b> — hold for continuous strikes</div></div>
-      <div class="binding"><span class="key-badge red">B / ◯</span><div class="binding-desc"><b>Dodge</b> — also closes open menus</div></div>
-      <div class="binding"><span class="key-badge">X / ▢</span><div class="binding-desc"><b>Block</b> — hold to raise shield</div></div>
-      <div class="binding"><span class="key-badge gold">Y / △</span><div class="binding-desc"><b>Interact</b> — talk, harvest, craft</div></div>
-      <div class="binding"><span class="key-badge">LB / L1</span><div class="binding-desc"><b>Previous Skill</b> — cycle skill slot down</div></div>
-      <div class="binding"><span class="key-badge">RB / R1</span><div class="binding-desc"><b>Next Skill</b> — cycle skill slot up</div></div>
-      <div class="binding"><span class="key-badge gold">RT / R2</span><div class="binding-desc"><b>Use Skill</b> — fire selected skill</div></div>
-      <div class="binding"><span class="key-badge">LT / L2</span><div class="binding-desc"><b>Quick Potion</b> — use item bar slot 1</div></div>
-      <div class="binding"><span class="key-badge">D-PAD ↑</span><div class="binding-desc"><b>Item Bar 1</b> — quick-use slot Z</div></div>
-      <div class="binding"><span class="key-badge">D-PAD ↓</span><div class="binding-desc"><b>Item Bar 2</b> — quick-use slot X</div></div>
-      <div class="binding"><span class="key-badge">D-PAD ←</span><div class="binding-desc"><b>Item Bar 3</b> — quick-use slot C</div></div>
-      <div class="binding"><span class="key-badge">D-PAD →</span><div class="binding-desc"><b>Item Bar 4</b> — quick-use slot V</div></div>
-      <div class="binding"><span class="key-badge">START</span><div class="binding-desc"><b>Settings</b> — open settings menu</div></div>
-      <div class="binding"><span class="key-badge">SELECT</span><div class="binding-desc"><b>Inventory</b> — toggle inventory panel</div></div>
+      <div class="binding"><span class="key-badge">L STICK</span><div class="binding-desc"><b>Move</b> — eight-direction, iso-rotated. Replaces WASD.</div></div>
+      <div class="binding"><span class="key-badge gold">R STICK</span><div class="binding-desc"><b>Aim</b> — drives the cursor and your facing direction. Tilt where you want spells, arrows, and attacks to go.</div></div>
+      <div class="binding"><span class="key-badge gold">RT / R2</span><div class="binding-desc"><b>Fire Selected Skill</b> — casts whatever skill slot is currently selected (cycle with LB/RB tap).</div></div>
+      <div class="binding"><span class="key-badge">LT / L2</span><div class="binding-desc"><b>Quick Potion</b> — uses item bar slot 1. Bind a healing potion here.</div></div>
     </div>
-    <p style="margin-top:1.25rem;font-size:0.78rem;color:var(--xu-dim);font-family:'Share Tech Mono',monospace;letter-spacing:0.08em;">
-      ⚠ Bindings use the Web Gamepad Standard mapping. Off-brand controllers without standard mapping may have button indices in the wrong order.
+
+    <!-- ── Face buttons (default combat) ── -->
+    <div class="ctrl-subhead">Face Buttons (combat — no bumper held)</div>
+    <p style="font-size:0.85rem;color:var(--xu-dim);margin-bottom:0.75rem;">
+      These are the everyday combat actions. They only fire when neither bumper is held (because bumper-held turns them into skill combos — see below).
+    </p>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">A / ✕</span><div class="binding-desc"><b>Attack</b> — hold for continuous strikes. Direction comes from the right stick.</div></div>
+      <div class="binding"><span class="key-badge red">B / ◯</span><div class="binding-desc"><b>Dodge Roll</b> — short i-frame burst in your movement direction. Also closes open menus.</div></div>
+      <div class="binding"><span class="key-badge">X / ▢</span><div class="binding-desc"><b>Block</b> — hold to raise shield. Front-facing damage reduction.</div></div>
+      <div class="binding"><span class="key-badge gold">Y / △</span><div class="binding-desc"><b>Interact</b> — talk to NPCs, harvest gem nodes, open crafting stations, accept quests.</div></div>
+    </div>
+
+    <!-- ── Skill combos (the headline feature) ── -->
+    <div class="ctrl-subhead" style="color:var(--xu-purple);border-color:rgba(136,34,255,0.25);">Skill Combos &mdash; All 8 Skills, One Press</div>
+    <p style="font-size:0.85rem;color:var(--xu-text);margin-bottom:0.75rem;">
+      Hold a bumper and press a face button to cast the corresponding skill. All 8 skill slots are reachable in <b style="color:var(--xu-purple)">one combo press</b>. A floating hint appears at the bottom of the screen while you hold a bumper, listing what each face button is bound to.
+    </p>
+
+    <div class="combo-callout">
+      <h4 style="color:var(--xu-purple);">LB / L1 + Face Button &nbsp;→&nbsp; Skills 1 through 4</h4>
+      <p>
+        <span class="pair"><span class="key-badge purple">LB</span><span class="plus">+</span><span class="key-badge">A</span></span> Skill 1 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge purple">LB</span><span class="plus">+</span><span class="key-badge red">B</span></span> Skill 2 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge purple">LB</span><span class="plus">+</span><span class="key-badge">X</span></span> Skill 3 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge purple">LB</span><span class="plus">+</span><span class="key-badge gold">Y</span></span> Skill 4
+      </p>
+    </div>
+
+    <div class="combo-callout" style="margin-top:0.75rem;border-left-color:var(--xu-cyan);background:linear-gradient(135deg,rgba(0,229,255,0.06),rgba(255,204,32,0.04));border-color:rgba(0,229,255,0.25);">
+      <h4 style="color:var(--xu-cyan);">RB / R1 + Face Button &nbsp;→&nbsp; Skills 5 through 8</h4>
+      <p>
+        <span class="pair"><span class="key-badge">RB</span><span class="plus">+</span><span class="key-badge">A</span></span> Skill 5 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge">RB</span><span class="plus">+</span><span class="key-badge red">B</span></span> Skill 6 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge">RB</span><span class="plus">+</span><span class="key-badge">X</span></span> Skill 7 &nbsp;·&nbsp;
+        <span class="pair"><span class="key-badge">RB</span><span class="plus">+</span><span class="key-badge gold">Y</span></span> Skill 8
+      </p>
+    </div>
+
+    <p style="font-size:0.85rem;color:var(--xu-dim);margin-top:1rem;max-width:760px;">
+      <b style="color:var(--xu-text)">Tip:</b> arrange your skill bar so the abilities you use most go in slots 1-4 (LB combos) since the LB row tends to be slightly faster to reach than RB on most pads. Equip skills via the <span class="hl">K</span> menu or skill manager NPC.
+    </p>
+
+    <!-- ── Bumpers (legacy cycle, secondary use) ── -->
+    <div class="ctrl-subhead">Bumpers (alternate use — quick cycle)</div>
+    <p style="font-size:0.85rem;color:var(--xu-dim);margin-bottom:0.75rem;">
+      If you tap a bumper without pressing any face button while it's held, it falls back to the classic "cycle selected slot" behavior. Useful when you want to spam a single skill with just the trigger.
+    </p>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">LB / L1 tap</span><div class="binding-desc"><b>Previous Skill Slot</b> — cycles the selected slot down by 1.</div></div>
+      <div class="binding"><span class="key-badge">RB / R1 tap</span><div class="binding-desc"><b>Next Skill Slot</b> — cycles the selected slot up by 1.</div></div>
+    </div>
+
+    <!-- ── D-pad (item bar) ── -->
+    <div class="ctrl-subhead">D-Pad (item bar quick-use)</div>
+    <p style="font-size:0.85rem;color:var(--xu-dim);margin-bottom:0.75rem;">
+      The D-pad fires your bottom-row item bar (consumables, scrolls, food, throwables). Drag items from your inventory onto these slots first.
+    </p>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">D-PAD ↑</span><div class="binding-desc"><b>Item Bar 1</b> — same as the Z key on keyboard.</div></div>
+      <div class="binding"><span class="key-badge">D-PAD ↓</span><div class="binding-desc"><b>Item Bar 2</b> — same as the X key.</div></div>
+      <div class="binding"><span class="key-badge">D-PAD ←</span><div class="binding-desc"><b>Item Bar 3</b> — same as the C key.</div></div>
+      <div class="binding"><span class="key-badge">D-PAD →</span><div class="binding-desc"><b>Item Bar 4</b> — same as the V key.</div></div>
+    </div>
+
+    <!-- ── System buttons ── -->
+    <div class="ctrl-subhead">System Buttons</div>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge green">START</span><div class="binding-desc"><b>Settings</b> — opens the settings panel (graphics, audio, controller bindings, tutorial reset).</div></div>
+      <div class="binding"><span class="key-badge green">SELECT / SHARE</span><div class="binding-desc"><b>Inventory</b> — toggles the inventory panel.</div></div>
+    </div>
+
+    <!-- ── Menu navigation ── -->
+    <div class="ctrl-subhead">Menu Navigation</div>
+    <p style="font-size:0.85rem;color:var(--xu-dim);margin-bottom:0.75rem;">
+      When any menu, modal, or dialog is open, the controller automatically switches into navigation mode. The focused element shows a green outline so you can always see what's selected.
+    </p>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">D-PAD or L STICK</span><div class="binding-desc"><b>Move Focus</b> — picks the nearest focusable element in the direction you press.</div></div>
+      <div class="binding"><span class="key-badge">D-PAD ←/→ on slider</span><div class="binding-desc"><b>Tweak Slider</b> — when a slider (audio volume, etc.) is focused, left/right adjusts the value.</div></div>
+      <div class="binding"><span class="key-badge">A / ✕</span><div class="binding-desc"><b>Activate</b> — clicks the focused element. Same path the mouse uses.</div></div>
+      <div class="binding"><span class="key-badge red">B / ◯</span><div class="binding-desc"><b>Close / Back</b> — closes the topmost open panel. Same as the Escape key.</div></div>
+    </div>
+
+    <!-- ── New player onboarding tip ── -->
+    <div class="combo-callout" style="margin-top:2rem;border-left-color:var(--xu-gold);background:linear-gradient(135deg,rgba(255,204,32,0.06),rgba(0,229,255,0.04));border-color:rgba(255,204,32,0.25);">
+      <h4 style="color:var(--xu-gold);">First Five Minutes (controller checklist)</h4>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">1.</b> Plug in the controller, log into Xu Outpost.</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">2.</b> Press <span class="key-badge green" style="vertical-align:middle;">START</span> to open settings.</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">3.</b> Toggle <b style="color:var(--xu-purple)">🎮 GAMEPAD</b> on. A 🎮 icon should appear in the HUD.</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">4.</b> Press <span class="key-badge red" style="vertical-align:middle;">B</span> to close settings.</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">5.</b> Press <span class="key-badge green" style="vertical-align:middle;">SELECT</span> to open inventory. Drag a potion to item-bar slot 1 (so <span class="key-badge" style="vertical-align:middle;">LT</span> heals you).</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">6.</b> Press <span class="hl">K</span> (or talk to a trainer NPC) to set up your skill slots 1-4 with the abilities you use most.</p>
+      <p style="margin-bottom:0.4rem;"><b style="color:var(--xu-text)">7.</b> Walk out the gate and try <span class="key-badge purple" style="vertical-align:middle;">LB</span> + <span class="key-badge" style="vertical-align:middle;">A</span> on a goblin. Watch the combo-hint overlay at the bottom while you hold LB.</p>
+      <p><b style="color:var(--xu-text)">8.</b> When you see the hint overlay, you know it's working. Have fun.</p>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--xu-dim);font-family:'Share Tech Mono',monospace;letter-spacing:0.08em;line-height:1.7;">
+      ⚠ Bindings use the Web Gamepad Standard mapping. Off-brand controllers that don't report a standard mapping may have buttons in different indices.
+      <br>
+      ⚠ Text entry (chat, login name, character creation) still requires a real keyboard. A virtual keyboard for controllers is on the backlog.
     </p>
   </div>
 

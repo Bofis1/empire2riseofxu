@@ -41,9 +41,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:cen
 .hero-div{width:240px;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);opacity:0;animation:fadeIn .8s .7s forwards;}
 .hero-sub{font-size:1.1rem;color:rgba(184,212,176,0.7);max-width:540px;font-weight:300;letter-spacing:0.04em;opacity:0;animation:fadeUp .8s .8s forwards;}
 .hero-sub b{color:var(--tx);}
-.hero-stats{display:flex;gap:3rem;opacity:0;animation:fadeUp .8s 1.0s forwards;}
-.st-num{font-family:'Cinzel Decorative',serif;font-size:2rem;font-weight:900;color:var(--g);line-height:1;text-shadow:var(--glow);}
-.st-lab{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;}
+.hero-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:1.4rem 2.2rem;opacity:0;animation:fadeUp .8s 1.0s forwards;max-width:920px;margin:0 auto;}
+.st-cell{text-align:center;cursor:default;transition:transform .2s;text-decoration:none;color:inherit;display:block;}
+.st-cell.lnk{cursor:pointer;}
+.st-cell:hover{transform:translateY(-3px);}
+.st-num{font-family:'Cinzel Decorative',serif;font-size:1.7rem;font-weight:900;color:var(--g);line-height:1;text-shadow:var(--glow);}
+.st-lab{font-family:'Share Tech Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;margin-top:0.35rem;}
 .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeUp .8s 1.2s forwards;}
 .btn-p{font-family:'Cinzel Decorative',serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;color:var(--bg);background:var(--g);border:none;padding:0.9rem 2.2rem;text-decoration:none;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:all .25s;position:relative;overflow:hidden;}
 .btn-p::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent);transform:translateX(-100%);transition:transform .4s;}
@@ -221,13 +224,19 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <p class="hero-pre">Browser Action RPG &middot; Free to Play &middot; No Download</p>
     <h1 class="hero-title"><span class="l1">EMPIRE 2</span><span class="l2">Rise of Xu</span></h1>
     <div class="hero-div"></div>
-    <p class="hero-sub">Fight through <b>23 zones</b>. Slay <b>25 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
+    <p class="hero-sub">Fight through <b>25 zones</b>. Slay <b>28 bosses</b>. Build your legend.<br>Real-time combat. Multiplayer co-op. Endgame that will destroy you.</p>
     <div class="hero-stats">
-      <div><div class="st-num">24</div><div class="st-lab">Zones</div></div>
-      <div><div class="st-num">25</div><div class="st-lab">Bosses</div></div>
-      <div><div class="st-num">32</div><div class="st-lab">Race Traits</div></div>
-      <div><div class="st-num">11</div><div class="st-lab">Lightstones</div></div>
-      <div><div class="st-num">∞</div><div class="st-lab">Depth</div></div>
+      <a class="st-cell lnk" href="wiki.html#items"><div class="st-num">339</div><div class="st-lab">Items</div></a>
+      <a class="st-cell lnk" href="wiki.html#bosses"><div class="st-num">28</div><div class="st-lab">Bosses</div></a>
+      <a class="st-cell lnk" href="wiki.html#skills"><div class="st-num">62</div><div class="st-lab">Skills</div></a>
+      <a class="st-cell lnk" href="wiki.html#talents"><div class="st-num">192</div><div class="st-lab">Talents</div></a>
+      <a class="st-cell lnk" href="wiki.html#ascendancy"><div class="st-num">26</div><div class="st-lab">Ascend.</div></a>
+      <a class="st-cell lnk" href="wiki.html#sets"><div class="st-num">14</div><div class="st-lab">Sets</div></a>
+      <a class="st-cell lnk" href="wiki.html#zones"><div class="st-num">25</div><div class="st-lab">Zones</div></a>
+      <a class="st-cell lnk" href="wiki.html#races"><div class="st-num">8</div><div class="st-lab">Races</div></a>
+      <a class="st-cell lnk" href="wiki.html#enemies"><div class="st-num">102</div><div class="st-lab">Enemies</div></a>
+      <a class="st-cell lnk" href="wiki.html#crafting"><div class="st-num">27</div><div class="st-lab">Crafts</div></a>
+      <a class="st-cell lnk" href="wiki.html#achievements"><div class="st-num">98</div><div class="st-lab">Achievements</div></a>
     </div>
     <div class="hero-btns">
       <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" target="_blank" class="btn-p">PLAY NOW FREE</a>

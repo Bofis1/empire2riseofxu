@@ -479,6 +479,20 @@ document.querySelectorAll('.ws-cell').forEach(c => {
   if(c.dataset.jump) c.addEventListener('click', () => switchTab(c.dataset.jump));
 });
 
+// Deep-link via URL hash (e.g. wiki.html#talents). Lets the index hero stats
+// link straight to the relevant wiki tab. We accept any hash that matches a
+// known tab name; unknown hashes are silently ignored. Also wire up
+// hashchange so back/forward and in-page nav both work.
+function _wikiApplyHash(){
+  var h = (window.location.hash || '').replace(/^#/, '');
+  if(!h) return;
+  var tab = document.querySelector('.wiki-tab[data-tab="' + h + '"]');
+  if(tab) switchTab(h);
+}
+window.addEventListener('hashchange', _wikiApplyHash);
+// Defer initial application until DOM ready below (after all renders register).
+setTimeout(_wikiApplyHash, 0);
+
 // ── ITEMS ──
 // Filter logic now matches itype against BOTH type AND slot, so chips like
 // "amulet"/"ring" (which are slot values on items with type:"accessory")

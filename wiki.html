@@ -558,6 +558,13 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
       <dt><span class="guide-key">N</span></dt>
       <dd>Open the talent tree (spend talent points)</dd>
     </dl>
+    <h3>Consumables (Item Bar)</h3>
+    <dl class="guide-quickref">
+      <dt><span class="guide-key">F</span></dt>
+      <dd>Use a health potion from your inventory (also opens dialog with nearby NPCs)</dd>
+      <dt><span class="guide-key">Z</span> <span class="guide-key">X</span> <span class="guide-key">C</span> <span class="guide-key">V</span> <span class="guide-key">G</span></dt>
+      <dd>Item bar slots — drag consumables here from inventory, then press the matching key to use</dd>
+    </dl>
     <h3>Menus</h3>
     <dl class="guide-quickref">
       <dt><span class="guide-key">I</span></dt>
@@ -566,8 +573,6 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
       <dd>Quest log</dd>
       <dt><span class="guide-key">P</span></dt>
       <dd>Stat points (spend on STR / VIT / AGI / INT / DEF)</dd>
-      <dt><span class="guide-key">F</span></dt>
-      <dd>Potion / Talk — drinks healing potion when not near an NPC, opens dialog when you are</dd>
       <dt><span class="guide-key">C</span></dt>
       <dd>Crafting bench (when you're standing at one)</dd>
       <dt><span class="guide-key">Y</span></dt>
@@ -576,6 +581,10 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
       <dd>Stats &amp; leaderboard</dd>
       <dt><span class="guide-key">G</span></dt>
       <dd>Guild panel</dd>
+      <dt><span class="guide-key">O</span></dt>
+      <dd>Dialogue log (re-read conversations you missed)</dd>
+      <dt><span class="guide-key">H</span></dt>
+      <dd>Help menu (full in-game controls reference)</dd>
       <dt><span class="guide-key">Esc</span></dt>
       <dd>Close menus / return to lobby</dd>
       <dt><span class="guide-key">F5</span></dt>
@@ -586,15 +595,15 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <!-- ─────────────── 05 HUD ─────────────── -->
   <section class="guide-section" id="g-hud">
     <h2><span class="guide-num">05 ·</span> Reading Your HUD</h2>
-    <h4>Top-Left</h4>
-    <p>Your character name, class, race, level, HP bar (red/green), MP bar (blue/purple), and current gold + gem count. Below that is your equipped weapon's name.</p>
-    <h4>Top-Right</h4>
-    <p>Current zone name, in-game timer, FPS counter, and a <em>LOBBY</em> button to bail back to character select. There's a controls reference (<span class="guide-key">?</span>) and settings (<span class="guide-key">⚙</span>) too.</p>
-    <h4>Bottom Bar (skill bar)</h4>
-    <p>Eight skill slots numbered 1-8. The big colored icons are your equipped skills. The slot above it labeled <em>X CRES</em> or similar is your racial ability. Two small slots labeled <em>X · Y</em> on the left side are your <strong>quick potions</strong> — the red one is HP, the blue one is MP.</p>
-    <h4>Bottom-Right minimap</h4>
-    <p>Shows your zone. Yellow dots = enemies, green = you, red = boss, gold = portal exit. The legend can be toggled with the icon in the corner.</p>
-    <h4>Chat panel (bottom-left, optional)</h4>
+    <h4>Top Bar</h4>
+    <p>One horizontal strip across the top of the screen with everything you need at a glance: your character avatar, name, class, title, <strong>HP bar</strong> (green/red) and <strong>MP bar</strong> (blue) with current/max numbers, your <strong>level</strong>, available <strong>talent points</strong>, your <strong>gold</strong> count (◇), and your <strong>echo shards</strong> (💎, only earned in The Convergence). On the right side: current <strong>zone name</strong>, in-game timer, <strong>FPS counter</strong>, and a <em>← LOBBY</em> button to bail back to character select. Two small icons (<span class="guide-key">⚙</span> settings, <span class="guide-key">?</span> help) sit in the middle.</p>
+    <h4>Bottom — Skill Bar</h4>
+    <p>Eight numbered slots (1-8) for your equipped skills. Cooldowns sweep across the icon when a skill is on recovery. The big slot near the bar showing your race icon is your <strong>racial ability</strong> — press <span class="guide-key">E</span> to fire it.</p>
+    <h4>Bottom — Item Bar</h4>
+    <p>A separate row of slots labeled <span class="guide-key">Z</span> <span class="guide-key">X</span> <span class="guide-key">C</span> <span class="guide-key">V</span> <span class="guide-key">G</span> for <strong>consumables</strong>. Drag health potions, mana potions, scrolls, or food into these slots from your inventory. Press the matching key to use the item in that slot. <strong>Press <span class="guide-key">F</span> to use a health potion</strong> from your inventory directly without needing to put it on the bar.</p>
+    <h4>Bottom-Right Minimap</h4>
+    <p>Shows your zone. Your character is the green dot in the center; enemies and points of interest appear as colored markers. The legend can be toggled with the icon in the corner.</p>
+    <h4>Chat Panel (bottom-left, optional)</h4>
     <p>Combat log, loot pickups, level-ups, boss messages, and multiplayer chat. You can resize it with the S/M/L buttons or hide it entirely.</p>
   </section>
 
@@ -614,7 +623,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
     </ol>
     <div class="guide-callout warn">
       <div class="guide-callout-label">Warning</div>
-      <p>Don't run into the middle of a pack of 5+ enemies on a fresh character. Pull one or two at a time by approaching slowly. If your HP drops below half, back off and use a potion (<span class="guide-key">F</span> or click the bottom-left red flask).</p>
+      <p>Don't run into the middle of a pack of 5+ enemies on a fresh character. Pull one or two at a time by approaching slowly. If your HP drops below half, back off and press <span class="guide-key">F</span> to drink a health potion — or open inventory (<span class="guide-key">I</span>) and drag a potion onto your item bar slot (<span class="guide-key">Z</span>/<span class="guide-key">X</span>/<span class="guide-key">C</span>/<span class="guide-key">V</span>/<span class="guide-key">G</span>) so you can hotkey it during fights.</p>
     </div>
   </section>
 

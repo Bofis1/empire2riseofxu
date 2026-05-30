@@ -328,6 +328,61 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   .enemy-grid,.talent-nodes,.ach-grid{grid-template-columns:repeat(2,1fr);}
 }
 
+/* ── NEWBIE GUIDE STYLES ──────────────────────────────────────────── */
+.guide-hero{text-align:center;padding:2.5rem 1.5rem 2rem;max-width:880px;margin:0 auto;}
+.guide-hero h1{font-family:'Cinzel Decorative',serif;font-size:2.4rem;color:var(--xu-cyan);text-shadow:var(--glow-cyan);margin-bottom:0.6rem;letter-spacing:0.04em;}
+.guide-hero .guide-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.3em;color:var(--xu-gold);text-transform:uppercase;margin-bottom:1rem;}
+.guide-hero .guide-tagline{font-size:1.1rem;color:var(--xu-dim);font-style:italic;line-height:1.6;}
+.guide-toc{max-width:880px;margin:0 auto 3rem;padding:1.5rem 1.8rem;background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.2);border-radius:4px;}
+.guide-toc h3{font-family:'Share Tech Mono',monospace;font-size:0.85rem;letter-spacing:0.2em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.8rem;}
+.guide-toc ol{list-style:none;counter-reset:gtoc;display:grid;grid-template-columns:repeat(2,1fr);gap:0.45rem 1.5rem;}
+.guide-toc ol li{counter-increment:gtoc;padding-left:2.2rem;position:relative;font-size:0.95rem;}
+.guide-toc ol li::before{content:counter(gtoc,decimal-leading-zero);position:absolute;left:0;top:0;font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:var(--xu-gold);letter-spacing:0.05em;}
+.guide-toc a{color:var(--xu-text);text-decoration:none;border-bottom:1px solid transparent;transition:all 0.2s;}
+.guide-toc a:hover{color:var(--xu-cyan);border-bottom-color:var(--xu-cyan);}
+.guide-section{max-width:880px;margin:0 auto 3.5rem;padding:0 1rem;scroll-margin-top:80px;}
+.guide-section h2{font-family:'Cinzel Decorative',serif;font-size:1.7rem;color:var(--xu-cyan);margin-bottom:0.4rem;letter-spacing:0.02em;display:flex;align-items:center;gap:0.7rem;}
+.guide-section h2 .guide-num{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--xu-gold);letter-spacing:0.15em;flex:0 0 auto;}
+.guide-section h3{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--xu-gold);margin:1.6rem 0 0.6rem;letter-spacing:0.02em;}
+.guide-section h4{font-family:'Cinzel',serif;font-size:1rem;color:var(--xu-text);margin:1.1rem 0 0.4rem;}
+.guide-section p{margin-bottom:0.9rem;line-height:1.75;color:var(--xu-text);}
+.guide-section ul,.guide-section ol{margin:0.5rem 0 1.1rem 1.4rem;line-height:1.75;}
+.guide-section li{margin-bottom:0.4rem;}
+.guide-section strong{color:var(--xu-gold);font-weight:600;}
+.guide-section em{color:var(--xu-cyan);font-style:normal;font-family:'Share Tech Mono',monospace;font-size:0.92em;letter-spacing:0.02em;}
+.guide-section a{color:var(--xu-cyan);text-decoration:none;border-bottom:1px solid rgba(0,229,255,0.3);}
+.guide-section a:hover{border-bottom-color:var(--xu-cyan);}
+.guide-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,0.3),transparent);margin:1.2rem 0;}
+.guide-callout{padding:1rem 1.3rem;margin:1.2rem 0;border-left:3px solid var(--xu-gold);background:rgba(255,204,32,0.05);border-radius:0 4px 4px 0;}
+.guide-callout.tip{border-left-color:var(--xu-cyan);background:rgba(0,229,255,0.05);}
+.guide-callout.warn{border-left-color:var(--xu-red);background:rgba(255,34,68,0.05);}
+.guide-callout.note{border-left-color:var(--xu-purple);background:rgba(136,34,255,0.05);}
+.guide-callout-label{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:0.4rem;}
+.guide-callout.tip .guide-callout-label{color:var(--xu-cyan);}
+.guide-callout .guide-callout-label{color:var(--xu-gold);}
+.guide-callout.warn .guide-callout-label{color:var(--xu-red);}
+.guide-callout.note .guide-callout-label{color:var(--xu-purple);}
+.guide-callout p:last-child{margin-bottom:0;}
+.guide-key{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:0.78rem;font-weight:700;padding:0.15rem 0.5rem;background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.4);border-radius:3px;color:var(--xu-cyan);letter-spacing:0.05em;margin:0 0.1rem;vertical-align:1px;}
+.guide-class-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1rem 0;}
+.guide-class-card{padding:1rem 1.2rem;background:rgba(10,22,40,0.6);border:1px solid rgba(0,229,255,0.15);border-radius:4px;}
+.guide-class-card h4{margin:0 0 0.4rem;font-family:'Cinzel',serif;color:var(--xu-cyan);font-size:1.1rem;}
+.guide-class-card .guide-class-tag{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;color:var(--xu-gold);text-transform:uppercase;display:block;margin-bottom:0.5rem;}
+.guide-class-card p{font-size:0.92rem;margin:0;color:var(--xu-text);line-height:1.6;}
+.guide-quickref{display:grid;grid-template-columns:auto 1fr;gap:0.5rem 1.2rem;margin:0.8rem 0;font-size:0.92rem;}
+.guide-quickref dt{font-family:'Share Tech Mono',monospace;color:var(--xu-gold);font-size:0.85rem;letter-spacing:0.05em;}
+.guide-quickref dd{color:var(--xu-text);margin:0;}
+.guide-cta{display:flex;justify-content:center;gap:1.2rem;margin:3rem 0 1rem;flex-wrap:wrap;}
+.guide-cta a{font-family:'Orbitron',monospace;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;padding:0.85rem 1.8rem;text-decoration:none;text-transform:uppercase;border:1px solid var(--xu-cyan);color:var(--xu-cyan);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all 0.2s;background:rgba(0,229,255,0.05);}
+.guide-cta a:hover{background:var(--xu-cyan);color:var(--xu-black);}
+.guide-cta a.primary{background:var(--xu-cyan);color:var(--xu-black);}
+.guide-cta a.primary:hover{background:var(--xu-gold);border-color:var(--xu-gold);color:var(--xu-black);}
+@media(max-width:740px){
+  .guide-toc ol{grid-template-columns:1fr;}
+  .guide-class-grid{grid-template-columns:1fr;}
+  .guide-hero h1{font-size:1.8rem;}
+}
+
 </style>
 </head>
 <body>
@@ -367,7 +422,8 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   </div>
 </section>
 <div class="wiki-tabs">
-  <button class="wiki-tab active" data-tab="items">Items</button>
+  <button class="wiki-tab active" data-tab="guide">📖 Newbie Guide</button>
+  <button class="wiki-tab" data-tab="items">Items</button>
   <button class="wiki-tab" data-tab="bosses">Bosses</button>
   <button class="wiki-tab" data-tab="skills">Skills</button>
   <button class="wiki-tab" data-tab="talents">Talents</button>
@@ -380,7 +436,401 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <button class="wiki-tab" data-tab="achievements">Achievements</button>
 </div>
 <main>
-<div class="wiki-panel active" id="panel-items">
+<div class="wiki-panel active" id="panel-guide">
+
+  <div class="guide-hero">
+    <div class="guide-eyebrow">New Player Orientation</div>
+    <h1>So you woke up in the Xu war</h1>
+    <p class="guide-tagline">A complete guide for first-time players: what to do, where to go, what every button does, and how not to die in your first ten minutes.</p>
+  </div>
+
+  <div class="guide-toc">
+    <h3>Table of Contents</h3>
+    <ol>
+      <li><a href="#g-start">Getting Started</a></li>
+      <li><a href="#g-class">Pick Your Class</a></li>
+      <li><a href="#g-race">Pick Your Race</a></li>
+      <li><a href="#g-controls">Controls You Need to Know</a></li>
+      <li><a href="#g-hud">Reading Your HUD</a></li>
+      <li><a href="#g-firstmin">Your First 10 Minutes</a></li>
+      <li><a href="#g-combat">Combat Basics</a></li>
+      <li><a href="#g-skills">Skills &amp; the Loadout</a></li>
+      <li><a href="#g-progression">Leveling &amp; Progression</a></li>
+      <li><a href="#g-items">Items, Gear &amp; Rarity</a></li>
+      <li><a href="#g-zones">Zones &amp; Where to Go Next</a></li>
+      <li><a href="#g-bosses">Bosses (and Surviving Them)</a></li>
+      <li><a href="#g-mp">Multiplayer Co-Op</a></li>
+      <li><a href="#g-pvp">PvP in the Colosseum</a></li>
+      <li><a href="#g-tips">Pro Tips New Players Miss</a></li>
+      <li><a href="#g-faq">FAQ &amp; Troubleshooting</a></li>
+    </ol>
+  </div>
+
+  <!-- ─────────────── 01 GETTING STARTED ─────────────── -->
+  <section class="guide-section" id="g-start">
+    <h2><span class="guide-num">01 ·</span> Getting Started</h2>
+    <p>Empire 2: Rise of Xu is a real-time action RPG. You play a soldier dropped into a war-torn alien world, and your job is to fight, loot, level up, and eventually take down the bosses keeping the Xu empire in power. Think classic top-down ARPG: <strong>click to attack, dodge with a roll, press numbers to cast skills</strong>.</p>
+    <p>There's no install, no signup gate, no tutorial wall. Click <strong>PLAY NOW</strong> on the homepage, pick a class and race, and you're in. The whole thing runs in your browser.</p>
+    <div class="guide-callout tip">
+      <div class="guide-callout-label">Tip</div>
+      <p>Use a desktop browser if you can. Chrome, Firefox, and Edge all work. The game is playable on mobile but you'll have a much better time with a keyboard and mouse.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 02 PICK YOUR CLASS ─────────────── -->
+  <section class="guide-section" id="g-class">
+    <h2><span class="guide-num">02 ·</span> Pick Your Class</h2>
+    <p>Class is the biggest decision you make at character creation. There are four, and they play very differently. You can always make alts later — your character roster is unlimited.</p>
+    <div class="guide-class-grid">
+      <div class="guide-class-card">
+        <h4>⚔ Warrior</h4>
+        <span class="guide-class-tag">Melee · Tank · Easy</span>
+        <p>Big HP, big sword, big numbers. Walk up to things and hit them until they fall over. The recommended class for first-time players — you can take a few hits while you're learning, and your starter skill (<em>Slash</em>) does great damage with no setup.</p>
+      </div>
+      <div class="guide-class-card">
+        <h4>🔮 Mage</h4>
+        <span class="guide-class-tag">Ranged · Glass Cannon · Medium</span>
+        <p>Squishy but devastating at range. Throws bolts, calls down lightning, freezes packs. Manage your mana and stay back. If you like dodging more than tanking, this is your class.</p>
+      </div>
+      <div class="guide-class-card">
+        <h4>✨ Healer</h4>
+        <span class="guide-class-tag">Hybrid · Support · Medium</span>
+        <p>Heals yourself with every skill, scales with magic damage, has lifesteal and damage shields. Great solo and indispensable in co-op. The <em>Divine Channel</em> talent branch turns you into a sustained-cast spell machine.</p>
+      </div>
+      <div class="guide-class-card">
+        <h4>🗡 Rogue</h4>
+        <span class="guide-class-tag">Burst · Mobile · Hard</span>
+        <p>Highest single-target burst, lowest HP. Built around the <em>Dash</em> skill — close gaps, hit hard, disengage. Rewarding once it clicks but unforgiving against bosses that don't telegraph.</p>
+      </div>
+    </div>
+    <div class="guide-callout">
+      <div class="guide-callout-label">Recommendation</div>
+      <p>First playthrough: <strong>Warrior</strong>. Big HP pool gives you breathing room to learn the systems. You can always reroll — characters are free to make.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 03 PICK YOUR RACE ─────────────── -->
+  <section class="guide-section" id="g-race">
+    <h2><span class="guide-num">03 ·</span> Pick Your Race</h2>
+    <p>After you pick a class, you pick a race. There are 8 races and each one comes with a unique racial ability you press with <span class="guide-key">E</span>. Race also gives passive stat bonuses and a small flavor flaw.</p>
+    <p>The races (full details on the <a href="#races" data-jump="races">Races tab</a>):</p>
+    <ul>
+      <li><strong>Human</strong> — Balanced, no big strengths or weaknesses. Safe pick.</li>
+      <li><strong>Xu</strong> — Crest Flare: AOE fear that makes nearby enemies flee. Great for crowd control.</li>
+      <li><strong>Vampire</strong> — Aether Light: brief invincibility + lifesteal burst. Built around staying low HP.</li>
+      <li><strong>Centaur</strong> — Charge (passive): run in a straight line for 3 seconds, then your next melee hit deals +200%. No E key — happens automatically.</li>
+      <li><strong>Minotaur</strong> — Vreth Stance: damage reduction toggle. Stand and trade.</li>
+      <li><strong>Ogre</strong> — War Chant: party-wide damage buff. Best in multiplayer.</li>
+      <li><strong>Wraith</strong> — Phase-shift movement, ignores some terrain. Fragile but fast.</li>
+      <li><strong>Construct</strong> — Synthetic body, resistant to elemental damage. Slow.</li>
+    </ul>
+    <div class="guide-callout tip">
+      <div class="guide-callout-label">Tip</div>
+      <p>For your first character, <strong>Human</strong> or <strong>Xu</strong> are the easiest to play. Centaur is great because the racial works automatically — no button to remember.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 04 CONTROLS ─────────────── -->
+  <section class="guide-section" id="g-controls">
+    <h2><span class="guide-num">04 ·</span> Controls You Need to Know</h2>
+    <p>You don't need to memorize everything. These are the ones that matter:</p>
+    <h3>Movement &amp; Combat</h3>
+    <dl class="guide-quickref">
+      <dt><span class="guide-key">W</span> <span class="guide-key">A</span> <span class="guide-key">S</span> <span class="guide-key">D</span></dt>
+      <dd>Move your character</dd>
+      <dt><span class="guide-key">Mouse</span></dt>
+      <dd>Aim — your character faces wherever your cursor is</dd>
+      <dt><span class="guide-key">LMB</span></dt>
+      <dd>Basic attack (auto-repeats while held)</dd>
+      <dt><span class="guide-key">RMB</span></dt>
+      <dd>Block — hold to reduce incoming damage. Costs stamina-ish; uses your weapon's block or a shield if equipped.</dd>
+      <dt><span class="guide-key">Space</span></dt>
+      <dd>Dodge roll — brief invincibility, great for getting out of telegraphed AOE attacks. Has a short cooldown.</dd>
+      <dt><span class="guide-key">E</span></dt>
+      <dd>Racial ability (varies by race — see above)</dd>
+    </dl>
+    <h3>Skills</h3>
+    <dl class="guide-quickref">
+      <dt><span class="guide-key">1</span> – <span class="guide-key">8</span></dt>
+      <dd>Cast equipped skill in that slot</dd>
+      <dt><span class="guide-key">K</span></dt>
+      <dd>Open the skill loadout (drag skills onto slots)</dd>
+      <dt><span class="guide-key">N</span></dt>
+      <dd>Open the talent tree (spend talent points)</dd>
+    </dl>
+    <h3>Menus</h3>
+    <dl class="guide-quickref">
+      <dt><span class="guide-key">I</span></dt>
+      <dd>Inventory — gear, consumables, lightstones</dd>
+      <dt><span class="guide-key">Q</span></dt>
+      <dd>Quest log</dd>
+      <dt><span class="guide-key">P</span></dt>
+      <dd>Stat points (spend on STR / VIT / AGI / INT / DEF)</dd>
+      <dt><span class="guide-key">F</span></dt>
+      <dd>Potion / Talk — drinks healing potion when not near an NPC, opens dialog when you are</dd>
+      <dt><span class="guide-key">C</span></dt>
+      <dd>Crafting bench (when you're standing at one)</dd>
+      <dt><span class="guide-key">Y</span></dt>
+      <dd>Achievements</dd>
+      <dt><span class="guide-key">L</span></dt>
+      <dd>Stats &amp; leaderboard</dd>
+      <dt><span class="guide-key">G</span></dt>
+      <dd>Guild panel</dd>
+      <dt><span class="guide-key">Esc</span></dt>
+      <dd>Close menus / return to lobby</dd>
+      <dt><span class="guide-key">F5</span></dt>
+      <dd>Save game (it also auto-saves periodically)</dd>
+    </dl>
+  </section>
+
+  <!-- ─────────────── 05 HUD ─────────────── -->
+  <section class="guide-section" id="g-hud">
+    <h2><span class="guide-num">05 ·</span> Reading Your HUD</h2>
+    <h4>Top-Left</h4>
+    <p>Your character name, class, race, level, HP bar (red/green), MP bar (blue/purple), and current gold + gem count. Below that is your equipped weapon's name.</p>
+    <h4>Top-Right</h4>
+    <p>Current zone name, in-game timer, FPS counter, and a <em>LOBBY</em> button to bail back to character select. There's a controls reference (<span class="guide-key">?</span>) and settings (<span class="guide-key">⚙</span>) too.</p>
+    <h4>Bottom Bar (skill bar)</h4>
+    <p>Eight skill slots numbered 1-8. The big colored icons are your equipped skills. The slot above it labeled <em>X CRES</em> or similar is your racial ability. Two small slots labeled <em>X · Y</em> on the left side are your <strong>quick potions</strong> — the red one is HP, the blue one is MP.</p>
+    <h4>Bottom-Right minimap</h4>
+    <p>Shows your zone. Yellow dots = enemies, green = you, red = boss, gold = portal exit. The legend can be toggled with the icon in the corner.</p>
+    <h4>Chat panel (bottom-left, optional)</h4>
+    <p>Combat log, loot pickups, level-ups, boss messages, and multiplayer chat. You can resize it with the S/M/L buttons or hide it entirely.</p>
+  </section>
+
+  <!-- ─────────────── 06 FIRST 10 MINUTES ─────────────── -->
+  <section class="guide-section" id="g-firstmin">
+    <h2><span class="guide-num">06 ·</span> Your First 10 Minutes</h2>
+    <ol>
+      <li><strong>Spawn in the Xu Outpost.</strong> This is the hub — safe, no enemies, full of NPCs. Walk around, talk to a few people with <span class="guide-key">F</span>.</li>
+      <li><strong>Find the Patrol Zone portal.</strong> It's a glowing orange ring labeled "XU PATROL ZONE" — usually to the east. Walk into it.</li>
+      <li><strong>Kill 3-5 weak mobs.</strong> Bandits, scouts, rebels. Use <span class="guide-key">LMB</span>. Don't bother with skills yet — your basic attack is enough for these.</li>
+      <li><strong>Loot drops.</strong> Items glow on the ground. Walk over them to pick up. Gold pickups are automatic.</li>
+      <li><strong>Level up.</strong> Probably level 2-3 after a few kills. A <em>LEVEL UP</em> burst plays. You get stat points and (every few levels) a skill point.</li>
+      <li><strong>Press <span class="guide-key">I</span>.</strong> Equip anything better than your starter gear. Compare item stats — green numbers mean upgrade.</li>
+      <li><strong>Press <span class="guide-key">P</span>.</strong> Spend your stat points. For your first character, pump <strong>VIT</strong> (HP) and your damage stat (<strong>STR</strong> for Warrior, <strong>INT</strong> for Mage/Healer, <strong>AGI</strong> for Rogue).</li>
+      <li><strong>Press <span class="guide-key">K</span>.</strong> If you've unlocked a new skill, drag it into a number slot.</li>
+      <li><strong>Keep pushing.</strong> Patrol Zone goes to about level 8-10. When it stops feeling dangerous, head to the next zone.</li>
+    </ol>
+    <div class="guide-callout warn">
+      <div class="guide-callout-label">Warning</div>
+      <p>Don't run into the middle of a pack of 5+ enemies on a fresh character. Pull one or two at a time by approaching slowly. If your HP drops below half, back off and use a potion (<span class="guide-key">F</span> or click the bottom-left red flask).</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 07 COMBAT ─────────────── -->
+  <section class="guide-section" id="g-combat">
+    <h2><span class="guide-num">07 ·</span> Combat Basics</h2>
+    <h3>The Combat Loop</h3>
+    <p>Empire 2 is real-time. You're always free to move while attacking, blocking, or dodging. The classic flow:</p>
+    <ol>
+      <li><strong>Aim with the mouse</strong> — your character always faces the cursor</li>
+      <li><strong>Walk into range</strong> (melee) or stay back (ranged)</li>
+      <li><strong>Hold <span class="guide-key">LMB</span></strong> to auto-swing</li>
+      <li><strong>Press <span class="guide-key">Space</span></strong> to dodge incoming telegraphed attacks (red rings on the ground = AOE about to happen)</li>
+      <li><strong>Press <span class="guide-key">1</span>-<span class="guide-key">8</span></strong> to cast skills when off cooldown</li>
+      <li><strong>Block (<span class="guide-key">RMB</span>)</strong> when you can't dodge in time</li>
+    </ol>
+    <h3>Damage Types</h3>
+    <p>Different attacks deal different types: <em>physical</em>, <em>fire</em>, <em>ice</em>, <em>lightning</em>, <em>holy</em>, <em>poison</em>. Some enemies resist certain types. The damage label color tells you the type (orange = fire, blue = ice, etc.).</p>
+    <h3>Crits &amp; Combos</h3>
+    <p>Critical hits double your damage and show with a <strong>!</strong> on the number. Your <em>combo counter</em> builds up with consecutive hits — at x3 you get a +10% bonus, at x6 you get +30%, at x10 you get +50% and a screen shake. Don't break the combo by missing.</p>
+    <h3>Status Effects</h3>
+    <p>You can <strong>burn</strong>, <strong>poison</strong>, <strong>freeze</strong>, <strong>shock</strong>, <strong>stun</strong>, or <strong>bleed</strong> enemies. Stunned enemies stand still — free hits. Frozen enemies can't move. Burning enemies take damage over time. Watch your damage label colors to know what status is ticking.</p>
+  </section>
+
+  <!-- ─────────────── 08 SKILLS ─────────────── -->
+  <section class="guide-section" id="g-skills">
+    <h2><span class="guide-num">08 ·</span> Skills &amp; the Loadout</h2>
+    <p>There are <strong>62 skills</strong> in the game across all classes. You don't unlock them all — you pick from your class's pool as you level up. Skills go into the 8 slot bar (1-8 keys).</p>
+    <h3>How to Equip a Skill</h3>
+    <ol>
+      <li>Press <span class="guide-key">K</span> to open the skill loadout</li>
+      <li>You'll see your unlocked skills on the left, the 8 slots on the right</li>
+      <li>Drag a skill onto a slot, or click the skill then click a slot</li>
+      <li>Close the panel (<span class="guide-key">Esc</span>) — the slot now responds to that number key</li>
+    </ol>
+    <h3>Mana Cost &amp; Cooldown</h3>
+    <p>Each skill costs MP and goes on cooldown after you cast it. Mana regenerates over time. If you spam skills, you'll run out of mana — that's where MP potions and the <strong>mpRegen</strong> stat from gear come in.</p>
+    <h3>Choosing Skills Early</h3>
+    <p>For your first few levels, equip:</p>
+    <ul>
+      <li>One <strong>AOE skill</strong> for pack clearing (Warrior: Whirlwind; Mage: Fireball / Ice Nova; Healer: Smite AOE; Rogue: Blade Flurry)</li>
+      <li>One <strong>single-target burst</strong> for elites and bosses</li>
+      <li>One <strong>mobility skill</strong> if your class has one (Dash, Charge, Teleport)</li>
+      <li>One <strong>defensive skill</strong> (heal, shield, block reinforcement)</li>
+    </ul>
+    <p>Full skill catalog on the <a href="#skills" data-jump="skills">Skills tab</a>.</p>
+  </section>
+
+  <!-- ─────────────── 09 PROGRESSION ─────────────── -->
+  <section class="guide-section" id="g-progression">
+    <h2><span class="guide-num">09 ·</span> Leveling &amp; Progression</h2>
+    <p>You progress on three parallel tracks: <strong>character level</strong>, <strong>talent points</strong>, and <strong>ascendancy points</strong>. Each one matters and each unlocks at a different pace.</p>
+    <h3>Character Level (XP)</h3>
+    <p>Kill enemies, gain XP, level up. Every level you get:</p>
+    <ul>
+      <li>HP and MP pool increases automatically</li>
+      <li>2 stat points to spend (<span class="guide-key">P</span> menu)</li>
+      <li>Every few levels: a new skill becomes available</li>
+      <li>Every 10 levels: a major milestone (gear unlocks, talent slots open)</li>
+    </ul>
+    <h4>Stat Points — Where to Spend Them</h4>
+    <ul>
+      <li><strong>STR</strong> — physical damage (Warrior primary)</li>
+      <li><strong>VIT</strong> — max HP (all classes — keep some here)</li>
+      <li><strong>AGI</strong> — crit chance + dodge (Rogue primary)</li>
+      <li><strong>INT</strong> — magic damage + max MP (Mage and Healer primary)</li>
+      <li><strong>DEF</strong> — flat damage reduction (good for tank builds)</li>
+    </ul>
+    <h3>Talent Tree (<span class="guide-key">N</span>)</h3>
+    <p><strong>192 talents</strong> across all classes — each class has 8 branches with 6 nodes each. You earn talent points as you level. Talents are where your <em>build</em> actually happens: lifesteal, cooldown reduction, crit damage, elemental specialization, etc.</p>
+    <p>For new players: don't worry about the math. Pick a branch that sounds cool and stick with it for the first 10 levels. You can respec later if it doesn't feel right.</p>
+    <h3>Ascendancy (Endgame)</h3>
+    <p><strong>26 ascendancy nodes</strong> unlocked after level 50. These are big bonuses that fundamentally change how your build feels. You don't need to think about ascendancy until much later — just know it exists.</p>
+  </section>
+
+  <!-- ─────────────── 10 ITEMS ─────────────── -->
+  <section class="guide-section" id="g-items">
+    <h2><span class="guide-num">10 ·</span> Items, Gear &amp; Rarity</h2>
+    <p>There are <strong>339 items</strong> in the game. They drop from enemies, bosses, chests, and crafting. Rarity goes:</p>
+    <ul>
+      <li><strong>Common</strong> (white) — vendor trash, sell it</li>
+      <li><strong>Uncommon</strong> (green) — slight upgrades, useful early</li>
+      <li><strong>Rare</strong> (blue) — solid mid-game gear</li>
+      <li><strong>Epic</strong> (purple) — strong, often with a unique effect</li>
+      <li><strong>Legendary</strong> (orange) — endgame staples</li>
+      <li><strong>Mythic</strong> (red) — rare endgame drops, build-defining</li>
+      <li><strong>Convergent</strong> (cyan) — drops from The Convergence, scales with depth</li>
+      <li><strong>Stormforged</strong> (gold) — drops from Overseer of Discord. The new top tier.</li>
+    </ul>
+    <h3>Equipment Slots</h3>
+    <p>Weapon, off-hand (shield or second weapon), helm, chest, gloves, boots, two ring slots, amulet. <em>Lightstones</em> are socketable into weapons for bonus effects.</p>
+    <h3>Sets (14 of them)</h3>
+    <p>Wearing 2 or 4 pieces of a set gives bonus effects. Check the <a href="#sets" data-jump="sets">Sets tab</a> — set bonuses can carry an entire build.</p>
+    <h3>Crafting</h3>
+    <p><strong>27 recipes</strong> across 4 crafting stations (Forge, Alchemy, Enchanter, Smithy). Press <span class="guide-key">C</span> when standing at a station. Craft materials drop from enemies in zone-specific patterns.</p>
+  </section>
+
+  <!-- ─────────────── 11 ZONES ─────────────── -->
+  <section class="guide-section" id="g-zones">
+    <h2><span class="guide-num">11 ·</span> Zones &amp; Where to Go Next</h2>
+    <p>There are <strong>25 zones</strong>. Each has its own enemy mix, environment, mini-boss, and loot table. Recommended progression:</p>
+    <ol>
+      <li><strong>Xu Outpost</strong> — your safe hub. Always returnable.</li>
+      <li><strong>Xu Patrol Zone</strong> — levels 1-10. First zone, beats up bandits and basic mechs.</li>
+      <li><strong>Cemetery</strong> or <strong>The Ashlands</strong> — levels 10-20. Undead and lava.</li>
+      <li><strong>Void Wastes</strong> — levels 20-30. Eldritch enemies, harder mechanics.</li>
+      <li><strong>The Citadel</strong> / <strong>Caves of Despair</strong> — levels 30-50. Real challenge spikes.</li>
+      <li><strong>Rift Vale / Dragon Lair</strong> — level 50+. Endgame zones.</li>
+      <li><strong>The Convergence</strong> — infinite-depth dungeon. Each depth gets harder. THE endgame grind.</li>
+      <li><strong>Colosseum</strong> — the PvP arena (see below).</li>
+    </ol>
+    <p>Each zone has its boss listed on the <a href="#bosses" data-jump="bosses">Bosses tab</a>. If a zone has a red warning saying "Recommends Lv.X+", trust it — you'll get crushed otherwise.</p>
+    <div class="guide-callout tip">
+      <div class="guide-callout-label">Tip</div>
+      <p>First time entering a new zone gives <strong>+3× XP on your first kill</strong> there. Hop around early to chain those bonuses.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 12 BOSSES ─────────────── -->
+  <section class="guide-section" id="g-bosses">
+    <h2><span class="guide-num">12 ·</span> Bosses (and Surviving Them)</h2>
+    <p>There are <strong>28 bosses</strong>: 22 zone bosses (one per zone, anchored in place) and 6 roaming <em>world bosses</em> (Forge Tyrant, Eyexor, Hollow Reaper, Void Behemoth, Abacus of Flesh, and the apex Overseer of Discord). World bosses spawn periodically — every 5 minutes after the first one — and any player in the zone can fight them.</p>
+    <h3>How to Not Die</h3>
+    <ul>
+      <li><strong>Watch the telegraphs.</strong> Red circles on the ground = AOE about to land. Move out before they fill.</li>
+      <li><strong>Dodge with <span class="guide-key">Space</span>.</strong> The roll has invincibility frames.</li>
+      <li><strong>Block big hits.</strong> If you can't dodge, hold <span class="guide-key">RMB</span> to reduce damage.</li>
+      <li><strong>Stay mobile.</strong> Standing still in a boss fight is a death sentence.</li>
+      <li><strong>Save your big skills.</strong> Use AOE for adds, single-target burst on the boss itself.</li>
+      <li><strong>Stock potions.</strong> Buy them from vendors before the fight.</li>
+    </ul>
+    <h3>Phases</h3>
+    <p>Most bosses have <strong>phases</strong> at HP thresholds — when HP drops to 50%, 25%, etc., the boss gets new attacks. Watch for screen shake and visual changes. The boss bar at the top of the screen tells you the current phase.</p>
+    <h3>Loot</h3>
+    <p>Boss kills drop set pieces, mythics, and crafting materials. World bosses drop the <em>highest</em> tier items (Loot Tier 3-8). Killing the Overseer of Discord drops the Stormforged set directly.</p>
+    <div class="guide-callout warn">
+      <div class="guide-callout-label">Warning</div>
+      <p>Don't fight a boss while still under-leveled. Check the boss's recommended level in the <a href="#bosses" data-jump="bosses">Bosses tab</a> — being 5 levels below is usually a wipe.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 13 MULTIPLAYER ─────────────── -->
+  <section class="guide-section" id="g-mp">
+    <h2><span class="guide-num">13 ·</span> Multiplayer Co-Op</h2>
+    <p>Empire 2 has multiplayer. Up to several players can run together in the same zone, share XP and loot, take down bosses together. Multiplayer uses a public server, so you'll see other players online by default.</p>
+    <h3>How It Works</h3>
+    <ul>
+      <li>When you enter a zone, you'll see other players standing or running around — they're real people, not bots</li>
+      <li>Damage you deal to enemies counts toward kills; <em>XP and gold are split among nearby party members</em></li>
+      <li>World boss kills give credit to everyone who participated</li>
+      <li>You can chat in the bottom-left chat panel</li>
+      <li>Form a guild (<span class="guide-key">G</span>) for shared XP bonuses</li>
+    </ul>
+    <h3>Etiquette</h3>
+    <ul>
+      <li>Don't pull a giant pack onto someone solo-farming if they look low-level</li>
+      <li>World boss spawns — let everyone who showed up get a hit in</li>
+      <li>The chat is global within a zone; be cool</li>
+    </ul>
+  </section>
+
+  <!-- ─────────────── 14 PVP ─────────────── -->
+  <section class="guide-section" id="g-pvp">
+    <h2><span class="guide-num">14 ·</span> PvP in the Colosseum</h2>
+    <p>The Colosseum is a dedicated PvP arena. Player-vs-player combat. Death there teleports you back to the arena entry with full HP — no gear loss, no XP loss, just a death counter bump.</p>
+    <p>The Colosseum is also where the <strong>Overseer of Discord</strong> world boss spawns. It's an apex fight under his storm — and any other players in the arena can attack you while you're fighting it. Risk and reward.</p>
+    <div class="guide-callout note">
+      <div class="guide-callout-label">Important</div>
+      <p>Dying to the Overseer of Discord (not to a player) sends you to the outpost with the normal death penalty. Only dying to <em>another player</em> uses the no-penalty PvP respawn.</p>
+    </div>
+  </section>
+
+  <!-- ─────────────── 15 PRO TIPS ─────────────── -->
+  <section class="guide-section" id="g-tips">
+    <h2><span class="guide-num">15 ·</span> Pro Tips New Players Miss</h2>
+    <ul>
+      <li><strong>The dodge roll has invincibility frames.</strong> You can iframe through almost any attack with good timing. Practice on small mobs first.</li>
+      <li><strong>Blocking reduces damage but doesn't make you invincible.</strong> Big telegraphed attacks should still be dodged, not blocked.</li>
+      <li><strong>Status effects stack with damage.</strong> A burning enemy still takes hit damage. Apply DOTs early in a fight and let them tick.</li>
+      <li><strong>First kill in a new zone = 3× XP.</strong> Hop zones to chain this.</li>
+      <li><strong>Higher difficulty = better loot.</strong> If you're farming for legendaries, push to harder zones where you can still survive — not the easiest zone.</li>
+      <li><strong>Save F5 before you do anything risky.</strong> Manual save covers you if something goes wrong.</li>
+      <li><strong>The minimap shows enemy density.</strong> Avoid yellow clusters if you're low on HP.</li>
+      <li><strong>Talent respec is possible.</strong> Don't agonize over your first talent choices — try things.</li>
+      <li><strong>Crafting materials stack in your inventory.</strong> Don't sell them by accident. The little gear icon means it's a crafting reagent.</li>
+      <li><strong>The Convergence is the real endgame.</strong> Once you're 50+, every run goes deeper. Modifiers stack, HP scales, drops get crazier.</li>
+    </ul>
+  </section>
+
+  <!-- ─────────────── 16 FAQ ─────────────── -->
+  <section class="guide-section" id="g-faq">
+    <h2><span class="guide-num">16 ·</span> FAQ &amp; Troubleshooting</h2>
+    <h4>Is this free?</h4>
+    <p>Yes. No ads, no microtransactions, no signup. Just play in your browser.</p>
+    <h4>Can I save my character?</h4>
+    <p>Yes — saves are local to your browser. Press <span class="guide-key">F5</span> to save manually; the game also auto-saves periodically. <em>Clearing your browser data will wipe your characters</em>, so don't do that without backing up.</p>
+    <h4>Why am I lagging?</h4>
+    <p>Try lowering graphics settings (gear icon in the top-right). Particle effects and bloom are the most expensive — disabling them helps. Also try Chrome — it tends to perform best.</p>
+    <h4>Can I play with my friend?</h4>
+    <p>Yes — both of you join, head to the same zone, and you'll see each other. Form a guild for shared XP bonuses.</p>
+    <h4>Is there controller support?</h4>
+    <p>Yes, the game supports gamepads. Check the <a href="controls.html">Controls page</a> for full mappings.</p>
+    <h4>I died and lost stuff. What happened?</h4>
+    <p>Dying outside the Colosseum has a small penalty: some gold and a small XP loss, plus your gear stays on the ground briefly. Pick it up where you died.</p>
+    <h4>Where do I report a bug?</h4>
+    <p>Find the dev (Bofis) on itch.io — comments on the game page are read.</p>
+
+    <div class="guide-cta">
+      <a href="../index.html">← Back to Home</a>
+      <a href="https://tehbofis.itch.io/empire-2-rise-of-xu" class="primary" target="_blank" rel="noopener">▶ Play Now</a>
+      <a href="#bosses" data-jump="bosses">Browse Bosses →</a>
+    </div>
+  </section>
+
+</div>
+<div class="wiki-panel" id="panel-items">
   <div class="filter-bar"><input class="filter-search" id="item-search" type="text" placeholder="Search items by name or stat..."></div>
   <div class="filter-bar" id="item-rarity-chips">
     <button class="filter-chip active" data-rarity="all">All Rarities</button>
@@ -478,6 +928,30 @@ document.querySelectorAll('.wiki-tab').forEach(t => t.addEventListener('click', 
 document.querySelectorAll('.ws-cell').forEach(c => {
   if(c.dataset.jump) c.addEventListener('click', () => switchTab(c.dataset.jump));
 });
+
+// Newbie guide: anchor links inside the guide panel (e.g. <a data-jump="bosses">
+// Bosses tab</a>) should switch tabs instead of trying to jump to a nonexistent
+// hash anchor. Delegated click so we catch all data-jump elements globally.
+document.addEventListener('click', function(ev){
+  var el = ev.target.closest('[data-jump]');
+  if(!el) return;
+  // Skip ws-cell — they have their own handler above
+  if(el.classList && el.classList.contains('ws-cell')) return;
+  ev.preventDefault();
+  switchTab(el.dataset.jump);
+});
+
+// Hash bootstrap — wiki.html#guide / #bosses / #items lands on that tab.
+// Also reacts to hash changes (e.g. clicking a link from another tab).
+function _wikiApplyHash(){
+  var h = (window.location.hash || '').replace(/^#/, '').trim();
+  if(!h) return;
+  // Only honor hashes that match a known tab
+  var validTabs = ['guide','items','bosses','skills','talents','ascendancy','sets','zones','races','enemies','crafting','achievements'];
+  if(validTabs.indexOf(h) !== -1){ switchTab(h); }
+}
+window.addEventListener('hashchange', _wikiApplyHash);
+_wikiApplyHash();
 
 // ── ITEMS ──
 // Filter logic now matches itype against BOTH type AND slot, so chips like

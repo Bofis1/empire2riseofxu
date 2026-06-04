@@ -1698,7 +1698,7 @@ gsInput.addEventListener('keydown', function(e){
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ===== Empire II bestiary/armory: game mesh bundle + viewer (mobs/bosses/weapons/armor/sets) ===== */
+/* ===== Empire II bestiary/armory: game mesh bundle + viewer (mobs/bosses/weapons/armor/sets w/ weapon) ===== */
 (function(){
 let _abacusStoneTex=null;
 const _matCacheL={}; const _matCacheT={}; const _matCacheB={};
@@ -20929,6 +20929,104 @@ function buildElfMesh(){
   return g;
 }
 
+/* ===== weapon/helmet hand-slot wiring (for set previews) ===== */
+function _attachRacePlayerSlots(g, raceIdx){
+  if(!g.userData) g.userData={};
+  const weaponSlot=new THREE.Group();
+  const helmetSlot=new THREE.Group();
+
+  // Per-race weapon slot — positioned at the hand (bottom of arm mesh in rArm local space)
+  // Rotation: x=PI/2 makes weapon point forward; y=PI flips to correct side
+  const _wRotations={
+    0:[Math.PI/2, 0, 0],  // xu
+    1:[Math.PI/2, 0, 0],  // human
+    2:[Math.PI/2, 0, 0],  // gnome
+    3:[Math.PI/2, 0, 0],  // ogre
+    4:[-Math.PI/2, 0, 0], // centaur — inner rotated 180°, use -PI/2
+    5:[Math.PI/2, 0, 0],  // minotaur
+    6:[Math.PI/2, 0, 0],  // elf
+    7:[Math.PI/2, 0, 0],  // vampire
+  };
+  const _wr=_wRotations[raceIdx]||_wRotations[0];
+  // y = bottom of arm mesh (arm pivots at shoulder, mesh hangs down)
+  // arm lengths: xu=0.55, human=0.50, gnome=0.44, ogre=0.70, centaur=0.50, minotaur=0.62, elf=0.56, vampire=0.50
+  const _wOffsets={
+    0:{y:-0.55, x:0, z:0},  // xu
+    1:{y:-0.50, x:0, z:0},  // human
+    2:{y:-0.44, x:0, z:0},  // gnome
+    3:{y:-0.70, x:0, z:0},  // ogre
+    4:{y:-0.50, x:0, z:0},  // centaur
+    5:{y:-0.62, x:0, z:0},  // minotaur
+    6:{y:-0.56, x:0, z:0},  // elf
+    7:{y:-0.50, x:0, z:0},  // vampire
+  };
+  const _wo=_wOffsets[raceIdx]||_wOffsets[0];
+  const rArmRef = g.userData.anim && g.userData.anim.rArm;
+  if(rArmRef){
+    weaponSlot.position.set(_wo.x, _wo.y, _wo.z);
+    weaponSlot.rotation.set(_wr[0], _wr[1], _wr[2]);
+    rArmRef.add(weaponSlot);
+  } else {
+    // Fallback: attach to root at hand position
+    const attachPoints={
+      0:{wx:0.7,wy:0.85,wz:0},1:{wx:0.5,wy:0.8,wz:0},
+      2:{wx:0.55,wy:0.55,wz:0},3:{wx:0.85,wy:0.95,wz:0},
+      4:{wx:0.5,wy:1.28,wz:-0.4},5:{wx:0.75,wy:0.88,wz:0},
+      6:{wx:0.52,wy:0.9,wz:0},7:{wx:0.48,wy:0.88,wz:0},
+    };
+    const ap=attachPoints[raceIdx]||attachPoints[0];
+    weaponSlot.position.set(ap.wx,ap.wy,ap.wz);
+    g.add(weaponSlot);
+  }
+
+  // Helmet stays on root group at head position
+  const helmetAttach={
+    0:{hx:0,hy:1.82,hz:0},1:{hx:0,hy:1.66,hz:0},
+    2:{hx:0,hy:1.55,hz:0},3:{hx:0,hy:1.95,hz:0},
+    4:{hx:0,hy:2.0,hz:-0.4},5:{hx:0,hy:1.9,hz:0},
+    6:{hx:0,hy:1.72,hz:0},7:{hx:0,hy:1.7,hz:0},
+  };
+  const ha=helmetAttach[raceIdx]||helmetAttach[0];
+  helmetSlot.position.set(ha.hx,ha.hy,ha.hz);
+  g.add(helmetSlot);
+
+  // ── Shield slot on left arm ──
+  const shieldSlot=new THREE.Group();
+  // ── Offhand weapon slot — mirrors weaponSlot on lArm ──
+  const offhandSlot=new THREE.Group();
+  const lArmRef=g.userData.anim&&g.userData.anim.lArm;
+  if(lArmRef){
+    const _armLens=[0.55,0.50,0.44,0.70,0.50,0.62,0.56,0.50];
+    const _sArmLen=_armLens[raceIdx]||0.50;
+    // Shield: mid-arm facing outward
+    shieldSlot.position.set(-0.18,-_sArmLen*0.5,0);
+    shieldSlot.rotation.set(0,Math.PI/2,0);
+    lArmRef.add(shieldSlot);
+    // Offhand weapon: same position/rotation as main weapon slot but on left arm
+    offhandSlot.position.set(_wo.x, _wo.y, _wo.z);
+    offhandSlot.rotation.set(_wr[0], _wr[1], _wr[2]);
+    offhandSlot.visible=false; // hidden until dual wield equipped
+    lArmRef.add(offhandSlot);
+  } else {
+    shieldSlot.position.set(-0.7,0.9,0);
+    shieldSlot.rotation.y = Math.PI / 2;
+    g.add(shieldSlot);
+    offhandSlot.position.set(-0.7,0.9,0);
+    g.add(offhandSlot);
+  }
+
+  g.userData.weaponSlot=weaponSlot;
+  g.userData.shieldSlot=shieldSlot;
+  g.userData.offhandSlot=offhandSlot;
+  g.userData.helmetSlot=helmetSlot;
+  g.userData.equippedWeaponMesh=null;
+  g.userData.equippedHelmetMesh=null;
+  if(!g.userData.armorMat) g.userData.armorMat=new THREE.MeshLambertMaterial({color:0x1e6a42});
+  if(!g.userData.darkMat)  g.userData.darkMat=new THREE.MeshLambertMaterial({color:0x0f3020});
+  if(!g.userData.visor)    g.userData.visor=null;
+  return g;
+}
+
 /* ============================================================================
    BESTIARY / ARMORY 3D — live specimen + weapon previews for the wiki.
    Geometry comes from the game's own builders (bundled above, verbatim):
@@ -21016,15 +21114,25 @@ function buildElfMesh(){
     if(kind === 'set'){
       var sd = (typeof WIKI !== 'undefined' && WIKI.sets) ? WIKI.sets[key] : null;
       var sBody = buildElfMesh();
+      _attachRacePlayerSlots(sBody, 6);                   // wire hand/helmet slots on the elf
       var sSkin = getRaceSkinTex(6);
       var sSlotTex = {}; var SL = {helmet:1, chest:1, legs:1, boots:1};
+      var sWeaponId = null;
       if(sd && sd.items){
         for(var sp=0; sp<sd.items.length; sp++){
           var sit = getItem(sd.items[sp]);
-          if(sit && SL[sit.slot] && !sSlotTex[sit.slot]){ var stx = mkArmorTex(sit.id); if(stx) sSlotTex[sit.slot] = stx; }
+          if(!sit) continue;
+          if(SL[sit.slot] && !sSlotTex[sit.slot]){ var stx = mkArmorTex(sit.id); if(stx) sSlotTex[sit.slot] = stx; }
+          if(sit.slot === 'weapon' && !sWeaponId) sWeaponId = sit.id;   // pick the first weapon
         }
       }
-      applyArmorTexturesToMesh(sBody, sSlotTex, sSkin);   // full set worn at once
+      applyArmorTexturesToMesh(sBody, sSlotTex, sSkin);   // full set worn (body only; weapon added after)
+      if(sWeaponId && sBody.userData && sBody.userData.weaponSlot){
+        var swm = buildWeaponMesh(sWeaponId);
+        var swit = getItem(sWeaponId);
+        swm.scale.setScalar((swit && swit.weaponType === 'twohanded') ? 1.0 : 0.75);
+        sBody.userData.weaponSlot.add(swm);               // held in the right hand
+      }
       return sBody;
     }
     return mkEnemy(ALIAS[key] || key);
@@ -21072,10 +21180,14 @@ function buildElfMesh(){
     var dist = (r / Math.sin((40*Math.PI/180)/2)) * fit;
     cam.position.set(0, kind==='weapon'? r*0.02 : r*0.10, dist); cam.lookAt(0,0,0);
 
+    // For sets, the animated _gfx lives on the held weapon (a descendant), not the body.
+    var gfxSrc = model.userData || null;
+    if(kind==='set'){ model.traverse(function(o){ if(o!==model && o.userData && o.userData.isGeoFx) gfxSrc = o.userData; }); }
+
     return {
       scene:scene, camera:cam, pivot:pivot, model:model, radius:r,
       glow:glow, emit:emit, anim:(model.userData && model.userData.anim) || null,
-      gfx:model.userData || null,
+      gfx:gfxSrc,
       baseRotY:(model.userData && model.userData._builtRotY) || 0,
       phase:Math.random()*Math.PI*2,
       spin:(kind==='boss'?0.32 : kind==='weapon'?0.6 : 0.45) + Math.random()*0.18, yaw:0
@@ -21206,7 +21318,7 @@ function buildElfMesh(){
       for(var g=0; g<u.glow.length; g++) u.glow[g].m.opacity = u.glow[g].base * (0.55 + 0.45*pulse);
       for(var e=0; e<u.emit.length; e++) u.emit[e].m.emissiveIntensity = u.emit[e].base * (0.85 + 0.3*Math.sin(t*1.6 + u.phase));
       animRig(u.anim, t, u.phase);
-      if(cell.kind === 'weapon') tickGfx(u, t);
+      if(cell.kind === 'weapon' || cell.kind === 'set') tickGfx(u, t);
 
       var visTop = Math.max(rect.top, cutTop);
       var visBot = Math.min(rect.bottom, H);

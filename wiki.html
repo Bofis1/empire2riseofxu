@@ -19505,7 +19505,7 @@ function buildWeaponMesh(itemId){
 /* ===== armor system: elf body + armor textures ===== */
 const _raceSkinTexCache={};
 var _wikiItemIndex=null;
-function getItem(id){ if(!_wikiItemIndex){ _wikiItemIndex={}; var a=(typeof window!=='undefined'&&window.WIKI&&window.WIKI.items)||[]; for(var k=0;k<a.length;k++)_wikiItemIndex[a[k].id]=a[k]; } return _wikiItemIndex[id]||null; }
+function getItem(id){ if(!_wikiItemIndex){ _wikiItemIndex={}; var a=(typeof WIKI!=='undefined'&&WIKI&&WIKI.items)?WIKI.items:((typeof window!=='undefined'&&window.WIKI&&window.WIKI.items)||[]); for(var k=0;k<a.length;k++)_wikiItemIndex[a[k].id]=a[k]; } return _wikiItemIndex[id]||null; }
 
 function _sRng(seed){ let s=(seed|0)||1; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
 

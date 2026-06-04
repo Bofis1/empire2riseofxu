@@ -1698,7 +1698,7 @@ gsInput.addEventListener('keydown', function(e){
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ===== Empire II bestiary/armory: game mesh bundle + viewer (mobs/bosses/weapons/armor/sets w/ weapon) ===== */
+/* ===== Empire II bestiary/armory: game mesh bundle + viewer (mobs/bosses/weapons/armor/sets) ===== */
 (function(){
 let _abacusStoneTex=null;
 const _matCacheL={}; const _matCacheT={}; const _matCacheB={};
@@ -21268,7 +21268,13 @@ function _attachRacePlayerSlots(g, raceIdx){
 
   function loop(){
     requestAnimationFrame(loop);
-    if(!renderer || !cells.length) return;
+    if(!renderer) return;
+    // Always clear the overlay FIRST — otherwise switching to a tab with no live
+    // previews (Skills / Talents / Zones / Races / Crafting / Achievements) leaves
+    // the previous tab's last frame frozen on screen, bleeding through the new tab.
+    renderer.setClearColor(0x000000, 0);
+    renderer.setScissorTest(false); renderer.clear();
+    if(!cells.length) return;
     var pe = document.getElementById('panel-enemies');
     var pb = document.getElementById('panel-bosses');
     var pi = document.getElementById('panel-items');
@@ -21286,8 +21292,6 @@ function _attachRacePlayerSlots(g, raceIdx){
     var cutTop = tabs ? tabs.getBoundingClientRect().bottom : 0;
     var built = 0;
 
-    renderer.setClearColor(0x000000, 0);
-    renderer.setScissorTest(false); renderer.clear();
     renderer.setScissorTest(true);
 
     for(var i=0;i<cells.length;i++){

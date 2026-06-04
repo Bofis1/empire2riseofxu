@@ -88,6 +88,18 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .item-card{background:var(--xu-deep);border:1px solid rgba(0,229,255,0.08);padding:1rem;position:relative;transition:all 0.2s;cursor:pointer;display:flex;flex-direction:column;gap:0.45rem;}
 .item-card:hover{border-color:rgba(0,229,255,0.35);transform:translateY(-2px);}
 .item-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--rar);opacity:0.85;}
+/* ── 3D weapon previews (shared overlay canvas) ── */
+.item-preview{position:relative;height:150px;margin:-1rem -1rem 0.55rem;overflow:hidden;
+  border-bottom:1px solid color-mix(in srgb,var(--rar) 28%,transparent);
+  background:radial-gradient(130% 95% at 50% 20%,color-mix(in srgb,var(--rar) 12%,transparent),transparent 72%),
+             linear-gradient(180deg,rgba(0,0,0,0.16),rgba(0,0,0,0.36));}
+.item-preview::before{content:'';position:absolute;top:8px;left:8px;width:13px;height:13px;
+  border-top:1px solid color-mix(in srgb,var(--rar) 60%,transparent);
+  border-left:1px solid color-mix(in srgb,var(--rar) 60%,transparent);opacity:0;transition:opacity 0.2s;}
+.item-card:hover .item-preview::before{opacity:1;}
+.item-preview::after{content:'⚔ LIVE MODEL';position:absolute;bottom:5px;right:8px;
+  font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;
+  color:color-mix(in srgb,var(--rar) 55%,transparent);pointer-events:none;}
 .item-head{display:flex;align-items:flex-start;gap:0.7rem;}
 .item-icon{font-size:1.6rem;line-height:1;width:2.4rem;height:2.4rem;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.1);flex-shrink:0;}
 .item-titles{flex:1;min-width:0;}
@@ -1024,6 +1036,7 @@ function renderItems(){
     var it = slice[i];
     var rar = it.rarity || 'common';
     html += '<div class="item-card r-' + rar + '">';
+    if(it.type === 'weapon') html += '<div class="item-preview" data-weapon="' + it.id + '"></div>';
     html += '<div class="item-head"><div class="item-icon">' + (it.icon||'?') + '</div>';
     html += '<div class="item-titles"><div class="item-name">' + escapeHtml(it.name) + '</div>';
     html += '<div class="item-meta">' + (it.slot||it.type||'') + ' · ' + rar + '</div></div></div>';
@@ -1036,6 +1049,7 @@ function renderItems(){
     html += '<div class="item-card" style="text-align:center;justify-content:center;border-style:dashed;"><div style="font-family:Share Tech Mono,monospace;font-size:0.7rem;color:var(--xu-dim);letter-spacing:0.15em;">+ ' + (filtered.length - 240) + ' more — narrow your filters</div></div>';
   }
   grid.innerHTML = html || '<div class="gr-empty">No items match these filters.</div>';
+  if(window.__refreshBestiary3D) window.__refreshBestiary3D();
 }
 document.getElementById('item-search').addEventListener('input', function(e){ itemFilter.search = e.target.value; renderItems(); });
 document.querySelectorAll('#item-rarity-chips .filter-chip').forEach(function(c){
@@ -1658,7 +1672,7 @@ gsInput.addEventListener('keydown', function(e){
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ===== Empire II bestiary: game mesh bundle (mk* builders + mkEnemy, verbatim) + viewer ===== */
+/* ===== Empire II bestiary/armory: game mesh bundle (mkEnemy + mkBoss* + buildWeaponMesh, verbatim) + viewer ===== */
 (function(){
 let _abacusStoneTex=null;
 const _matCacheL={}; const _matCacheT={}; const _matCacheB={};
@@ -18017,68 +18031,1520 @@ function _getAbacusStoneTex(){
   return tex;
 }
 
+function buildWeaponMesh(itemId){
+  var g=new THREE.Group();
+  if(itemId==='w001'){
+    // ── VENOM BLADE — serpentine green blade, fanged crossguard, venom gem pommel ──
+    var w1pm=new THREE.Mesh(new THREE.SphereGeometry(0.065,6,5),new THREE.MeshLambertMaterial({color:0x1a5a28}));w1pm.position.y=0.04;g.add(w1pm);
+    // Grip — wrapped leather, dark green
+    var w1gr=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.038,0.28,7),new THREE.MeshLambertMaterial({color:0x1a3018}));w1gr.position.y=0.18;g.add(w1gr);
+    for(var w1i=0;w1i<4;w1i++){var w1b=new THREE.Mesh(new THREE.CylinderGeometry(0.036,0.036,0.028,7),new THREE.MeshLambertMaterial({color:0x0f2210}));w1b.position.y=0.06+w1i*0.07;g.add(w1b);}
+    // Fanged crossguard — two curved prongs
+    var w1cg=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.055,0.07),new THREE.MeshLambertMaterial({color:0x204828}));w1cg.position.y=0.34;g.add(w1cg);
+    var w1f1=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.12,4),new THREE.MeshLambertMaterial({color:0x39ff8a}));w1f1.position.set(-0.20,0.42,0);w1f1.rotation.z=0.5;g.add(w1f1);
+    var w1f2=w1f1.clone();w1f2.position.x=0.20;w1f2.rotation.z=-0.5;g.add(w1f2);
+    // Serpentine blade — slight wave shape, venom-green edge
+    var w1bl=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.72,0.036),new THREE.MeshLambertMaterial({color:0x1a4a28,emissive:0x0a2814,emissiveIntensity:0.3}));w1bl.position.y=0.76;g.add(w1bl);
+    var w1edge=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.65,0.018),new THREE.MeshBasicMaterial({color:0x39ff8a,transparent:true,opacity:0.85}));w1edge.position.set(0.028,0.74,0.018);g.add(w1edge);
+    // Venom gem inlaid in blade
+    var w1gem=new THREE.Mesh(new THREE.OctahedronGeometry(0.040,0),new THREE.MeshBasicMaterial({color:0x00ff88,transparent:true,opacity:0.92}));w1gem.position.set(0,0.60,0.028);g.add(w1gem);
+    var w1tip=new THREE.Mesh(new THREE.ConeGeometry(0.026,0.14,4),new THREE.MeshLambertMaterial({color:0x2a6c38}));w1tip.position.y=1.17;g.add(w1tip);
+
+  } else if(itemId==='w002'){
+    // ── XU WARBLADE — brutal Xu military sword, red-gold, dragon motif guard, rune blade ──
+    var w2pm=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.07,0.10),new THREE.MeshLambertMaterial({color:0xcc8800,emissive:0x664400,emissiveIntensity:0.4}));w2pm.position.y=0.04;g.add(w2pm);
+    var w2gr=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.040,0.30,7),new THREE.MeshLambertMaterial({color:0x3a1008}));w2gr.position.y=0.19;g.add(w2gr);
+    // Gold grip bands
+    for(var w2i=0;w2i<3;w2i++){var w2gb=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.032,7),new THREE.MeshLambertMaterial({color:0xcc8800,emissive:0x664400,emissiveIntensity:0.4}));w2gb.position.y=0.07+w2i*0.10;g.add(w2gb);}
+    // Dragon jaw crossguard — wide swept, gold
+    var w2cg=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.072,0.10),new THREE.MeshLambertMaterial({color:0xcc8800,emissive:0x664400,emissiveIntensity:0.3}));w2cg.position.y=0.36;g.add(w2cg);
+    var w2sp1=new THREE.Mesh(new THREE.ConeGeometry(0.028,0.14,4),new THREE.MeshLambertMaterial({color:0xff4400,emissive:0x882200,emissiveIntensity:0.5}));w2sp1.position.set(-0.28,0.46,0);w2sp1.rotation.z=0.4;g.add(w2sp1);
+    var w2sp2=w2sp1.clone();w2sp2.position.x=0.28;w2sp2.rotation.z=-0.4;g.add(w2sp2);
+    // Wide war blade — dark red-steel with gold fuller
+    var w2ric=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.18,0.05),new THREE.MeshLambertMaterial({color:0x6a1010}));w2ric.position.y=0.50;g.add(w2ric);
+    var w2bl=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.90,0.048),new THREE.MeshLambertMaterial({color:0x8b1a1a,emissive:0x3a0808,emissiveIntensity:0.25}));w2bl.position.y=1.00;g.add(w2bl);
+    var w2fl=new THREE.Mesh(new THREE.BoxGeometry(0.030,0.78,0.020),new THREE.MeshLambertMaterial({color:0xddaa00,emissive:0x886600,emissiveIntensity:0.5}));w2fl.position.set(0,0.98,0.030);g.add(w2fl);
+    // Rune slots on blade
+    for(var w2r=0;w2r<3;w2r++){var w2rn=new THREE.Mesh(new THREE.BoxGeometry(0.050,0.032,0.030),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.8}));w2rn.position.set(0,0.62+w2r*0.24,0.032);g.add(w2rn);}
+    var w2tip=new THREE.Mesh(new THREE.ConeGeometry(0.050,0.18,4),new THREE.MeshLambertMaterial({color:0xaa2020}));w2tip.position.y=1.54;g.add(w2tip);
+
+  } else if(itemId==='w004'){
+    // ── VOID DAGGER — double-edged obsidian, void crystal core, elbow guard ──
+    var w4pm=new THREE.Mesh(new THREE.OctahedronGeometry(0.058,0),new THREE.MeshBasicMaterial({color:0x8040ff,transparent:true,opacity:0.9}));w4pm.position.y=0.04;g.add(w4pm);
+    var w4gr=new THREE.Mesh(new THREE.CylinderGeometry(0.026,0.034,0.22,6),new THREE.MeshLambertMaterial({color:0x201030}));w4gr.position.y=0.15;g.add(w4gr);
+    for(var w4i=0;w4i<3;w4i++){var w4b=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.034,0.022,6),new THREE.MeshBasicMaterial({color:0x6020c0,transparent:true,opacity:0.75}));w4b.position.y=0.05+w4i*0.08;g.add(w4b);}
+    // Swept void crossguard
+    var w4cg=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.050,0.07),new THREE.MeshLambertMaterial({color:0x301848,emissive:0x180830,emissiveIntensity:0.4}));w4cg.position.y=0.30;g.add(w4cg);
+    var w4cl=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.10,4),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.9}));w4cl.position.set(-0.16,0.36,0);w4cl.rotation.z=0.5;g.add(w4cl);
+    var w4cr=w4cl.clone();w4cr.position.x=0.16;w4cr.rotation.z=-0.5;g.add(w4cr);
+    // Double-edged void blade — narrow, crystalline
+    var w4bl=new THREE.Mesh(new THREE.BoxGeometry(0.052,0.56,0.038),new THREE.MeshLambertMaterial({color:0x0a0018,emissive:0x060010,emissiveIntensity:0.5}));w4bl.position.y=0.63;g.add(w4bl);
+    var w4e1=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.50,0.016),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.88}));w4e1.position.set(0.030,0.62,0.022);g.add(w4e1);
+    var w4e2=w4e1.clone();w4e2.position.x=-0.030;g.add(w4e2);
+    var w4tip=new THREE.Mesh(new THREE.ConeGeometry(0.024,0.12,4),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.95}));w4tip.position.y=0.97;g.add(w4tip);
+
+  } else if(itemId==='w006'){
+    // ── SCALE CRUSHER — heavy Xu war-axe, brutal square head, rune-carved face ──
+    var w6pm=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.08,0.12),new THREE.MeshLambertMaterial({color:0x404050}));w6pm.position.y=0.04;g.add(w6pm);
+    var w6gr=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.048,0.55,6),new THREE.MeshLambertMaterial({color:0x2a1808}));w6gr.position.y=0.33;g.add(w6gr);
+    // Grip wrapping
+    for(var w6i=0;w6i<4;w6i++){var w6bnd=new THREE.Mesh(new THREE.CylinderGeometry(0.050,0.050,0.025,6),new THREE.MeshLambertMaterial({color:0x1a0c04}));w6bnd.position.y=0.07+w6i*0.13;g.add(w6bnd);}
+    // Collar
+    var w6col=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.050,0.08,6),new THREE.MeshLambertMaterial({color:0x505060}));w6col.position.y=0.64;g.add(w6col);
+    // Axe head — wide flat face, spike on top
+    var w6hd=new THREE.Mesh(new THREE.BoxGeometry(0.50,0.36,0.12),new THREE.MeshLambertMaterial({color:0x404858,emissive:0x101820,emissiveIntensity:0.2}));w6hd.position.set(0.10,0.88,0);g.add(w6hd);
+    // Blade edge — bright steel
+    var w6edge=new THREE.Mesh(new THREE.BoxGeometry(0.030,0.34,0.06),new THREE.MeshLambertMaterial({color:0xc0c8d0}));w6edge.position.set(0.36,0.88,0);g.add(w6edge);
+    // Axe spike on top
+    var w6spk=new THREE.Mesh(new THREE.ConeGeometry(0.040,0.20,4),new THREE.MeshLambertMaterial({color:0x606878}));w6spk.position.set(0.05,1.12,0);g.add(w6spk);
+    // Rune carvings on face
+    for(var w6r=0;w6r<3;w6r++){var w6rn=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.030,0.035),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.6}));w6rn.position.set(0.08,0.76+w6r*0.10,-0.065);g.add(w6rn);}
+
+  } else if(itemId==='w007'){
+    // ── IRON FANG — basic military shortsword, sturdy iron, simple crossguard ──
+    var w7pm=new THREE.Mesh(new THREE.SphereGeometry(0.055,5,4),new THREE.MeshLambertMaterial({color:0x505050}));w7pm.position.y=0.04;g.add(w7pm);
+    var w7gr=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.036,0.24,6),new THREE.MeshLambertMaterial({color:0x2a1808}));w7gr.position.y=0.16;g.add(w7gr);
+    // Simple iron crossguard
+    var w7cg=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.058,0.068),new THREE.MeshLambertMaterial({color:0x484848}));w7cg.position.y=0.30;g.add(w7cg);
+    // Broad iron blade — thick, battle-worn
+    var w7ric=new THREE.Mesh(new THREE.BoxGeometry(0.088,0.14,0.044),new THREE.MeshLambertMaterial({color:0x5a5a5a}));w7ric.position.y=0.40;g.add(w7ric);
+    var w7bl=new THREE.Mesh(new THREE.BoxGeometry(0.080,0.62,0.040),new THREE.MeshLambertMaterial({color:0x686870}));w7bl.position.y=0.80;g.add(w7bl);
+    // Fuller groove
+    var w7fl=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.52,0.018),new THREE.MeshLambertMaterial({color:0x909098}));w7fl.position.set(0,0.78,0.024);g.add(w7fl);
+    // Chipped edge detail — worn steel
+    var w7ed=new THREE.Mesh(new THREE.BoxGeometry(0.014,0.56,0.014),new THREE.MeshLambertMaterial({color:0xb0b0b8}));w7ed.position.set(0.034,0.78,0.022);g.add(w7ed);
+    var w7tip=new THREE.Mesh(new THREE.ConeGeometry(0.036,0.14,4),new THREE.MeshLambertMaterial({color:0x707078}));w7tip.position.y=1.14;g.add(w7tip);
+
+  } else if(itemId==='w008'){
+    // ── PSIONIC BLADE — levitating purple crystal blade, no guard, mind-forged ──
+    var w8pm=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.95}));w8pm.position.y=0.04;g.add(w8pm);
+    var w8gr=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.036,0.26,8),new THREE.MeshLambertMaterial({color:0x301848,emissive:0x180828,emissiveIntensity:0.5}));w8gr.position.y=0.17;g.add(w8gr);
+    // Psionic bands — floating rings
+    for(var w8i=0;w8i<3;w8i++){var w8rng=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.048,0.018,8),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.7}));w8rng.position.y=0.06+w8i*0.09;g.add(w8rng);}
+    // Crystal focus — where hand meets blade energy
+    var w8foc=new THREE.Mesh(new THREE.OctahedronGeometry(0.085,0),new THREE.MeshBasicMaterial({color:0x8040ff,transparent:true,opacity:0.9}));w8foc.position.y=0.36;g.add(w8foc);
+    // Psionic blade — segmented crystal panels
+    var w8bl=new THREE.Mesh(new THREE.BoxGeometry(0.058,0.72,0.034),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.82}));w8bl.position.y=0.82;g.add(w8bl);
+    var w8core=new THREE.Mesh(new THREE.BoxGeometry(0.020,0.68,0.020),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.90}));w8core.position.y=0.80;g.add(w8core);
+    // Crystal segments
+    for(var w8s=0;w8s<4;w8s++){var w8seg=new THREE.Mesh(new THREE.BoxGeometry(0.054,0.014,0.038),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.6}));w8seg.position.set(0,0.48+w8s*0.17,0);g.add(w8seg);}
+    var w8tip=new THREE.Mesh(new THREE.ConeGeometry(0.026,0.16,4),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.98}));w8tip.position.y=1.26;g.add(w8tip);
+
+  } else if(itemId==='w009'){
+    // ── SUNFIRE BLADE — blazing golden sword, flame crossguard, fire rune blade ──
+    var w9pm=new THREE.Mesh(new THREE.SphereGeometry(0.068,7,5),new THREE.MeshLambertMaterial({color:0xffaa00,emissive:0xcc6600,emissiveIntensity:0.5}));w9pm.position.y=0.04;g.add(w9pm);
+    var w9gr=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.040,0.28,7),new THREE.MeshLambertMaterial({color:0x4a1a00,emissive:0x220800,emissiveIntensity:0.3}));w9gr.position.y=0.18;g.add(w9gr);
+    // Gold flame grip bands
+    for(var w9i=0;w9i<3;w9i++){var w9gb=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.030,7),new THREE.MeshLambertMaterial({color:0xffaa00,emissive:0xcc6600,emissiveIntensity:0.5}));w9gb.position.y=0.06+w9i*0.10;g.add(w9gb);}
+    // Flame-swept crossguard — curved up like wings
+    var w9cg=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.060,0.08),new THREE.MeshLambertMaterial({color:0xffaa00,emissive:0xcc6600,emissiveIntensity:0.4}));w9cg.position.y=0.36;g.add(w9cg);
+    var w9fl1=new THREE.Mesh(new THREE.ConeGeometry(0.026,0.18,4),new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.9}));w9fl1.position.set(-0.24,0.46,0);w9fl1.rotation.z=0.55;g.add(w9fl1);
+    var w9fl2=w9fl1.clone();w9fl2.position.x=0.24;w9fl2.rotation.z=-0.55;g.add(w9fl2);
+    // Fire blade — bright orange-gold, tapers to flame tip
+    var w9bl=new THREE.Mesh(new THREE.BoxGeometry(0.075,0.78,0.042),new THREE.MeshLambertMaterial({color:0xdd6600,emissive:0x882200,emissiveIntensity:0.4}));w9bl.position.y=0.86;g.add(w9bl);
+    var w9glow=new THREE.Mesh(new THREE.BoxGeometry(0.026,0.72,0.020),new THREE.MeshBasicMaterial({color:0xffcc00,transparent:true,opacity:0.88}));w9glow.position.set(0,0.84,0.030);g.add(w9glow);
+    // Fire runes on blade
+    for(var w9r=0;w9r<4;w9r++){var w9rn=new THREE.Mesh(new THREE.BoxGeometry(0.040,0.026,0.026),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.85}));w9rn.position.set(0,0.56+w9r*0.18,0.030);g.add(w9rn);}
+    var w9tip=new THREE.Mesh(new THREE.ConeGeometry(0.035,0.20,4),new THREE.MeshBasicMaterial({color:0xff8800,transparent:true,opacity:0.95}));w9tip.position.y=1.32;g.add(w9tip);
+
+  } else if(itemId==='w010'){
+    // ── VOID ANNIHILATOR — massive dark void sword, fracture-cracks, death gem, annihilator edge ──
+    var w10pm=new THREE.Mesh(new THREE.BoxGeometry(0.13,0.09,0.13),new THREE.MeshLambertMaterial({color:0x0a0010}));w10pm.position.y=0.04;g.add(w10pm);
+    var w10gr=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.046,0.32,7),new THREE.MeshLambertMaterial({color:0x080010,emissive:0x040008,emissiveIntensity:0.4}));w10gr.position.y=0.20;g.add(w10gr);
+    // Void crystal grip rings
+    for(var w10i=0;w10i<4;w10i++){var w10b=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.048,0.024,7),new THREE.MeshBasicMaterial({color:0x4400cc,transparent:true,opacity:0.8}));w10b.position.y=0.06+w10i*0.08;g.add(w10b);}
+    // Death gem at guard junction
+    var w10gem=new THREE.Mesh(new THREE.OctahedronGeometry(0.078,0),new THREE.MeshBasicMaterial({color:0x6600ff,transparent:true,opacity:0.95}));w10gem.position.y=0.40;g.add(w10gem);
+    // Wide void crossguard with spikes
+    var w10cg=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.060,0.085),new THREE.MeshLambertMaterial({color:0x0c0018}));w10cg.position.y=0.46;g.add(w10cg);
+    for(var w10s=0;w10s<2;w10s++){var w10sp=new THREE.Mesh(new THREE.ConeGeometry(0.024,0.14,4),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.9}));w10sp.position.set(w10s===0?-0.26:0.26,0.54,0);w10sp.rotation.z=w10s===0?0.45:-0.45;g.add(w10sp);}
+    // Massive void blade — dark with fracture cracks
+    var w10bl=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.90,0.048),new THREE.MeshLambertMaterial({color:0x0a0018,emissive:0x060010,emissiveIntensity:0.5}));w10bl.position.y=1.00;g.add(w10bl);
+    // Void fracture cracks
+    for(var w10c=0;w10c<5;w10c++){var w10crack=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.018,0.032),new THREE.MeshBasicMaterial({color:0xcc00ff,transparent:true,opacity:0.85}));w10crack.position.set((w10c%2===0?0.02:-0.02),0.64+w10c*0.18,-0.026);w10crack.rotation.z=(w10c%2===0?0.3:-0.3);g.add(w10crack);}
+    var w10tip=new THREE.Mesh(new THREE.ConeGeometry(0.046,0.22,4),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.96}));w10tip.position.y=1.56;g.add(w10tip);
+
+  } else if(itemId==='w012'){
+    // ── ANCIENT REAPER — curved elven crescent blade, ancient runes, moonstone gems ──
+    var w12pm=new THREE.Mesh(new THREE.SphereGeometry(0.065,7,5),new THREE.MeshLambertMaterial({color:0x8899aa,emissive:0x445566,emissiveIntensity:0.3}));w12pm.position.y=0.04;g.add(w12pm);
+    var w12gr=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.038,0.30,8),new THREE.MeshLambertMaterial({color:0x3a3a50,emissive:0x1a1a28,emissiveIntensity:0.2}));w12gr.position.y=0.19;g.add(w12gr);
+    // Silver grip bands
+    for(var w12i=0;w12i<4;w12i++){var w12b=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.040,0.026,8),new THREE.MeshLambertMaterial({color:0xaabbcc}));w12b.position.y=0.05+w12i*0.08;g.add(w12b);}
+    // Crescent crossguard — swept like a moon
+    var w12cg=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.055,0.07),new THREE.MeshLambertMaterial({color:0x8899aa,emissive:0x445566,emissiveIntensity:0.3}));w12cg.position.y=0.36;g.add(w12cg);
+    // Moonstone gems on crossguard
+    var w12m1=new THREE.Mesh(new THREE.SphereGeometry(0.040,6,5),new THREE.MeshBasicMaterial({color:0xddeeff,transparent:true,opacity:0.95}));w12m1.position.set(-0.18,0.40,0);g.add(w12m1);
+    var w12m2=w12m1.clone();w12m2.position.x=0.18;g.add(w12m2);
+    // Curved crescent blade — scimitar-like sweep
+    var w12bl=new THREE.Mesh(new THREE.BoxGeometry(0.068,0.85,0.038),new THREE.MeshLambertMaterial({color:0x7788aa,emissive:0x2a3040,emissiveIntensity:0.3}));w12bl.position.set(0.025,0.88,0);w12bl.rotation.z=-0.12;g.add(w12bl);
+    // Moon-silver edge
+    var w12ed=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.80,0.018),new THREE.MeshBasicMaterial({color:0xddeeff,transparent:true,opacity:0.90}));w12ed.position.set(0.050,0.86,0.022);g.add(w12ed);
+    // Ancient rune inscriptions
+    for(var w12r=0;w12r<4;w12r++){var w12rn=new THREE.Mesh(new THREE.BoxGeometry(0.044,0.020,0.022),new THREE.MeshBasicMaterial({color:0x88bbff,transparent:true,opacity:0.75}));w12rn.position.set(0.022,0.54+w12r*0.18,-0.022);g.add(w12rn);}
+    var w12tip=new THREE.Mesh(new THREE.ConeGeometry(0.030,0.16,4),new THREE.MeshLambertMaterial({color:0x99aacc}));w12tip.position.set(0.04,1.37,0);w12tip.rotation.z=-0.12;g.add(w12tip);
+
+  } else if(itemId==='w013'){
+    // ── SOUL HARVESTER — dark curved harvester, soul gem cluster, dripping void edge ──
+    var w13pm=new THREE.Mesh(new THREE.OctahedronGeometry(0.070,0),new THREE.MeshBasicMaterial({color:0xff2020,transparent:true,opacity:0.9}));w13pm.position.y=0.04;g.add(w13pm);
+    var w13gr=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.040,0.28,7),new THREE.MeshLambertMaterial({color:0x200008,emissive:0x100004,emissiveIntensity:0.4}));w13gr.position.y=0.18;g.add(w13gr);
+    // Blood-red grip bands
+    for(var w13i=0;w13i<3;w13i++){var w13b=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.026,7),new THREE.MeshBasicMaterial({color:0xcc0020,transparent:true,opacity:0.85}));w13b.position.y=0.06+w13i*0.09;g.add(w13b);}
+    // Soul gem cluster at guard
+    for(var w13g=0;w13g<3;w13g++){var w13gem=new THREE.Mesh(new THREE.OctahedronGeometry(0.042,0),new THREE.MeshBasicMaterial({color:w13g===0?0xff2020:w13g===1?0xff6600:0xcc0060,transparent:true,opacity:0.92}));w13gem.position.set((w13g-1)*0.08,0.36,0.02);g.add(w13gem);}
+    // Curved harvester guard
+    var w13cg=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.055,0.072),new THREE.MeshLambertMaterial({color:0x300010}));w13cg.position.y=0.44;g.add(w13cg);
+    // Void-dark curved blade
+    var w13bl=new THREE.Mesh(new THREE.BoxGeometry(0.072,0.82,0.040),new THREE.MeshLambertMaterial({color:0x180008,emissive:0x0c0004,emissiveIntensity:0.4}));w13bl.position.set(0.016,0.88,0);w13bl.rotation.z=-0.08;g.add(w13bl);
+    // Soul-drain drip edge
+    var w13ed=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.76,0.018),new THREE.MeshBasicMaterial({color:0xff2020,transparent:true,opacity:0.80}));w13ed.position.set(0.038,0.86,0.024);g.add(w13ed);
+    // Soul drip drops
+    for(var w13d=0;w13d<4;w13d++){var w13drp=new THREE.Mesh(new THREE.SphereGeometry(0.018,4,3),new THREE.MeshBasicMaterial({color:0xff0030,transparent:true,opacity:0.85}));w13drp.position.set(0.046+Math.random()*0.010,0.56+w13d*0.18,0.020);g.add(w13drp);}
+    var w13tip=new THREE.Mesh(new THREE.ConeGeometry(0.030,0.18,4),new THREE.MeshBasicMaterial({color:0xff1040,transparent:true,opacity:0.95}));w13tip.position.set(0.022,1.34,0);w13tip.rotation.z=-0.08;g.add(w13tip);
+
+  } else if(itemId==='w003'){
+    // ── AETHER STAFF — twisted silver shaft, large teal crystal crown with orbiting gems ──
+    // Pommel
+    var s3pm=new THREE.Mesh(new THREE.SphereGeometry(0.07,7,5),new THREE.MeshLambertMaterial({color:0x446655}));s3pm.position.y=0.04;g.add(s3pm);
+    // Main shaft — slightly tapered, twisted look via segments
+    var s3sh=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.048,1.55,8),new THREE.MeshLambertMaterial({color:0x2a5040,emissive:0x0a2018,emissiveIntensity:0.3}));s3sh.position.y=0.82;g.add(s3sh);
+    // Shaft wrap bands
+    for(var si=0;si<5;si++){var sb=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.04,8),new THREE.MeshLambertMaterial({color:0x00ccaa,emissive:0x006655,emissiveIntensity:0.5}));sb.position.y=0.25+si*0.28;g.add(sb);}
+    // Collar at top of shaft
+    var s3col=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.055,0.10,8),new THREE.MeshLambertMaterial({color:0x338866}));s3col.position.y=1.62;g.add(s3col);
+    // Large central crystal — double octahedron
+    var s3cr=new THREE.Mesh(new THREE.OctahedronGeometry(0.22,0),new THREE.MeshBasicMaterial({color:0x00ffcc,transparent:true,opacity:0.88}));s3cr.position.y=1.95;g.add(s3cr);
+    var s3cr2=new THREE.Mesh(new THREE.OctahedronGeometry(0.14,0),new THREE.MeshBasicMaterial({color:0x80ffee,transparent:true,opacity:0.95}));s3cr2.position.y=1.95;s3cr2.rotation.y=Math.PI/8;g.add(s3cr2);
+    // Four orbiting small gems at crown
+    for(var gi3=0;gi3<4;gi3++){var a3=gi3/4*Math.PI*2;var sg=new THREE.Mesh(new THREE.OctahedronGeometry(0.055,0),new THREE.MeshBasicMaterial({color:gi3%2===0?0x00ffcc:0x39ff8a,transparent:true,opacity:0.9}));sg.position.set(Math.cos(a3)*0.26,1.92+Math.sin(a3)*0.08,Math.sin(a3)*0.26);g.add(sg);}
+    // Top spike
+    var s3tip=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.22,4),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));s3tip.position.y=2.25;g.add(s3tip);
+  } else if(itemId==='w004'){
+    g.add(new THREE.Mesh(new THREE.BoxGeometry(0.18,0.05,0.06),new THREE.MeshLambertMaterial({color:0x402060})));
+    var b4=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.46,0.035),new THREE.MeshLambertMaterial({color:0x9080b0,emissive:0x4020a0,emissiveIntensity:0.5}));b4.position.y=0.26;g.add(b4);
+    var b4h=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.04),new THREE.MeshLambertMaterial({color:0x301848}));b4h.position.y=0.07;g.add(b4h);
+  // PointLight removed for performance
+  } else if(itemId==='w005'){
+    // Grip at center y=0, bow limbs extend up and down
+    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,0.24,6),new THREE.MeshLambertMaterial({color:0x8a5a20})));
+    var bw=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,0.55,5),new THREE.MeshLambertMaterial({color:0x5a3810}));bw.position.set(0.04,0.4,0);bw.rotation.z=0.25;g.add(bw);
+    var bw2=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,0.55,5),new THREE.MeshLambertMaterial({color:0x5a3810}));bw2.position.set(0.04,-0.4,0);bw2.rotation.z=-0.25;g.add(bw2);
+    // Bowstring
+    var str=new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,1.1,4),new THREE.MeshLambertMaterial({color:0xd0c080}));str.position.x=0.18;g.add(str);
+  } else if(itemId==='w006'){
+    // Grip at y=0, handle goes up, head at top
+    var hnd=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.7,6),new THREE.MeshLambertMaterial({color:0x3a2010}));hnd.position.y=0.35;g.add(hnd);
+    var hd=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.30,0.30),new THREE.MeshLambertMaterial({color:0x505060}));hd.position.y=0.76;g.add(hd);
+    var pommel=new THREE.Mesh(new THREE.SphereGeometry(0.07,5,4),new THREE.MeshLambertMaterial({color:0x404050}));pommel.position.y=0.02;g.add(pommel);
+  // PointLight removed for performance
+  } else if(itemId==='w008'){
+    var b8h=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.18,0.06),new THREE.MeshLambertMaterial({color:0x402060}));b8h.position.y=0.09;g.add(b8h);
+    g.add(new THREE.Mesh(new THREE.BoxGeometry(0.26,0.05,0.08),new THREE.MeshLambertMaterial({color:0x402060})));
+    var b8=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.82,0.04),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.85}));b8.position.y=0.59;g.add(b8);
+  // PointLight removed for performance
+  } else if(itemId==='w2h001'){
+    // ── GREATSWORD OF THE RECRUIT — long iron blade, simple crossguard ──
+    // Grip (long — two hands)
+    var g1h=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.04,0.42,6),new THREE.MeshLambertMaterial({color:0x3a2010}));g1h.position.y=0.21;g.add(g1h);
+    // Pommel
+    var g1p=new THREE.Mesh(new THREE.SphereGeometry(0.055,6,5),new THREE.MeshLambertMaterial({color:0x505050}));g1p.position.y=0.02;g.add(g1p);
+    // Crossguard — wide and plain
+    var g1c=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.06,0.08),new THREE.MeshLambertMaterial({color:0x606060}));g1c.position.y=0.44;g.add(g1c);
+    // Long blade
+    var g1b=new THREE.Mesh(new THREE.BoxGeometry(0.07,1.05,0.04),new THREE.MeshLambertMaterial({color:0x909090}));g1b.position.y=1.00;g.add(g1b);
+    // Blade fuller (centre groove)
+    var g1f=new THREE.Mesh(new THREE.BoxGeometry(0.025,0.85,0.02),new THREE.MeshLambertMaterial({color:0xc0c0c0}));g1f.position.y=0.97;g1f.position.z=0.025;g.add(g1f);
+    // Tip
+    var g1t=new THREE.Mesh(new THREE.ConeGeometry(0.035,0.18,4),new THREE.MeshLambertMaterial({color:0xb0b0b0}));g1t.position.y=1.60;g.add(g1t);
+
+  } else if(itemId==='w2h002'){
+    // ── IRONCLAD ZWEIHANDER — armoured crossguard, etched blade ──
+    var g2h=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.044,0.46,6),new THREE.MeshLambertMaterial({color:0x2a1808}));g2h.position.y=0.23;g.add(g2h);
+    var g2p=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.06,0.10),new THREE.MeshLambertMaterial({color:0x404048}));g2p.position.y=0.02;g.add(g2p);
+    // Ricasso (unsharpened base of blade)
+    var g2r=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.22,0.05),new THREE.MeshLambertMaterial({color:0x707070}));g2r.position.y=0.58;g.add(g2r);
+    // Compound crossguard — main bar + swept lugs
+    var g2c=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.07,0.09),new THREE.MeshLambertMaterial({color:0x485058}));g2c.position.y=0.50;g.add(g2c);
+    var g2lug1=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.02,0.18,5),new THREE.MeshLambertMaterial({color:0x485058}));g2lug1.position.set(-0.28,0.64,0);g2lug1.rotation.z=0.4;g.add(g2lug1);
+    var g2lug2=g2lug1.clone();g2lug2.position.x=0.28;g2lug2.rotation.z=-0.4;g.add(g2lug2);
+    // Blade — wider, with edge bevel
+    var g2b=new THREE.Mesh(new THREE.BoxGeometry(0.09,1.10,0.045),new THREE.MeshLambertMaterial({color:0x808090}));g2b.position.y=1.14;g.add(g2b);
+    var g2e=new THREE.Mesh(new THREE.BoxGeometry(0.03,1.0,0.02),new THREE.MeshLambertMaterial({color:0xd0d0e0}));g2e.position.set(0.04,1.12,0.03);g.add(g2e);
+    var g2t=new THREE.Mesh(new THREE.ConeGeometry(0.045,0.22,4),new THREE.MeshLambertMaterial({color:0x909090}));g2t.position.y=1.80;g.add(g2t);
+
+  } else if(itemId==='w2h003'){
+    // ── VOID CLEAVER — purple-dark blade, crystalline edge ──
+    var g3h=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.045,0.50,6),new THREE.MeshLambertMaterial({color:0x201030}));g3h.position.y=0.25;g.add(g3h);
+    // Wrapped grip bands
+    for(var gi=0;gi<3;gi++){var gb=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.04,6),new THREE.MeshLambertMaterial({color:0x5020a0}));gb.position.y=0.12+gi*0.15;g.add(gb);}
+    var g3p=new THREE.Mesh(new THREE.OctahedronGeometry(0.065,0),new THREE.MeshBasicMaterial({color:0x8040ff,transparent:true,opacity:0.9}));g3p.position.y=0.02;g.add(g3p);
+    // Swept crossguard
+    var g3c=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.06,0.09),new THREE.MeshLambertMaterial({color:0x301848,emissive:0x200d38,emissiveIntensity:0.3}));g3c.position.y=0.54;g.add(g3c);
+    var g3ct=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.14,4),new THREE.MeshLambertMaterial({color:0x6030d0}));g3ct.position.set(0.26,0.62,0);g.add(g3ct);
+    var g3ct2=g3ct.clone();g3ct2.position.x=-0.26;g.add(g3ct2);
+    // Dark blade with void shimmer
+    var g3b=new THREE.Mesh(new THREE.BoxGeometry(0.08,1.15,0.04),new THREE.MeshLambertMaterial({color:0x18102a,emissive:0x200850,emissiveIntensity:0.4}));g3b.position.y=1.18;g.add(g3b);
+    // Crystal edge
+    var g3be=new THREE.Mesh(new THREE.BoxGeometry(0.025,1.0,0.015),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.8}));g3be.position.set(0.042,1.15,0.025);g.add(g3be);
+    var g3t=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.25,4),new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:0.9}));g3t.position.y=1.88;g.add(g3t);
+
+  } else if(itemId==='w2h004'){
+    // ── EMBERSTRIKE COLOSSUS — massive orange-glow blade, forge-hammer crossguard ──
+    var g4h=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.055,0.55,6),new THREE.MeshLambertMaterial({color:0x3a1a08}));g4h.position.y=0.27;g.add(g4h);
+    var g4p=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.08,0.14),new THREE.MeshLambertMaterial({color:0x603010}));g4p.position.y=0.02;g.add(g4p);
+    // Thick forge-plate crossguard
+    var g4c=new THREE.Mesh(new THREE.BoxGeometry(0.60,0.10,0.12),new THREE.MeshLambertMaterial({color:0x505050}));g4c.position.y=0.59;g.add(g4c);
+    var g4cg=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.20,5),new THREE.MeshLambertMaterial({color:0xff6010,emissive:0xcc3000,emissiveIntensity:0.5}));g4cg.position.set(0.31,0.62,0);g4cg.rotation.z=Math.PI/2;g.add(g4cg);
+    var g4cg2=g4cg.clone();g4cg2.position.x=-0.31;g.add(g4cg2);
+    // Wide ember blade — tapers to point, glows hot at edge
+    var g4b=new THREE.Mesh(new THREE.BoxGeometry(0.11,1.20,0.05),new THREE.MeshLambertMaterial({color:0x604020}));g4b.position.y=1.24;g.add(g4b);
+    // Hot edge
+    var g4e=new THREE.Mesh(new THREE.BoxGeometry(0.04,1.10,0.02),new THREE.MeshLambertMaterial({color:0xff6600,emissive:0xcc2200,emissiveIntensity:0.7}));g4e.position.set(0.05,1.22,0.03);g.add(g4e);
+    // Rune slots on blade face
+    for(var gi4=0;gi4<3;gi4++){var gr4=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.03),new THREE.MeshBasicMaterial({color:0xff8820,transparent:true,opacity:0.85}));gr4.position.set(0,0.80+gi4*0.28,-0.04);g.add(gr4);}
+    var g4t=new THREE.Mesh(new THREE.ConeGeometry(0.055,0.28,4),new THREE.MeshLambertMaterial({color:0xff6600,emissive:0xcc2200,emissiveIntensity:0.6}));g4t.position.y=1.99;g.add(g4t);
+
+  } else if(itemId==='w2h005'){
+    // ── VAELTHARAX'S GREATSWORD — dragon claw hilt, scorched fire blade ──
+    var g5h=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.055,0.58,7),new THREE.MeshLambertMaterial({color:0x3a0808,emissive:0x1a0000,emissiveIntensity:0.2}));g5h.position.y=0.29;g.add(g5h);
+    // Scale wrapping on grip
+    for(var gi5=0;gi5<4;gi5++){var gs5=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.055,0.060),new THREE.MeshLambertMaterial({color:0x8b0000}));gs5.position.set(0,0.12+gi5*0.13,0.048);g.add(gs5);}
+    // Dragon jaw pommel
+    var g5p=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.09,0.14),new THREE.MeshLambertMaterial({color:0x8b0000}));g5p.position.y=0.02;g.add(g5p);
+    var g5pt=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.12,4),new THREE.MeshLambertMaterial({color:0xcc4400}));g5pt.position.y=0.10;g5pt.rotation.x=Math.PI;g.add(g5pt);
+    // Dragon wing crossguard
+    var g5c=new THREE.Mesh(new THREE.BoxGeometry(0.70,0.08,0.10),new THREE.MeshLambertMaterial({color:0x8b0000,emissive:0x3a0000,emissiveIntensity:0.3}));g5c.position.y=0.63;g.add(g5c);
+    var g5cl=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.06,0.08),new THREE.MeshLambertMaterial({color:0xcc4400}));g5cl.position.set(-0.38,0.68,0);g5cl.rotation.z=0.35;g.add(g5cl);
+    var g5cr=g5cl.clone();g5cr.position.x=0.38;g5cr.rotation.z=-0.35;g.add(g5cr);
+    // Dragon-fire blade — scorched dark with orange core and gold edge
+    var g5b=new THREE.Mesh(new THREE.BoxGeometry(0.10,1.30,0.05),new THREE.MeshLambertMaterial({color:0x1a0a00,emissive:0x180800,emissiveIntensity:0.3}));g5b.position.y=1.33;g.add(g5b);
+    var g5be=new THREE.Mesh(new THREE.BoxGeometry(0.04,1.20,0.02),new THREE.MeshLambertMaterial({color:0xff6600,emissive:0xff2200,emissiveIntensity:0.8}));g5be.position.set(0.052,1.30,0.03);g.add(g5be);
+    var g5bi=new THREE.Mesh(new THREE.BoxGeometry(0.03,1.10,0.015),new THREE.MeshBasicMaterial({color:0xffcc00,transparent:true,opacity:0.6}));g5bi.position.set(0.055,1.28,0.04);g.add(g5bi);
+    // Runes — three glowing dragons'-eye symbols
+    for(var gi5r=0;gi5r<4;gi5r++){var gr5=new THREE.Mesh(new THREE.OctahedronGeometry(0.028,0),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.9}));gr5.position.set(0,0.80+gi5r*0.28,0.03);g.add(gr5);}
+    var g5t=new THREE.Mesh(new THREE.ConeGeometry(0.050,0.30,4),new THREE.MeshLambertMaterial({color:0xff6600,emissive:0xff2200,emissiveIntensity:0.9}));g5t.position.y=2.10;g.add(g5t);
+
+  } else if(itemId==='w2h006'){
+    // ── RIFT SOVEREIGN CLAYMORE — dimensional rift blade, alien geometry ──
+    var g6h=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.050,0.60,6),new THREE.MeshLambertMaterial({color:0x100820}));g6h.position.y=0.30;g.add(g6h);
+    // Void bands
+    for(var gi6=0;gi6<4;gi6++){var gb6=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.048,0.04,6),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.7}));gb6.position.y=0.09+gi6*0.14;g.add(gb6);}
+    // Rift-tear pommel
+    var g6p=new THREE.Mesh(new THREE.OctahedronGeometry(0.08,0),new THREE.MeshBasicMaterial({color:0x8800ff,transparent:true,opacity:0.95}));g6p.position.y=0.02;g.add(g6p);
+    // Four-armed crossguard — dimensional
+    var g6cm=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.07,0.10),new THREE.MeshLambertMaterial({color:0x180030,emissive:0x080018,emissiveIntensity:0.3}));g6cm.position.y=0.65;g.add(g6cm);
+    var g6cv=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.28,0.10),new THREE.MeshLambertMaterial({color:0x180030}));g6cv.position.y=0.65;g.add(g6cv);
+    [[0.36,0],[0.36,0],[-.36,0],[0,.14],[0,-.14]].forEach(function(p){
+      var gem=new THREE.Mesh(new THREE.OctahedronGeometry(0.032,0),new THREE.MeshBasicMaterial({color:0xcc00ff,transparent:true,opacity:0.9}));
+      gem.position.set(p[0],0.65+p[1],0);g.add(gem);
+    });
+    // Rift blade — semi-transparent with void core
+    var g6b=new THREE.Mesh(new THREE.BoxGeometry(0.09,1.40,0.04),new THREE.MeshLambertMaterial({color:0x0a0018,emissive:0x080010,emissiveIntensity:0.4}));g6b.position.y=1.40;g.add(g6b);
+    var g6be=new THREE.Mesh(new THREE.BoxGeometry(0.03,1.28,0.015),new THREE.MeshBasicMaterial({color:0xcc00ff,transparent:true,opacity:0.85}));g6be.position.set(0.046,1.38,0.028);g.add(g6be);
+    // Rift cracks on blade surface
+    for(var gi6c=0;gi6c<5;gi6c++){var gc6=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.02,0.025),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.8}));gc6.position.set(0,0.82+gi6c*0.24,-0.03);g.add(gc6);}
+    var g6t=new THREE.Mesh(new THREE.ConeGeometry(0.045,0.32,4),new THREE.MeshBasicMaterial({color:0xcc00ff,transparent:true,opacity:0.95}));g6t.position.y=2.22;g.add(g6t);
+  } else if(itemId==='w011'){
+    // ── AETHER LANCE — sleek blue-gold lance, triple gem array, crackling energy tip ──
+    var l1pm=new THREE.Mesh(new THREE.OctahedronGeometry(0.08,0),new THREE.MeshLambertMaterial({color:0x224488}));l1pm.position.y=0.04;g.add(l1pm);
+    var l1sh=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.044,1.70,8),new THREE.MeshLambertMaterial({color:0x1a2a50,emissive:0x080818,emissiveIntensity:0.4}));l1sh.position.y=0.90;g.add(l1sh);
+    // Gold accent rings
+    for(var li=0;li<4;li++){var lr=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.048,0.035,8),new THREE.MeshLambertMaterial({color:0xddaa00,emissive:0x886600,emissiveIntensity:0.4}));lr.position.y=0.3+li*0.38;g.add(lr);}
+    // Triple gem cluster at head
+    var l1c1=new THREE.Mesh(new THREE.OctahedronGeometry(0.16,0),new THREE.MeshBasicMaterial({color:0x4488ff,transparent:true,opacity:0.92}));l1c1.position.y=1.85;g.add(l1c1);
+    var l1c2=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,0),new THREE.MeshBasicMaterial({color:0xaaddff,transparent:true,opacity:0.95}));l1c2.position.set(0.18,1.82,0);g.add(l1c2);
+    var l1c3=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,0),new THREE.MeshBasicMaterial({color:0xaaddff,transparent:true,opacity:0.95}));l1c3.position.set(-0.18,1.82,0);g.add(l1c3);
+    // Crackling energy lance tip
+    var l1tip=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.42,4),new THREE.MeshBasicMaterial({color:0x88ccff,transparent:true,opacity:0.98}));l1tip.position.y=2.28;g.add(l1tip);
+    var l1tip2=new THREE.Mesh(new THREE.ConeGeometry(0.02,0.30,4),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.85}));l1tip2.position.y=2.46;g.add(l1tip2);
+
+  } else if(itemId==='ww_w_breath'){
+    // ── DRAGONBREATH LANCE — volcanic obsidian shaft, molten lava core, dragon-fire tip ──
+    var db1pm=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.08,0.12),new THREE.MeshLambertMaterial({color:0x1a0400}));db1pm.position.y=0.04;g.add(db1pm);
+    var db1sh=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.055,1.65,6),new THREE.MeshLambertMaterial({color:0x180800,emissive:0x0a0200,emissiveIntensity:0.3}));db1sh.position.y=0.87;g.add(db1sh);
+    // Lava vein cracks on shaft
+    for(var dbi=0;dbi<4;dbi++){var dbc=new THREE.Mesh(new THREE.BoxGeometry(0.01,0.30,0.05),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.8}));dbc.position.set(0.04,0.30+dbi*0.35,0);g.add(dbc);}
+    // Dragon scale collar
+    var db1col=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.055,0.12,6),new THREE.MeshLambertMaterial({color:0x3a0a00,emissive:0x200400,emissiveIntensity:0.4}));db1col.position.y=1.68;g.add(db1col);
+    // Molten crystal — deep orange fire gem
+    var db1cr=new THREE.Mesh(new THREE.OctahedronGeometry(0.20,0),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.85}));db1cr.position.y=2.00;g.add(db1cr);
+    var db1cr2=new THREE.Mesh(new THREE.OctahedronGeometry(0.12,0),new THREE.MeshBasicMaterial({color:0xffcc00,transparent:true,opacity:0.95}));db1cr2.position.y=2.00;g.add(db1cr2);
+    // Orbiting fire shards
+    for(var dbs=0;dbs<3;dbs++){var a_db=dbs/3*Math.PI*2;var ds=new THREE.Mesh(new THREE.OctahedronGeometry(0.06,0),new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.9}));ds.position.set(Math.cos(a_db)*0.28,1.98,Math.sin(a_db)*0.28);g.add(ds);}
+    var db1tip=new THREE.Mesh(new THREE.ConeGeometry(0.055,0.38,4),new THREE.MeshBasicMaterial({color:0xff8800,transparent:true,opacity:0.95}));db1tip.position.y=2.38;g.add(db1tip);
+
+  } else if(itemId==='boss_w_void'){
+    // ── WRAITH PRIME SCYTHE — void-black curved scythe, soul gems, spectral blade ──
+    var vs1h=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.050,1.80,8),new THREE.MeshLambertMaterial({color:0x0a0010,emissive:0x040008,emissiveIntensity:0.5}));vs1h.position.y=0.90;g.add(vs1h);
+    // Dark gem bands
+    for(var vsi=0;vsi<5;vsi++){var vsb=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.03,8),new THREE.MeshBasicMaterial({color:0x6600cc,transparent:true,opacity:0.8}));vsb.position.y=0.18+vsi*0.35;g.add(vsb);}
+    // Curved scythe neck
+    var vsn=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.038,0.45,6),new THREE.MeshLambertMaterial({color:0x080008}));vsn.position.set(0.18,1.95,0);vsn.rotation.z=-0.7;g.add(vsn);
+    // Scythe blade — spectral curved
+    var vsbl=new THREE.Mesh(new THREE.BoxGeometry(0.60,0.10,0.04),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.88}));vsbl.position.set(0.38,2.08,0);vsbl.rotation.z=-0.25;g.add(vsbl);
+    var vsbl2=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.06,0.03),new THREE.MeshBasicMaterial({color:0xdd44ff,transparent:true,opacity:0.95}));vsbl2.position.set(0.55,2.14,0);vsbl2.rotation.z=-0.4;g.add(vsbl2);
+    // Blade tip
+    var vstip=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.22,3),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.95}));vstip.position.set(0.72,2.10,0);vstip.rotation.z=-Math.PI/2;g.add(vstip);
+    // Soul gem at handle top
+    var vsgem=new THREE.Mesh(new THREE.OctahedronGeometry(0.14,0),new THREE.MeshBasicMaterial({color:0x8800ff,transparent:true,opacity:0.92}));vsgem.position.y=1.82;g.add(vsgem);
+    // Skull/eye sockets
+    var vseye=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.85}));vseye.position.y=1.82;g.add(vseye);
+
+  } else if(itemId==='boss_w_fungal'){
+    // ── QUEEN'S SPORE STAFF — gnarled mushroom staff, bioluminescent caps, spore clusters ──
+    var fs1sh=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.060,1.60,7),new THREE.MeshLambertMaterial({color:0x1a2808,emissive:0x0a1400,emissiveIntensity:0.2}));fs1sh.position.y=0.85;g.add(fs1sh);
+    // Gnarled knots on shaft
+    for(var fsi=0;fsi<3;fsi++){var fsk=new THREE.Mesh(new THREE.SphereGeometry(0.07,6,4),new THREE.MeshLambertMaterial({color:0x243010}));fsk.position.set((fsi%2===0?0.04:-0.04),0.35+fsi*0.45,0);g.add(fsk);}
+    // Main mushroom cap head
+    var fscap=new THREE.Mesh(new THREE.SphereGeometry(0.28,8,6),new THREE.MeshLambertMaterial({color:0xcc3080}));fscap.scale.y=0.45;fscap.position.y=1.82;g.add(fscap);
+    var fsstem=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.10,0.25,8),new THREE.MeshLambertMaterial({color:0x1a2808}));fsstem.position.y=1.62;g.add(fsstem);
+    // Glowing spore gems under cap
+    for(var fsg=0;fsg<5;fsg++){var fsa=fsg/5*Math.PI*2;var fsgo=new THREE.Mesh(new THREE.SphereGeometry(0.05,5,4),new THREE.MeshBasicMaterial({color:0x80ff40,transparent:true,opacity:0.9}));fsgo.position.set(Math.cos(fsa)*0.22,1.70,Math.sin(fsa)*0.22);g.add(fsgo);}
+    // Secondary small caps
+    [[0.18,1.90,0.12],[-0.16,1.95,-0.10]].forEach(function(p,pi){try{var fc=new THREE.Mesh(new THREE.SphereGeometry(0.10+pi*0.03,6,5),new THREE.MeshLambertMaterial({color:pi===0?0xff6090:0xcc2060}));fc.scale.y=0.5;fc.position.set(p[0],p[1],p[2]);g.add(fc);}catch(e){}});
+    // Top spore burst
+    var fstip=new THREE.Mesh(new THREE.SphereGeometry(0.08,5,4),new THREE.MeshBasicMaterial({color:0x40ff80,transparent:true,opacity:0.95}));fstip.position.y=2.12;g.add(fstip);
+
+  } else if(itemId==='boss_w_ancient'){
+    // ── STAFF OF THE ARCHITECT — golden ancient relic, rune-carved, three-gem trinity crown ──
+    var as1pm=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,1),new THREE.MeshLambertMaterial({color:0x886600,emissive:0x442200,emissiveIntensity:0.3}));as1pm.position.y=0.05;g.add(as1pm);
+    var as1sh=new THREE.Mesh(new THREE.CylinderGeometry(0.036,0.050,1.62,8),new THREE.MeshLambertMaterial({color:0x7a5a10,emissive:0x3a2a00,emissiveIntensity:0.3}));as1sh.position.y=0.86;g.add(as1sh);
+    // Gold rune rings
+    for(var asi=0;asi<5;asi++){var asr=new THREE.Mesh(new THREE.CylinderGeometry(0.058,0.058,0.040,8),new THREE.MeshLambertMaterial({color:0xddaa00,emissive:0x886600,emissiveIntensity:0.5}));asr.position.y=0.22+asi*0.32;g.add(asr);}
+    // Trinity crown frame
+    var ascr=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.06,0.18,6),new THREE.MeshLambertMaterial({color:0xcc9900,emissive:0x664400,emissiveIntensity:0.4}));ascr.position.y=1.76;g.add(ascr);
+    // Three large gems in trinity arrangement
+    var triCols=[0xffcc00,0xff8800,0xffffff];
+    for(var ati=0;ati<3;ati++){var ata=ati/3*Math.PI*2;var atg=new THREE.Mesh(new THREE.OctahedronGeometry(0.12,0),new THREE.MeshBasicMaterial({color:triCols[ati],transparent:true,opacity:0.92}));atg.position.set(Math.cos(ata)*0.18,1.96,Math.sin(ata)*0.18);g.add(atg);}
+    // Central master gem
+    var asmain=new THREE.Mesh(new THREE.OctahedronGeometry(0.16,0),new THREE.MeshBasicMaterial({color:0xffeea0,transparent:true,opacity:0.95}));asmain.position.y=2.08;g.add(asmain);
+    // Spire
+    var astip=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.32,4),new THREE.MeshLambertMaterial({color:0xffcc44,emissive:0xcc8800,emissiveIntensity:0.6}));astip.position.y=2.42;g.add(astip);
+
+  } else if(itemId==='dragon_w_void'){
+    // ── EMBERSOUL CATALYST — black dragon-bone staff, ember heart core, void fire tip ──
+    var ec1pm=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.10,0.14),new THREE.MeshLambertMaterial({color:0x0a0000}));ec1pm.position.y=0.05;g.add(ec1pm);
+    var ec1sh=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.055,1.60,6),new THREE.MeshLambertMaterial({color:0x120000,emissive:0x060000,emissiveIntensity:0.3}));ec1sh.position.y=0.85;g.add(ec1sh);
+    // Dragon bone ridges
+    for(var eci=0;eci<4;eci++){var ecr=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.03,0.08),new THREE.MeshLambertMaterial({color:0x1a0400}));ecr.position.set(0,0.30+eci*0.36,0);ecr.rotation.y=eci*0.4;g.add(ecr);}
+    // Ember heart — deep red core with orange shell
+    var ech=new THREE.Mesh(new THREE.OctahedronGeometry(0.22,0),new THREE.MeshBasicMaterial({color:0xff1800,transparent:true,opacity:0.80}));ech.position.y=1.88;g.add(ech);
+    var ech2=new THREE.Mesh(new THREE.OctahedronGeometry(0.14,0),new THREE.MeshBasicMaterial({color:0xffaa00,transparent:true,opacity:0.92}));ech2.position.y=1.88;g.add(ech2);
+    var ech3=new THREE.Mesh(new THREE.OctahedronGeometry(0.07,0),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.98}));ech3.position.y=1.88;g.add(ech3);
+    // Void fire shards orbiting
+    for(var ecs=0;ecs<4;ecs++){var ea=ecs/4*Math.PI*2;var es=new THREE.Mesh(new THREE.OctahedronGeometry(0.07,0),new THREE.MeshBasicMaterial({color:ecs%2===0?0xff4400:0xcc0000,transparent:true,opacity:0.88}));es.position.set(Math.cos(ea)*0.30,1.86+Math.cos(ea)*0.10,Math.sin(ea)*0.30);g.add(es);}
+    // Tip — black void spire with ember point
+    var ectip=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.40,5),new THREE.MeshLambertMaterial({color:0x080000}));ectip.position.y=2.28;g.add(ectip);
+    var ectip2=new THREE.Mesh(new THREE.ConeGeometry(0.02,0.18,4),new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.95}));ectip2.position.y=2.55;g.add(ectip2);
+
+  } else if(itemId==='rv_w_staff'||itemId==='xu_w_blade'||itemId==='ww_w_fang'||itemId==='dng_w_drillblade'||itemId==='cr_w001'||itemId==='cr_w002'||itemId==='cr_w003'||itemId==='cr_w004'){
+    // Zone weapons not individually handled — use default stub
+    var dbh=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.16,0.04),new THREE.MeshLambertMaterial({color:0x606060}));dbh.position.y=0.08;g.add(dbh);
+    var db=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.55,0.04),new THREE.MeshLambertMaterial({color:0x808090}));db.position.y=0.43;g.add(db);
+
+  } else if(itemId==='vc_w_voidblade'){
+    // ── XERATH'S VOID BLADE — military blade, void energy fused into the edge, cracked crossguard ──
+    var vbMat=new THREE.MeshLambertMaterial({color:0x0a0818,emissive:new THREE.Color(0x040410),emissiveIntensity:0.4});
+    var vbGlow=new THREE.MeshBasicMaterial({color:0x8800ff,transparent:true,opacity:0.90});
+    var vbEdge=new THREE.MeshBasicMaterial({color:0xcc66ff,transparent:true,opacity:0.80});
+    // Grip — wrapped military handle
+    var vbGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.036,0.42,7),vbMat);vbGrip.position.y=0.21;g.add(vbGrip);
+    // Pommel — void crystal
+    var vbPom=new THREE.Mesh(new THREE.OctahedronGeometry(0.055,0),vbGlow);vbPom.position.y=0.00;g.add(vbPom);
+    // Crossguard — cracked, one side intact (military) one side glowing void
+    var vbCG=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.045,0.055),vbMat);vbCG.position.y=0.44;g.add(vbCG);
+    var vbCGv=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.030,0.040),vbGlow);vbCGv.position.set(0.14,0.44,0);g.add(vbCGv);
+    // Blade — dark military steel body
+    var vbBlade=new THREE.Mesh(new THREE.BoxGeometry(0.095,1.12,0.030),vbMat);vbBlade.position.y=1.06;g.add(vbBlade);
+    // Void energy fused along full edge — left side
+    var vbE1=new THREE.Mesh(new THREE.BoxGeometry(0.018,1.10,0.020),vbGlow);vbE1.position.set(-0.056,1.06,0);g.add(vbE1);
+    var vbE2=new THREE.Mesh(new THREE.BoxGeometry(0.010,1.08,0.015),vbEdge);vbE2.position.set(-0.062,1.06,0);g.add(vbE2);
+    // Cracks running through blade — void bleeding through
+    for(var vbi=0;vbi<3;vbi++){var vbc=new THREE.Mesh(new THREE.BoxGeometry(0.008,0.22,0.034),vbGlow);vbc.position.set(0.02,0.62+vbi*0.32,0);vbc.rotation.z=0.3+vbi*0.15;g.add(vbc);}
+    // Tip — narrows to void-crystal point
+    var vbTip=new THREE.Mesh(new THREE.ConeGeometry(0.044,0.28,4),vbMat);vbTip.position.y=1.76;g.add(vbTip);
+    var vbTipG=new THREE.Mesh(new THREE.ConeGeometry(0.028,0.26,4),vbGlow);vbTipG.position.y=1.77;g.add(vbTipG);
+
+  } else if(itemId==='vc_w_lance'){
+    // ── COMMANDANT LANCE — long void lance, tri-barrel tip, pulsing purple core ──
+    var vlMat=new THREE.MeshLambertMaterial({color:0x080614,emissive:new THREE.Color(0x04030a),emissiveIntensity:0.3});
+    var vlGlow=new THREE.MeshBasicMaterial({color:0xaa44ff,transparent:true,opacity:0.88});
+    var vlCore=new THREE.MeshBasicMaterial({color:0xdd88ff,transparent:true,opacity:0.95});
+    // Main shaft — long and slim
+    var vlShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.044,1.80,7),vlMat);vlShaft.position.y=0.90;g.add(vlShaft);
+    // Void ring bands on shaft
+    for(var vli=0;vli<5;vli++){var vlr=new THREE.Mesh(new THREE.TorusGeometry(0.044,0.009,5,14),vlGlow);vlr.rotation.x=Math.PI/2;vlr.position.y=0.22+vli*0.34;g.add(vlr);}
+    // Grip collar
+    var vlCol=new THREE.Mesh(new THREE.CylinderGeometry(0.058,0.044,0.14,7),vlMat);vlCol.position.y=1.72;g.add(vlCol);
+    // Tri-barrel tip assembly — 3 slim barrels at 120°
+    for(var vlt=0;vlt<3;vlt++){
+      var vla=vlt/3*Math.PI*2;
+      var vlb=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.38,5),vlMat);
+      vlb.position.set(Math.cos(vla)*0.055,2.08,Math.sin(vla)*0.055);g.add(vlb);
+      var vlbG=new THREE.Mesh(new THREE.SphereGeometry(0.022,5,4),vlGlow);
+      vlbG.position.set(Math.cos(vla)*0.055,2.28,Math.sin(vla)*0.055);g.add(vlbG);
+    }
+    // Central core — glowing void orb in the tip
+    var vlOrb=new THREE.Mesh(new THREE.SphereGeometry(0.072,9,7),vlGlow);vlOrb.position.y=2.10;g.add(vlOrb);
+    var vlOrbI=new THREE.Mesh(new THREE.SphereGeometry(0.040,8,6),vlCore);vlOrbI.position.y=2.10;g.add(vlOrbI);
+    // Pommel — void crystal base
+    var vlPom=new THREE.Mesh(new THREE.OctahedronGeometry(0.048,0),vlGlow);vlPom.position.y=0.00;g.add(vlPom);
+  } else if(itemId==='w014'){
+    // MAGE: Aelun Voidweaver Staff — void crystal orb, dark shaft, rune rings
+    var mV=new THREE.MeshLambertMaterial({color:0x080018,emissive:new THREE.Color(0x1a0044),emissiveIntensity:1.0});
+    var mC=new THREE.MeshBasicMaterial({color:0x9900ff,transparent:true,opacity:0.92});
+    var mG=new THREE.MeshLambertMaterial({color:0xb88000,emissive:new THREE.Color(0x3a2000),emissiveIntensity:0.6});
+    var mR=new THREE.MeshBasicMaterial({color:0xcc44ff,transparent:true,opacity:0.85});
+    var sh=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.034,1.65,8),mV); sh.position.y=0.7; g.add(sh);
+    for(var i=0;i<4;i++){var r=new THREE.Mesh(new THREE.TorusGeometry(0.038,0.008,5,14),mG);r.rotation.x=Math.PI/2;r.position.y=0.2+i*0.38;g.add(r);}
+    var orb=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),mC);orb.position.y=1.63;g.add(orb);
+    var orbI=new THREE.Mesh(new THREE.SphereGeometry(0.075,8,6),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));orbI.position.y=1.63;g.add(orbI);
+    var orbC=new THREE.Mesh(new THREE.SphereGeometry(0.035,6,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));orbC.position.y=1.63;g.add(orbC);
+    for(var i=0;i<6;i++){var sa=i/6*Math.PI*2;var sp=new THREE.Mesh(new THREE.ConeGeometry(0.020,0.18,4),mR);sp.position.set(Math.cos(sa)*0.14,1.63+Math.sin(sa)*0.06,Math.sin(sa)*0.14);sp.rotation.z=Math.cos(sa)*0.8;g.add(sp);}
+    var vr=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.014,5,20),mR);vr.position.y=1.63;vr.rotation.x=0.3;g.add(vr);
+
+  } else if(itemId==='w015'){
+    // WARRIOR: Dominion Breaker — massive 2H, xu-plate embedded, energy cracks
+    var mDb=new THREE.MeshLambertMaterial({color:0x080812,emissive:new THREE.Color(0x000818),emissiveIntensity:0.4});
+    var mDg=new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0.95});
+    var mDr=new THREE.MeshBasicMaterial({color:0xff3300,transparent:true,opacity:0.88});
+    var bl=new THREE.Mesh(new THREE.BoxGeometry(0.28,1.80,0.04),mDb);bl.position.y=1.05;g.add(bl);
+    var ed=new THREE.Mesh(new THREE.BoxGeometry(0.06,1.85,0.018),mDg);ed.position.set(0.11,1.05,0.025);g.add(ed);
+    var ed2=ed.clone();ed2.position.x=-0.11;g.add(ed2);
+    for(var i=0;i<4;i++){var cr=new THREE.Mesh(new THREE.BoxGeometry(0.012,0.26,0.045),mDr);cr.position.set((Math.random()-.5)*0.2,0.45+i*0.34,0);g.add(cr);}
+    var cg=new THREE.Mesh(new THREE.BoxGeometry(0.68,0.06,0.06),mDb);cg.position.y=0.1;g.add(cg);
+    var cgG=new THREE.Mesh(new THREE.BoxGeometry(0.66,0.035,0.035),mDg);cgG.position.y=0.1;g.add(cgG);
+    var ha=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.030,0.55,7),mDb);ha.position.y=-0.22;g.add(ha);
+    var pm=new THREE.Mesh(new THREE.SphereGeometry(0.062,7,5),mDg);pm.position.y=-0.52;g.add(pm);
+    var co=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.055,0.07),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));co.position.y=1.05;g.add(co);
+
+  } else if(itemId==='w016'){
+    // ROGUE L: Phantom Edge — shadow-iron, ghost copies, blue glow
+    var mPe=new THREE.MeshLambertMaterial({color:0x050510,emissive:new THREE.Color(0x010106),emissiveIntensity:0.5});
+    var mPg=new THREE.MeshBasicMaterial({color:0x2255ff,transparent:true,opacity:0.90});
+    var bl16=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.82,0.022),mPe);bl16.position.y=0.55;g.add(bl16);
+    var e16=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.85,0.012),mPg);e16.position.set(0.050,0.55,0);g.add(e16);
+    for(var i=0;i<3;i++){var gb=new THREE.Mesh(new THREE.BoxGeometry(0.065,0.78,0.008),new THREE.MeshBasicMaterial({color:0x0033cc,transparent:true,opacity:0.12+i*0.06}));gb.position.set((i+1)*0.022,0.55+i*0.008,0);g.add(gb);}
+    var cg16=new THREE.Mesh(new THREE.BoxGeometry(0.26,0.038,0.032),mPe);cg16.position.y=0.12;g.add(cg16);
+    var cgG16=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.022,0.022),mPg);cgG16.position.y=0.12;g.add(cgG16);
+    var ha16=new THREE.Mesh(new THREE.CylinderGeometry(0.020,0.022,0.34,6),mPe);ha16.position.y=-0.13;g.add(ha16);
+    var pm16=new THREE.Mesh(new THREE.OctahedronGeometry(0.042,0),mPg);pm16.position.y=-0.33;g.add(pm16);
+
+  } else if(itemId==='w017'){
+    // ROGUE R: Void Fang — silver with gold void-rune veins
+    var mVf=new THREE.MeshLambertMaterial({color:0xb0b8c4,emissive:new THREE.Color(0x1a1e24),emissiveIntensity:0.3});
+    var mVg=new THREE.MeshBasicMaterial({color:0xffcc00,transparent:true,opacity:0.90});
+    var bl17=new THREE.Mesh(new THREE.BoxGeometry(0.082,0.80,0.020),mVf);bl17.position.y=0.54;g.add(bl17);
+    for(var i=0;i<3;i++){var ve=new THREE.Mesh(new THREE.BoxGeometry(0.007,0.48+i*0.06,0.026),mVg);ve.position.set(-0.022+i*0.022,0.57,0);g.add(ve);}
+    var tp17=new THREE.Mesh(new THREE.ConeGeometry(0.038,0.16,4),mVf);tp17.position.y=0.96;g.add(tp17);
+    var cg17=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.032,0.030),mVf);cg17.position.y=0.11;g.add(cg17);
+    var cgV=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.020,0.020),mVg);cgV.position.y=0.11;g.add(cgV);
+    var ha17=new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.020,0.32,6),mVf);ha17.position.y=-0.11;g.add(ha17);
+    var pm17=new THREE.Mesh(new THREE.SphereGeometry(0.038,6,5),mVg);pm17.position.y=-0.30;g.add(pm17);
+
+  } else if(itemId==='w018'){
+    // HEALER: Staff of Undying Light — golden sun disc, warm glow, healing rune rings
+    var mUl=new THREE.MeshLambertMaterial({color:0x2a1400,emissive:new THREE.Color(0x0c0500),emissiveIntensity:0.5});
+    var mUg=new THREE.MeshLambertMaterial({color:0xcc8000,emissive:new THREE.Color(0x3a2000),emissiveIntensity:0.7});
+    var mUw=new THREE.MeshBasicMaterial({color:0xffdd44,transparent:true,opacity:0.95});
+    var sh18=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.038,1.60,7),mUl);sh18.position.y=0.68;g.add(sh18);
+    for(var i=0;i<5;i++){var r18=new THREE.Mesh(new THREE.TorusGeometry(0.042,0.009,5,12),mUg);r18.rotation.x=Math.PI/2;r18.position.y=0.15+i*0.30;g.add(r18);}
+    var di=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,0.020,16),mUg);di.position.y=1.60;g.add(di);
+    for(var i=0;i<8;i++){var sk=i/8*Math.PI*2;var sp18=new THREE.Mesh(new THREE.BoxGeometry(0.009,0.20,0.011),mUg);sp18.position.set(Math.cos(sk)*0.09,1.60,Math.sin(sk)*0.09);sp18.rotation.y=sk;g.add(sp18);}
+    var ob18=new THREE.Mesh(new THREE.SphereGeometry(0.075,9,7),mUw);ob18.position.y=1.60;g.add(ob18);
+    var oc18=new THREE.Mesh(new THREE.SphereGeometry(0.036,7,5),new THREE.MeshBasicMaterial({color:0xffffee,transparent:true,opacity:1.0}));oc18.position.y=1.60;g.add(oc18);
+    for(var i=0;i<2;i++){var hr=new THREE.Mesh(new THREE.TorusGeometry(0.13+i*0.06,0.007,4,16),mUw);hr.position.y=1.60;hr.rotation.x=0.5+i*0.8;g.add(hr);}
+
+  } else if(itemId==='necro_w_reaper'){
+    // SOULREAPER SCYTHE — massive two-handed scythe, void-black shaft, purple crescent blade
+    var srPommel=new THREE.Mesh(new THREE.SphereGeometry(0.07,6,5),new THREE.MeshBasicMaterial({color:0x8833ff,transparent:true,opacity:0.92}));srPommel.position.y=0.04;g.add(srPommel);
+    var srShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.04,1.60,6),new THREE.MeshLambertMaterial({color:0x0a0010,emissive:new THREE.Color(0x040008),emissiveIntensity:0.4}));srShaft.position.y=0.90;g.add(srShaft);
+    for(var sri=0;sri<5;sri++){var srb=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.022,6),new THREE.MeshBasicMaterial({color:0x6622aa,transparent:true,opacity:0.80}));srb.position.y=0.15+sri*0.32;g.add(srb);}
+    var srHead=new THREE.Group();
+    var srBlade=new THREE.Mesh(new THREE.TorusGeometry(0.55,0.06,5,14,Math.PI*0.75),new THREE.MeshLambertMaterial({color:0x0c0018,emissive:new THREE.Color(0x060010),emissiveIntensity:0.5}));srBlade.rotation.z=-0.3;srHead.add(srBlade);
+    var srEdge=new THREE.Mesh(new THREE.TorusGeometry(0.57,0.025,4,14,Math.PI*0.75),new THREE.MeshBasicMaterial({color:0xaa44ff,transparent:true,opacity:0.90,blending:THREE.AdditiveBlending}));srEdge.rotation.z=-0.3;srHead.add(srEdge);
+    var srTip=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.28,4),new THREE.MeshLambertMaterial({color:0x1a0028}));srTip.position.set(0.42,0.35,0);srTip.rotation.z=1.0;srHead.add(srTip);
+    var srOrb=new THREE.Mesh(new THREE.SphereGeometry(0.10,7,6),new THREE.MeshBasicMaterial({color:0x8833ff,transparent:true,opacity:0.85}));srOrb.position.set(-0.14,0.0,0);srHead.add(srOrb);
+    var srOrbG=new THREE.Mesh(new THREE.SphereGeometry(0.18,7,6),new THREE.MeshBasicMaterial({color:0x6622aa,transparent:true,opacity:0.28}));srOrbG.position.set(-0.14,0.0,0);srHead.add(srOrbG);
+    srHead.position.set(-0.28,1.72,0);g.add(srHead);
+    for(var srw=0;srw<3;srw++){var swisp=new THREE.Mesh(new THREE.SphereGeometry(0.04,5,4),new THREE.MeshBasicMaterial({color:0x6622aa,transparent:true,opacity:0.6}));swisp.position.set(-0.18+srw*0.22,1.60+srw*0.10,0.04);g.add(swisp);}
+
+  } else if(itemId==='necro_w_staff'){
+    // STAFF OF THE UNDYING LICH — bone staff, skull top, orbiting soul gems
+    var lsShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.038,1.50,7),new THREE.MeshLambertMaterial({color:0xc0b890,emissive:new THREE.Color(0x0c0a06),emissiveIntensity:0.2}));lsShaft.position.y=0.75;g.add(lsShaft);
+    for(var lsi=0;lsi<4;lsi++){var lsKnot=new THREE.Mesh(new THREE.SphereGeometry(0.045,6,5),new THREE.MeshLambertMaterial({color:0xd0c898}));lsKnot.position.y=0.20+lsi*0.36;g.add(lsKnot);}
+    var lsSkull=new THREE.Mesh(new THREE.SphereGeometry(0.18,8,7),new THREE.MeshLambertMaterial({color:0xd8d0b0}));lsSkull.scale.set(1,1.05,0.9);lsSkull.position.y=1.70;g.add(lsSkull);
+    var lsJaw=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.10,0.18),new THREE.MeshLambertMaterial({color:0xc8c098}));lsJaw.position.set(0,1.55,0.06);lsJaw.rotation.x=0.25;g.add(lsJaw);
+    [[-0.07,1.74,0.16],[0.07,1.74,0.16]].forEach(function(p){var e=new THREE.Mesh(new THREE.SphereGeometry(0.04,5,4),new THREE.MeshBasicMaterial({color:0x88ffff,transparent:true,opacity:0.98}));e.position.set(p[0],p[1],p[2]);g.add(e);var eg=new THREE.Mesh(new THREE.SphereGeometry(0.08,5,4),new THREE.MeshBasicMaterial({color:0x44ffff,transparent:true,opacity:0.22}));eg.position.set(p[0],p[1],p[2]);g.add(eg);});
+    for(var lsg=0;lsg<3;lsg++){var lsa=lsg/3*Math.PI*2;var lsgem=new THREE.Mesh(new THREE.OctahedronGeometry(0.06,0),new THREE.MeshBasicMaterial({color:lsg===0?0x8833ff:lsg===1?0x44ffcc:0xffaa00,transparent:true,opacity:0.92}));lsgem.position.set(Math.cos(lsa)*0.32,1.72,Math.sin(lsa)*0.32);g.add(lsgem);}
+    for(var lsc=0;lsc<5;lsc++){var lsca=lsc/5*Math.PI*2;var lssp=new THREE.Mesh(new THREE.ConeGeometry(0.035,0.20,4),new THREE.MeshLambertMaterial({color:0xc8c090}));lssp.position.set(Math.cos(lsca)*0.16,1.88,Math.sin(lsca)*0.16);g.add(lssp);}
+
+  } else if(itemId==='necro_w_blade'){
+    // BONE SOVEREIGN BLADE — bone greatblade, claw crossguard, void rune inlays
+    var bsGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.042,0.35,6),new THREE.MeshLambertMaterial({color:0x1a0a28}));bsGrip.position.y=0.20;g.add(bsGrip);
+    for(var bsi=0;bsi<4;bsi++){var bsW=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.044,0.026,6),new THREE.MeshBasicMaterial({color:0x6622aa,transparent:true,opacity:0.75}));bsW.position.y=0.06+bsi*0.09;g.add(bsW);}
+    var bsPom=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.07,0.09),new THREE.MeshLambertMaterial({color:0xd0c890}));bsPom.position.y=0.04;g.add(bsPom);
+    var bsCG=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.06,0.09),new THREE.MeshLambertMaterial({color:0xd0c890}));bsCG.position.y=0.40;g.add(bsCG);
+    [[-0.22,0.50],[0,0.52],[0.22,0.50]].forEach(function(pos,ci){var cl=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.16,4),new THREE.MeshLambertMaterial({color:0xb8b070}));cl.position.set(pos[0]-0.08,pos[1],0);cl.rotation.z=(ci-1)*0.35;g.add(cl);});
+    var bsRic=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.16,0.052),new THREE.MeshLambertMaterial({color:0xc8c080}));bsRic.position.y=0.54;g.add(bsRic);
+    var bsBl=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.96,0.048),new THREE.MeshLambertMaterial({color:0xd8d098,emissive:new THREE.Color(0x181408),emissiveIntensity:0.3}));bsBl.position.y=1.04;g.add(bsBl);
+    for(var bsr=0;bsr<5;bsr++){var bsrn=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.030,0.028),new THREE.MeshBasicMaterial({color:0x8833ff,transparent:true,opacity:0.85}));bsrn.position.set(0,0.68+bsr*0.20,0.030);g.add(bsrn);}
+    var bsEdge=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.88,0.018),new THREE.MeshLambertMaterial({color:0x888060}));bsEdge.position.set(0.07,1.02,0.026);g.add(bsEdge);
+    var bsTip=new THREE.Mesh(new THREE.ConeGeometry(0.056,0.22,4),new THREE.MeshLambertMaterial({color:0xc0b870}));bsTip.position.y=1.60;g.add(bsTip);
+
+  } else if(itemId==='xf_w_disintegrator'){
+    // APEX DISINTEGRATOR — sleek tech staff, glowing cyan barrel, energy coils
+    var xdGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.036,0.40,6),new THREE.MeshLambertMaterial({color:0x040810,emissive:new THREE.Color(0x001020),emissiveIntensity:0.5}));xdGrip.position.y=0.22;g.add(xdGrip);
+    // Energy coils along grip
+    for(var xdi=0;xdi<4;xdi++){var xdc=new THREE.Mesh(new THREE.TorusGeometry(0.042,0.010,5,10),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.85}));xdc.rotation.x=Math.PI/2;xdc.position.y=0.08+xdi*0.10;g.add(xdc);}
+    // Tech chassis — rectangular body
+    var xdBody=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.60,0.08),new THREE.MeshLambertMaterial({color:0x060c18,emissive:new THREE.Color(0x001428),emissiveIntensity:0.4}));xdBody.position.y=0.78;g.add(xdBody);
+    // Side panels
+    [[-0.06,0],[0.06,0]].forEach(function(ox){var xdp=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.52,0.06),new THREE.MeshBasicMaterial({color:0x004466,transparent:true,opacity:0.70}));xdp.position.set(ox[0],0.78,0);g.add(xdp);});
+    // Barrel — elongated cyan emitter
+    var xdBar=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.025,0.65,6),new THREE.MeshLambertMaterial({color:0x040810}));xdBar.position.y=1.40;g.add(xdBar);
+    var xdMuzzle=new THREE.Mesh(new THREE.SphereGeometry(0.065,7,6),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));xdMuzzle.position.y=1.76;g.add(xdMuzzle);
+    var xdHalo=new THREE.Mesh(new THREE.SphereGeometry(0.12,7,6),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.22,blending:THREE.AdditiveBlending}));xdHalo.position.y=1.76;g.add(xdHalo);
+    // Scope/targeting
+    var xdScope=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.022,0.24,6),new THREE.MeshLambertMaterial({color:0x0a1428}));xdScope.position.set(0.07,1.10,0);xdScope.rotation.z=Math.PI/2;g.add(xdScope);
+    var xdEye=new THREE.Mesh(new THREE.SphereGeometry(0.030,5,4),new THREE.MeshBasicMaterial({color:0xffcc00,transparent:true,opacity:0.95}));xdEye.position.set(0.18,1.10,0);g.add(xdEye);
+    // Power cell at grip base
+    var xdCell=new THREE.Mesh(new THREE.BoxGeometry(0.09,0.12,0.09),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.80}));xdCell.position.y=0.04;g.add(xdCell);
+
+  } else if(itemId==='xf_w_obliterator'){
+    // ORBITAL OBLITERATOR — massive siege cannon, dark hull, rotating charge ring
+    var xoPom=new THREE.Mesh(new THREE.SphereGeometry(0.10,6,5),new THREE.MeshLambertMaterial({color:0x040810}));xoPom.position.y=0.05;g.add(xoPom);
+    var xoGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.048,0.55,6),new THREE.MeshLambertMaterial({color:0x050a14}));xoGrip.position.y=0.38;g.add(xoGrip);
+    for(var xoi=0;xoi<4;xoi++){var xob=new THREE.Mesh(new THREE.CylinderGeometry(0.052,0.052,0.028,6),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.75}));xob.position.y=0.08+xoi*0.13;g.add(xob);}
+    // Barrel housing — wide hex cross-section
+    var xoHousing=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.22,0.80,6),new THREE.MeshLambertMaterial({color:0x040810,emissive:new THREE.Color(0x000a18),emissiveIntensity:0.3}));xoHousing.position.y=1.15;g.add(xoHousing);
+    // Barrel proper
+    var xoBarrel=new THREE.Mesh(new THREE.CylinderGeometry(0.10,0.14,0.55,6),new THREE.MeshLambertMaterial({color:0x030608}));xoBarrel.position.y=1.73;g.add(xoBarrel);
+    // Charge ring around barrel — orbital weapon aesthetic
+    var xoRing=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.04,6,18),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.90,blending:THREE.AdditiveBlending}));xoRing.position.y=1.55;xoRing.rotation.x=Math.PI/2;g.add(xoRing);
+    var xoRing2=new THREE.Mesh(new THREE.TorusGeometry(0.28,0.025,5,18),new THREE.MeshBasicMaterial({color:0xffd700,transparent:true,opacity:0.65,blending:THREE.AdditiveBlending}));xoRing2.position.y=1.35;xoRing2.rotation.x=Math.PI/2;xoRing2.rotation.z=0.4;g.add(xoRing2);
+    // Muzzle — glowing aperture
+    var xoAp=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.10,0.08,6),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));xoAp.position.y=2.03;g.add(xoAp);
+    var xoGlow=new THREE.Mesh(new THREE.SphereGeometry(0.14,7,6),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.28,blending:THREE.AdditiveBlending}));xoGlow.position.y=2.03;g.add(xoGlow);
+    // Targeting fins
+    [[0.18,1.15,0],[-0.18,1.15,0]].forEach(function(pos){var fin=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.40,0.04),new THREE.MeshLambertMaterial({color:0x040810}));fin.position.set(pos[0],pos[1],pos[2]);g.add(fin);var finLine=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.36,0.02),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.70}));finLine.position.set(pos[0],pos[1],pos[2]);g.add(finLine);});
+
+  } else if(itemId==='xf_w_beamblade'){
+    // TRACTOR BEAMBLADE — sleek melee weapon, cyan edge, tractor field emitter at tip
+    var xbGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.040,0.32,6),new THREE.MeshLambertMaterial({color:0x040810}));xbGrip.position.y=0.18;g.add(xbGrip);
+    for(var xbi=0;xbi<3;xbi++){var xbb=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.022,6),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.80}));xbb.position.y=0.06+xbi*0.11;g.add(xbb);}
+    // Cross guard — swept tech design
+    var xbCG=new THREE.Mesh(new THREE.BoxGeometry(0.50,0.06,0.10),new THREE.MeshLambertMaterial({color:0x040810}));xbCG.position.y=0.38;g.add(xbCG);
+    var xbCGl=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.03,0.04),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.75}));xbCGl.position.set(0,0.42,0);g.add(xbCGl);
+    // Blade — dark hull with cyan edge
+    var xbBl=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.88,0.045),new THREE.MeshLambertMaterial({color:0x020508,emissive:new THREE.Color(0x000a14),emissiveIntensity:0.4}));xbBl.position.y=0.94;g.add(xbBl);
+    var xbEdge=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.82,0.016),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.92,blending:THREE.AdditiveBlending}));xbEdge.position.set(0.05,0.92,0.024);g.add(xbEdge);
+    // Tractor emitter at tip — the key visual feature
+    var xbEmit=new THREE.Mesh(new THREE.SphereGeometry(0.08,7,6),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.98}));xbEmit.position.y=1.42;g.add(xbEmit);
+    var xbEmitG=new THREE.Mesh(new THREE.SphereGeometry(0.16,7,6),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.22,blending:THREE.AdditiveBlending}));xbEmitG.position.y=1.42;g.add(xbEmitG);
+    // Tractor field rings orbiting the tip
+    for(var xbr=0;xbr<2;xbr++){var xbrR=new THREE.Mesh(new THREE.TorusGeometry(0.14+xbr*0.06,0.012,4,12),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.65}));xbrR.position.y=1.42;xbrR.rotation.z=xbr*0.55;g.add(xbrR);}
+    var xbTip=new THREE.Mesh(new THREE.ConeGeometry(0.038,0.16,4),new THREE.MeshLambertMaterial({color:0x040810}));xbTip.position.y=1.58;g.add(xbTip);
+
+  } else if(itemId==='xu_w_cannon'){
+    // Xu Plasma Cannon — squat barrel with glowing energy cell
+    var cnBase=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.22,8),new THREE.MeshLambertMaterial({color:0x1a2535}));cnBase.position.y=0.11;g.add(cnBase);
+    var cnBarrel=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.07,0.68,8),new THREE.MeshLambertMaterial({color:0x0d1520}));cnBarrel.position.y=0.56;g.add(cnBarrel);
+    var cnMuzzle=new THREE.Mesh(new THREE.CylinderGeometry(0.072,0.055,0.10,8),new THREE.MeshLambertMaterial({color:0x040a14}));cnMuzzle.position.y=0.95;g.add(cnMuzzle);
+    var cnGlow=new THREE.Mesh(new THREE.SphereGeometry(0.06,7,5),new THREE.MeshBasicMaterial({color:0x00e5ff,transparent:true,opacity:0.90,blending:THREE.AdditiveBlending}));cnGlow.position.y=0.98;g.add(cnGlow);
+    for(var ci=0;ci<3;ci++){var cnR=new THREE.Mesh(new THREE.TorusGeometry(0.07,0.010,4,10),new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0.70}));cnR.position.y=0.30+ci*0.18;cnR.rotation.x=Math.PI/2;g.add(cnR);}
+    var cnCell=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.14,0.10),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.55,blending:THREE.AdditiveBlending}));cnCell.position.set(0.10,0.42,0);g.add(cnCell);
+
+  } else if(itemId==='w_bone_scythe'){
+    // Bone Scythe — curved femur blade on a dark shaft
+    var bsShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.038,1.10,6),new THREE.MeshLambertMaterial({color:0x2a1a08}));bsShaft.position.y=0.55;g.add(bsShaft);
+    var bsCurve=new THREE.Mesh(new THREE.TorusGeometry(0.30,0.028,5,12,Math.PI*0.75),new THREE.MeshLambertMaterial({color:0xd4c8a0,emissive:0x3a3020,emissiveIntensity:0.3}));bsCurve.position.set(0.14,1.05,0);bsCurve.rotation.z=-0.5;g.add(bsCurve);
+    var bsTip=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.14,5),new THREE.MeshLambertMaterial({color:0xe8dcb0}));bsTip.position.set(-0.10,1.36,0);bsTip.rotation.z=1.2;g.add(bsTip);
+    var bsGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.040,0),new THREE.MeshBasicMaterial({color:0x80ff40,transparent:true,opacity:0.80}));bsGem.position.y=0.85;g.add(bsGem);
+
+  } else if(itemId==='w_soul_staff'){
+    // Soul Reaver's Staff — twisted dark wood with a trapped soul orb
+    var ssShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.048,1.20,7),new THREE.MeshLambertMaterial({color:0x180808,emissive:0x0a0000,emissiveIntensity:0.4}));ssShaft.position.y=0.60;g.add(ssShaft);
+    var ssOrb=new THREE.Mesh(new THREE.SphereGeometry(0.110,9,7),new THREE.MeshBasicMaterial({color:0x8800cc,transparent:true,opacity:0.85,blending:THREE.AdditiveBlending}));ssOrb.position.y=1.30;g.add(ssOrb);
+    var ssOrbCore=new THREE.Mesh(new THREE.SphereGeometry(0.060,7,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.60}));ssOrbCore.position.y=1.30;g.add(ssOrbCore);
+    for(var si=0;si<3;si++){var ssRing=new THREE.Mesh(new THREE.TorusGeometry(0.14+si*0.04,0.008,4,14),new THREE.MeshBasicMaterial({color:0xcc44ff,transparent:true,opacity:0.55}));ssRing.position.y=1.30;ssRing.rotation.x=si*Math.PI/3;ssRing.rotation.z=si*Math.PI/4;g.add(ssRing);}
+    var ssClaw=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.24,4),new THREE.MeshLambertMaterial({color:0x1a0020}));ssClaw.position.set(0,1.50,0);g.add(ssClaw);
+
+  } else if(itemId==='w_grave_blade'){
+    // Gravedigger — heavy corroded shovel-blade hybrid
+    var gbHandle=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.040,0.85,6),new THREE.MeshLambertMaterial({color:0x3a2808}));gbHandle.position.y=0.42;g.add(gbHandle);
+    var gbBlade=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.48,0.045),new THREE.MeshLambertMaterial({color:0x484840,emissive:0x101008,emissiveIntensity:0.3}));gbBlade.position.y=1.02;g.add(gbBlade);
+    var gbEdge=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.024,0.024),new THREE.MeshLambertMaterial({color:0x707068}));gbEdge.position.set(0,0.78,0);g.add(gbEdge);
+    // Dirt/rust texture lines
+    for(var gi=0;gi<4;gi++){var gbSc=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.024,0.050),new THREE.MeshLambertMaterial({color:0x302818}));gbSc.position.set(0,0.85+gi*0.10,0);g.add(gbSc);}
+    var gbGlow=new THREE.Mesh(new THREE.SphereGeometry(0.038,5,4),new THREE.MeshBasicMaterial({color:0x40ff40,transparent:true,opacity:0.55}));gbGlow.position.y=0.95;g.add(gbGlow);
+
+  } else if(itemId==='w_lich_wand'){
+    // Lich Crown Wand — crown spike with void energy
+    var lwShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.032,0.90,6),new THREE.MeshLambertMaterial({color:0x080010,emissive:0x050008,emissiveIntensity:0.5}));lwShaft.position.y=0.45;g.add(lwShaft);
+    var lwCrown=new THREE.Group(); lwCrown.position.y=1.0; g.add(lwCrown);
+    for(var lci=0;lci<5;lci++){var lcs=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.18+Math.sin(lci)*0.08,4),new THREE.MeshLambertMaterial({color:0x1a0030}));lcs.position.set(Math.cos(lci/5*Math.PI*2)*0.075,0.09,Math.sin(lci/5*Math.PI*2)*0.075);lwCrown.add(lcs);}
+    var lwOrb=new THREE.Mesh(new THREE.SphereGeometry(0.075,8,6),new THREE.MeshBasicMaterial({color:0x9900ff,transparent:true,opacity:0.95,blending:THREE.AdditiveBlending}));lwOrb.position.y=0.90;g.add(lwOrb);
+    var lwPulse=new THREE.Mesh(new THREE.SphereGeometry(0.13,8,6),new THREE.MeshBasicMaterial({color:0x6600cc,transparent:true,opacity:0.25,blending:THREE.AdditiveBlending}));lwPulse.position.y=0.90;g.add(lwPulse);
+    var lwBase=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.06,0.08),new THREE.MeshLambertMaterial({color:0xc8a020,emissive:0x604800,emissiveIntensity:0.4}));lwBase.position.y=0.90;g.add(lwBase);
+
+  } else if(itemId==='boss_w_patrol'){
+    // Xu Patrol Commander Blade — angular military sword with rank insignia
+    var bpGrip=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.038,0.28,6),new THREE.MeshLambertMaterial({color:0x1a2030}));bpGrip.position.y=0.14;g.add(bpGrip);
+    var bpGuard=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.048,0.06),new THREE.MeshLambertMaterial({color:0x304060}));bpGuard.position.y=0.32;g.add(bpGuard);
+    var bpBlade=new THREE.Mesh(new THREE.BoxGeometry(0.065,0.88,0.038),new THREE.MeshLambertMaterial({color:0x606880,emissive:0x080c12,emissiveIntensity:0.3}));bpBlade.position.y=0.82;g.add(bpBlade);
+    var bpEdge=new THREE.Mesh(new THREE.BoxGeometry(0.010,0.82,0.010),new THREE.MeshBasicMaterial({color:0x80c0ff,transparent:true,opacity:0.70}));bpEdge.position.set(0.034,0.82,0);g.add(bpEdge);
+    var bpBadge=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.08,0.06),new THREE.MeshLambertMaterial({color:0xffcc20,emissive:0x604800,emissiveIntensity:0.5}));bpBadge.position.set(0,0.50,0);g.add(bpBadge);
+    var bpTip=new THREE.Mesh(new THREE.ConeGeometry(0.032,0.14,4),new THREE.MeshLambertMaterial({color:0x505868}));bpTip.position.y=1.30;g.add(bpTip);
+
+  } else if(itemId==='boss_w_citadel'){
+    // Citadel Warstaff — fortress-style rune-etched polearm
+    var cwShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.042,1.18,7),new THREE.MeshLambertMaterial({color:0x282830,emissive:0x060610,emissiveIntensity:0.3}));cwShaft.position.y=0.59;g.add(cwShaft);
+    var cwHead=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.26,0.08),new THREE.MeshLambertMaterial({color:0x404858}));cwHead.position.y=1.29;g.add(cwHead);
+    var cwBlade=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.12,0.040),new THREE.MeshLambertMaterial({color:0x505868}));cwBlade.position.y=1.38;g.add(cwBlade);
+    for(var cwi=0;cwi<4;cwi++){var cwRune=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.038,0.050),new THREE.MeshBasicMaterial({color:0x4080ff,transparent:true,opacity:0.75}));cwRune.position.set(0,0.35+cwi*0.22,0);g.add(cwRune);}
+    var cwGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.050,0),new THREE.MeshBasicMaterial({color:0x2060ff,transparent:true,opacity:0.90,blending:THREE.AdditiveBlending}));cwGem.position.y=1.29;g.add(cwGem);
+
+  } else if(itemId==='boss_w_ashlands'){
+    // Embershard Axe — volcanic obsidian double-axe with magma glow
+    var awHandle=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.042,0.80,6),new THREE.MeshLambertMaterial({color:0x1a0800}));awHandle.position.y=0.40;g.add(awHandle);
+    var awHead1=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.22,0.058),new THREE.MeshLambertMaterial({color:0x181010,emissive:0x200500,emissiveIntensity:0.4}));awHead1.position.y=0.88;g.add(awHead1);
+    var awHead2=awHead1.clone(); awHead2.position.y=1.18; g.add(awHead2);
+    var awMagma=new THREE.Mesh(new THREE.BoxGeometry(0.40,0.06,0.066),new THREE.MeshBasicMaterial({color:0xff4400,transparent:true,opacity:0.80,blending:THREE.AdditiveBlending}));awMagma.position.y=1.03;g.add(awMagma);
+    for(var awi=0;awi<6;awi++){var awCrack=new THREE.Mesh(new THREE.BoxGeometry(0.30*Math.random()+0.05,0.012,0.070),new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:0.65}));awCrack.position.set((Math.random()-0.5)*0.20,0.88+Math.random()*0.30,0);g.add(awCrack);}
+    var awTip=new THREE.Mesh(new THREE.ConeGeometry(0.028,0.18,4),new THREE.MeshLambertMaterial({color:0x080400}));awTip.position.y=1.40;g.add(awTip);
+
+  } else if(itemId==='boss_w_frostveil'){
+    // Frostveil Ice Lance — crystalline shard weapon
+    var fwShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.035,0.85,6),new THREE.MeshLambertMaterial({color:0x102030,emissive:0x040c14,emissiveIntensity:0.4}));fwShaft.position.y=0.42;g.add(fwShaft);
+    var fwCrystal=new THREE.Mesh(new THREE.ConeGeometry(0.060,0.60,5),new THREE.MeshLambertMaterial({color:0x80d4ff,emissive:0x204060,emissiveIntensity:0.5,transparent:true,opacity:0.90}));fwCrystal.position.y=1.15;g.add(fwCrystal);
+    for(var fwi=0;fwi<4;fwi++){var fwShard=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.28,4),new THREE.MeshBasicMaterial({color:0xaaddff,transparent:true,opacity:0.75,blending:THREE.AdditiveBlending}));fwShard.position.set(Math.cos(fwi/4*Math.PI*2)*0.06,1.0,Math.sin(fwi/4*Math.PI*2)*0.06);fwShard.rotation.z=(Math.random()-0.5)*0.6;g.add(fwShard);}
+    var fwGlow=new THREE.Mesh(new THREE.SphereGeometry(0.08,7,5),new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending}));fwGlow.position.y=1.10;g.add(fwGlow);
+    var fwTip=new THREE.Mesh(new THREE.ConeGeometry(0.014,0.12,4),mT(0xffffff,0.90));fwTip.position.y=1.48;g.add(fwTip);
+
+  } else if(itemId==='dragon_w_fang'){
+    // Dragon Fang Blade — actual dragon tooth on a bone handle
+    var dfHandle=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.044,0.38,7),new THREE.MeshLambertMaterial({color:0x3a1a08,emissive:0x100500,emissiveIntensity:0.3}));dfHandle.position.y=0.19;g.add(dfHandle);
+    var dfGuard=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.050,0.06),new THREE.MeshLambertMaterial({color:0x8B0000,emissive:0x3a0000,emissiveIntensity:0.4}));dfGuard.position.y=0.42;g.add(dfGuard);
+    var dfBlade=new THREE.Mesh(new THREE.ConeGeometry(0.048,0.92,5),new THREE.MeshLambertMaterial({color:0xf0e8c0,emissive:0x302010,emissiveIntensity:0.2}));dfBlade.position.y=0.96;g.add(dfBlade);
+    for(var dfi=0;dfi<6;dfi++){var dfSerr=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.06,3),mL(0xe0d8b0));dfSerr.position.set(0.04,0.55+dfi*0.12,0);dfSerr.rotation.z=Math.PI/2*0.5;g.add(dfSerr);}
+    var dfGlow=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,4),mT(0xff4400,0.70));dfGlow.position.y=0.52;g.add(dfGlow);
+
+  } else if(itemId==='rs_w001'){
+    // ── WORLDBREAKER — massive ancient war-sword, civilization-ending blade ──
+    // Pommel: cracked world-shard, deep gold
+    var rb1p=new THREE.Mesh(new THREE.OctahedronGeometry(0.09,1),new THREE.MeshLambertMaterial({color:0xcc9900,emissive:0x664400,emissiveIntensity:0.6}));rb1p.position.y=0.05;g.add(rb1p);
+    // Grip: ancient bone-wrapped handle, three gold cuffs
+    var rb1gr=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.045,0.34,7),mL(0xc8a870));rb1gr.position.y=0.22;g.add(rb1gr);
+    for(var rb1i=0;rb1i<3;rb1i++){var rb1c=new THREE.Mesh(new THREE.CylinderGeometry(0.050,0.050,0.030,7),new THREE.MeshLambertMaterial({color:0xffcc00,emissive:0xaa6600,emissiveIntensity:0.5}));rb1c.position.y=0.08+rb1i*0.13;g.add(rb1c);}
+    // Crossguard: massive swept wings, gold, world-map etchings
+    var rb1cg=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.075,0.12),new THREE.MeshLambertMaterial({color:0xddaa00,emissive:0x886600,emissiveIntensity:0.4}));rb1cg.position.y=0.44;g.add(rb1cg);
+    var rb1wl=new THREE.Mesh(new THREE.ConeGeometry(0.030,0.22,4),mL(0xffcc00));rb1wl.position.set(-0.38,0.56,0);rb1wl.rotation.z=0.45;g.add(rb1wl);
+    var rb1wr=rb1wl.clone();rb1wr.position.x=0.38;rb1wr.rotation.z=-0.45;g.add(rb1wr);
+    // Ricasso — wide, thick, imposing
+    var rb1ri=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.22,0.065),mL(0x5a3a10));rb1ri.position.y=0.62;g.add(rb1ri);
+    // Blade: wide double-fuller, ancient steel that never chips
+    var rb1bl=new THREE.Mesh(new THREE.BoxGeometry(0.16,1.02,0.058),new THREE.MeshLambertMaterial({color:0x2a1e10,emissive:0x100a04,emissiveIntensity:0.3}));rb1bl.position.y=1.18;g.add(rb1bl);
+    var rb1f1=new THREE.Mesh(new THREE.BoxGeometry(0.030,0.90,0.024),new THREE.MeshLambertMaterial({color:0xffcc00,emissive:0xaa8800,emissiveIntensity:0.6}));rb1f1.position.set(-0.042,1.16,0.038);g.add(rb1f1);
+    var rb1f2=rb1f1.clone();rb1f2.position.x=0.042;g.add(rb1f2);
+    // Cracks glowing gold — civilization fault lines etched into the blade
+    for(var rb1r=0;rb1r<5;rb1r++){var rb1rn=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.018,0.030),mT(0xffdd00,0.9));rb1rn.position.set((rb1r%2===0?0.04:-0.04),0.72+rb1r*0.20,0.038);rb1rn.rotation.z=(rb1r%2===0?0.3:-0.3);g.add(rb1rn);}
+    var rb1tip=new THREE.Mesh(new THREE.ConeGeometry(0.072,0.22,4),mL(0x3a2a10));rb1tip.position.y=1.80;g.add(rb1tip);
+
+  } else if(itemId==='rs_w002'){
+    // ── VOIDHEART STAFF — pulsing consciousness, alien crystal cluster tip ──
+    // Base cap: void-crystal faceted orb
+    var rs2b=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),mT(0x8800ff,0.92));rs2b.position.y=0.075;g.add(rs2b);
+    // Shaft: black void-wood, wrapped with living void tendrils
+    var rs2sh=new THREE.Mesh(new THREE.CylinderGeometry(0.024,0.034,1.05,8),new THREE.MeshLambertMaterial({color:0x0a0018,emissive:0x080010,emissiveIntensity:0.4}));rs2sh.position.y=0.63;g.add(rs2sh);
+    for(var rs2i=0;rs2i<5;rs2i++){var rs2t=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.24,0.016),mT(0xcc44ff,0.7));rs2t.position.set((rs2i%2===0?0.028:-0.028),0.32+rs2i*0.18,0);rs2t.rotation.z=(rs2i%2===0?0.15:-0.15);g.add(rs2t);}
+    // Focus collar: where consciousness concentrates
+    var rs2col=new THREE.Mesh(new THREE.TorusGeometry(0.058,0.016,6,12),mT(0xff00ff,0.9));rs2col.position.y=1.16;rs2col.rotation.x=Math.PI/2;g.add(rs2col);
+    // Crystal head: alien cluster, 7 faceted spikes radiating outward
+    for(var rs2c=0;rs2c<7;rs2c++){var rs2ca=rs2c/7*Math.PI*2;var rs2cr=new THREE.Mesh(new THREE.ConeGeometry(0.028,0.22+Math.sin(rs2c)*0.06,5),new THREE.MeshBasicMaterial({color:rs2c%2===0?0xcc44ff:0x8800ff,transparent:true,opacity:0.88}));rs2cr.position.set(Math.cos(rs2ca)*0.08,1.38+Math.sin(rs2c)*0.04,Math.sin(rs2ca)*0.08);rs2cr.rotation.x=Math.cos(rs2ca)*0.55;rs2cr.rotation.z=-Math.sin(rs2ca)*0.55;g.add(rs2cr);}
+    // Core pulsing heart at centre
+    var rs2hrt=new THREE.Mesh(new THREE.SphereGeometry(0.072,9,7),mT(0xffffff,0.96));rs2hrt.position.y=1.26;g.add(rs2hrt);
+    var rs2halo=new THREE.Mesh(new THREE.TorusGeometry(0.16,0.010,5,16),mT(0xcc44ff,0.8));rs2halo.position.y=1.26;rs2halo.rotation.x=Math.PI/2;g.add(rs2halo);
+
+  } else if(itemId==='rs_w003'){
+    // ── THE LAST ARROW — a single perfect arrow, mounted bow-handle, impossible precision ──
+    // The bow handle — carved from a fallen star's remains
+    var ra3h=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.032,0.48,6),new THREE.MeshLambertMaterial({color:0x1a2c10,emissive:0x0a1808,emissiveIntensity:0.3}));ra3h.position.y=0.24;g.add(ra3h);
+    for(var ra3i=0;ra3i<3;ra3i++){var ra3b=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.030,0.022,6),new THREE.MeshLambertMaterial({color:0x8cc840,emissive:0x446618,emissiveIntensity:0.5}));ra3b.position.y=0.07+ra3i*0.18;g.add(ra3b);}
+    // Bowstring curve — two swept limbs
+    var ra3lL=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.38,0.016),mL(0x2a4820));ra3lL.position.set(-0.14,0.42,0);ra3lL.rotation.z=0.5;g.add(ra3lL);
+    var ra3lR=ra3lL.clone();ra3lR.position.x=0.14;ra3lR.rotation.z=-0.5;g.add(ra3lR);
+    // The arrow shaft — singular, silver-white, nocked and ready
+    var ra3sh=new THREE.Mesh(new THREE.CylinderGeometry(0.008,0.012,0.88,6),new THREE.MeshLambertMaterial({color:0xe8e8e0,emissive:0x888880,emissiveIntensity:0.3}));ra3sh.position.y=0.92;g.add(ra3sh);
+    // Fletching — three gleaming feather vanes, gold-tipped
+    for(var ra3f=0;ra3f<3;ra3f++){var ra3fa=ra3f/3*Math.PI*2;var ra3fv=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.18,0.008),new THREE.MeshLambertMaterial({color:0xffcc00,emissive:0xaa8800,emissiveIntensity:0.4}));ra3fv.position.set(Math.cos(ra3fa)*0.028,0.58,Math.sin(ra3fa)*0.028);ra3fv.rotation.y=ra3fa;g.add(ra3fv);}
+    // Arrowhead — impossibly sharp, starlight-forged point
+    var ra3tip=new THREE.Mesh(new THREE.ConeGeometry(0.014,0.16,4),mT(0xffffff,0.98));ra3tip.position.y=1.44;g.add(ra3tip);
+    var ra3glow=new THREE.Mesh(new THREE.SphereGeometry(0.022,5,4),mT(0x88ffff,0.85));ra3glow.position.y=1.44;g.add(ra3glow);
+
+  } else if(itemId==='rs_w004'){
+    // ── ASHWALKER'S FANG — a dagger that's still warm, curved fang-blade ──
+    var aw4p=new THREE.Mesh(new THREE.SphereGeometry(0.060,6,5),new THREE.MeshLambertMaterial({color:0x8B1a1a,emissive:0x440808,emissiveIntensity:0.5}));aw4p.position.y=0.04;g.add(aw4p);
+    var aw4gr=new THREE.Mesh(new THREE.CylinderGeometry(0.026,0.035,0.26,7),mL(0x2a0a0a));aw4gr.position.y=0.17;g.add(aw4gr);
+    // Bone-carved grip rings — something's rib
+    for(var aw4i=0;aw4i<4;aw4i++){var aw4r=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.032,0.020,7),mL(0xd4c090));aw4r.position.y=0.06+aw4i*0.07;g.add(aw4r);}
+    // Swept guard — single curved bone spur
+    var aw4cg=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.044,0.060),mL(0xc8a060));aw4cg.position.y=0.32;g.add(aw4cg);
+    var aw4sp=new THREE.Mesh(new THREE.ConeGeometry(0.018,0.16,4),mL(0xd4b070));aw4sp.position.set(-0.13,0.42,0);aw4sp.rotation.z=0.6;g.add(aw4sp);
+    // Fang blade — curved inward like a predator's tooth
+    var aw4bl=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.62,0.034),new THREE.MeshLambertMaterial({color:0x1a0808,emissive:0x0a0404,emissiveIntensity:0.4}));aw4bl.position.set(0.04,0.68,0);aw4bl.rotation.z=-0.12;g.add(aw4bl);
+    // Heat shimmer edge — still warm
+    var aw4edge=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.58,0.016),mT(0xff4400,0.70));aw4edge.position.set(0.060,0.66,0.018);aw4edge.rotation.z=-0.12;g.add(aw4edge);
+    var aw4tip=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.12,4),mL(0x3a1010));aw4tip.position.set(0.06,1.04,0);aw4tip.rotation.z=-0.15;g.add(aw4tip);
+    // Heat glow at base of blade — it's always warm
+    var aw4glow=new THREE.Mesh(new THREE.SphereGeometry(0.048,6,5),mT(0xff6600,0.55));aw4glow.position.set(0.02,0.40,0);g.add(aw4glow);
+
+  } else if(itemId==='rv_w_blade'){
+    // ── RIFT-FORGED NULLBLADE — exists in two places at once, shimmering edge ──
+    var rv1p=new THREE.Mesh(new THREE.OctahedronGeometry(0.082,0),mT(0x6600cc,0.95));rv1p.position.y=0.05;g.add(rv1p);
+    var rv1gr=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.040,0.30,7),new THREE.MeshLambertMaterial({color:0x18002a,emissive:0x100018,emissiveIntensity:0.5}));rv1gr.position.y=0.20;g.add(rv1gr);
+    // Rift-energy grip rings — material shifts between solid and dimensional
+    for(var rv1i=0;rv1i<4;rv1i++){var rv1rng=new THREE.Mesh(new THREE.CylinderGeometry(0.046,0.046,0.020,7),new THREE.MeshBasicMaterial({color:rv1i%2===0?0x9900ff:0x6600cc,transparent:true,opacity:0.75}));rv1rng.position.y=0.06+rv1i*0.09;g.add(rv1rng);}
+    // Split crossguard — both dimensions visible at once
+    var rv1cg1=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.058,0.080),new THREE.MeshLambertMaterial({color:0x180028,emissive:0x100018,emissiveIntensity:0.4}));rv1cg1.position.y=0.40;g.add(rv1cg1);
+    var rv1cg2=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.058,0.080),mT(0x9900ff,0.45));rv1cg2.position.set(0.03,0.42,0.02);g.add(rv1cg2);
+    // The primary blade
+    var rv1bl=new THREE.Mesh(new THREE.BoxGeometry(0.072,0.88,0.044),new THREE.MeshLambertMaterial({color:0x0c0018,emissive:0x08000e,emissiveIntensity:0.5}));rv1bl.position.y=0.94;g.add(rv1bl);
+    // Dimensional echo blade — offset ghost copy of the blade
+    var rv1echo=new THREE.Mesh(new THREE.BoxGeometry(0.072,0.88,0.044),mT(0x9900ff,0.35));rv1echo.position.set(0.05,0.97,0.06);g.add(rv1echo);
+    // Rift-line edges
+    var rv1e1=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.80,0.016),mT(0xcc44ff,0.9));rv1e1.position.set(0.038,0.92,0.026);g.add(rv1e1);
+    var rv1e2=rv1e1.clone();rv1e2.position.x=-0.038;g.add(rv1e2);
+    // Null-zone — where the blade erases what it touches
+    for(var rv1n=0;rv1n<5;rv1n++){var rv1nv=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.016,0.028),mT(0xffffff,0.4));rv1nv.position.set(0,0.56+rv1n*0.16,0.030);g.add(rv1nv);}
+    var rv1tip=new THREE.Mesh(new THREE.ConeGeometry(0.032,0.18,4),mT(0xcc44ff,0.95));rv1tip.position.y=1.44;g.add(rv1tip);
+
+  } else if(itemId==='vs_w_veilrender'){
+    // ── VEILRENDER — pale gold greatsword with white-glowing edge, void-rune handle ──
+    var vrPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.7}));vrPm.position.y=0.04;g.add(vrPm);
+    // Wrapped grip — long, two-handed
+    var vrGr=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.045,0.40,7),new THREE.MeshLambertMaterial({color:0xa08a60}));vrGr.position.y=0.25;g.add(vrGr);
+    // Gold grip rings
+    for(var vrI=0;vrI<5;vrI++){var vrB=new THREE.Mesh(new THREE.CylinderGeometry(0.048,0.048,0.022,7),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.6}));vrB.position.y=0.08+vrI*0.085;g.add(vrB);}
+    // Crossguard — wide swept gold with void runes
+    var vrCg=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.080,0.10),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.5}));vrCg.position.y=0.49;g.add(vrCg);
+    // Void runes inset on crossguard
+    for(var vrR=0;vrR<3;vrR++){var vrRn=new THREE.Mesh(new THREE.BoxGeometry(0.045,0.04,0.022),new THREE.MeshBasicMaterial({color:0x9933ff,transparent:true,opacity:0.92}));vrRn.position.set(-0.18+vrR*0.18,0.49,0.055);g.add(vrRn);}
+    // Wing-spread crossguard tips
+    var vrWg1=new THREE.Mesh(new THREE.ConeGeometry(0.040,0.18,4),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.6}));vrWg1.position.set(-0.36,0.55,0);vrWg1.rotation.z=0.4;g.add(vrWg1);
+    var vrWg2=vrWg1.clone();vrWg2.position.x=0.36;vrWg2.rotation.z=-0.4;g.add(vrWg2);
+    // Long pale-gold blade
+    var vrBl=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.30,0.044),new THREE.MeshLambertMaterial({color:0xfff0a0,emissive:new THREE.Color(0x886020),emissiveIntensity:0.4}));vrBl.position.y=1.20;g.add(vrBl);
+    // White-glowing edge (the Veilrender effect)
+    var vrEdge1=new THREE.Mesh(new THREE.BoxGeometry(0.02,1.20,0.02),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));vrEdge1.position.set(0.05,1.18,0.024);g.add(vrEdge1);
+    var vrEdge2=vrEdge1.clone();vrEdge2.position.x=-0.05;g.add(vrEdge2);
+    // Central blood-channel with void runes
+    var vrCh=new THREE.Mesh(new THREE.BoxGeometry(0.025,1.10,0.022),new THREE.MeshBasicMaterial({color:0x9933ff,transparent:true,opacity:0.85}));vrCh.position.set(0,1.18,0.025);g.add(vrCh);
+    // Tip
+    var vrTip=new THREE.Mesh(new THREE.ConeGeometry(0.060,0.20,4),new THREE.MeshLambertMaterial({color:0xfff0a0,emissive:new THREE.Color(0xffaa00),emissiveIntensity:0.6}));vrTip.position.y=1.95;g.add(vrTip);
+
+  } else if(itemId==='vs_w_censer'){
+    // ── CARDINAL'S CENSER — gold brazier on chain, smoldering embers, ornate handle ──
+    var ccPm=new THREE.Mesh(new THREE.SphereGeometry(0.060,7,5),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.6}));ccPm.position.y=0.04;g.add(ccPm);
+    // Carved gold haft
+    var ccGr=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.040,0.55,7),new THREE.MeshLambertMaterial({color:0xa08a60}));ccGr.position.y=0.30;g.add(ccGr);
+    // Gold rings down haft
+    for(var ccI=0;ccI<6;ccI++){var ccB=new THREE.Mesh(new THREE.TorusGeometry(0.044,0.012,4,12),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.5}));ccB.rotation.x=Math.PI/2;ccB.position.y=0.10+ccI*0.080;g.add(ccB);}
+    // Top swivel ring
+    var ccSw=new THREE.Mesh(new THREE.TorusGeometry(0.075,0.020,5,14),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.6}));ccSw.rotation.x=Math.PI/2;ccSw.position.y=0.60;g.add(ccSw);
+    // Three chains hanging down to brazier
+    for(var ccCh=0;ccCh<3;ccCh++){
+      var ccA=ccCh/3*Math.PI*2;
+      var ccChain=new THREE.Mesh(new THREE.CylinderGeometry(0.010,0.010,0.45,5),new THREE.MeshLambertMaterial({color:0xa08840}));
+      ccChain.position.set(Math.cos(ccA)*0.07,0.85,Math.sin(ccA)*0.07);
+      g.add(ccChain);
+    }
+    // The brazier — ornate gold sphere
+    var ccBz=new THREE.Mesh(new THREE.SphereGeometry(0.18,8,6),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.5}));ccBz.position.y=1.20;g.add(ccBz);
+    // Brazier vent slits (4 dark cuts)
+    for(var ccV=0;ccV<4;ccV++){
+      var ccVa=ccV/4*Math.PI*2;
+      var ccVent=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.06,0.02),new THREE.MeshLambertMaterial({color:0x442200}));
+      ccVent.position.set(Math.cos(ccVa)*0.18,1.20,Math.sin(ccVa)*0.18);
+      ccVent.rotation.y=ccVa;
+      g.add(ccVent);
+    }
+    // Bottom finial — cone hanging below
+    var ccFn=new THREE.Mesh(new THREE.ConeGeometry(0.08,0.18,5),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.5}));ccFn.rotation.x=Math.PI;ccFn.position.y=1.05;g.add(ccFn);
+    // Sanctified flame above the brazier (visible through vents and on top)
+    var ccFl=new THREE.Mesh(new THREE.ConeGeometry(0.10,0.20,5),new THREE.MeshBasicMaterial({color:0xff8030,transparent:true,opacity:0.92}));ccFl.position.y=1.45;g.add(ccFl);
+    var ccFlInner=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.15,5),new THREE.MeshBasicMaterial({color:0xffeeaa,transparent:true,opacity:0.95}));ccFlInner.position.y=1.42;g.add(ccFlInner);
+    // Smoke wisp
+    var ccSm=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),new THREE.MeshBasicMaterial({color:0x4a3020,transparent:true,opacity:0.55}));ccSm.position.y=1.65;g.add(ccSm);
+
+  } else if(itemId==='vs_w_choir'){
+    // ── CHOIR OF THE FORSAKEN — staff with golden orb + 2 floating chimes ──
+    var cfPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.060,0),new THREE.MeshBasicMaterial({color:0xffeeaa,transparent:true,opacity:0.92}));cfPm.position.y=0.04;g.add(cfPm);
+    // Pale-gold haft
+    var cfGr=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.035,1.05,7),new THREE.MeshLambertMaterial({color:0xeed080}));cfGr.position.y=0.55;g.add(cfGr);
+    // Twisted gold inlays
+    for(var cfI=0;cfI<8;cfI++){
+      var cfA=cfI/8*Math.PI*2;
+      var cfRing=new THREE.Mesh(new THREE.TorusGeometry(0.040,0.010,4,12),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.5}));
+      cfRing.rotation.x=Math.PI/2;
+      cfRing.position.y=0.18+cfI*0.10;
+      g.add(cfRing);
+    }
+    // Top: floating orb + 2 chimes
+    var cfOrb=new THREE.Mesh(new THREE.SphereGeometry(0.16,9,7),new THREE.MeshBasicMaterial({color:0xffd060,transparent:true,opacity:0.92}));cfOrb.position.y=1.30;g.add(cfOrb);
+    // Inner core (white)
+    var cfCore=new THREE.Mesh(new THREE.SphereGeometry(0.07,7,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));cfCore.position.y=1.30;g.add(cfCore);
+    // Halo around orb
+    var cfHa=new THREE.Mesh(new THREE.TorusGeometry(0.22,0.018,5,18),new THREE.MeshBasicMaterial({color:0xfff0a0,transparent:true,opacity:0.85}));cfHa.rotation.x=Math.PI/2;cfHa.position.y=1.30;g.add(cfHa);
+    // Two floating prayer-chimes (small bells) on either side
+    var cfBl1=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.10,0.16,6,1,true),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.6}));cfBl1.position.set(-0.32,1.42,0);g.add(cfBl1);
+    var cfBl2=cfBl1.clone();cfBl2.position.x=0.32;g.add(cfBl2);
+    // Tongue/clapper inside each
+    var cfCl1=new THREE.Mesh(new THREE.SphereGeometry(0.025,5,4),new THREE.MeshLambertMaterial({color:0x442200}));cfCl1.position.set(-0.32,1.36,0);g.add(cfCl1);
+    var cfCl2=cfCl1.clone();cfCl2.position.x=0.32;g.add(cfCl2);
+    // Twin top spires
+    var cfSp1=new THREE.Mesh(new THREE.ConeGeometry(0.025,0.08,4),new THREE.MeshLambertMaterial({color:0xffd060,emissive:new THREE.Color(0x886000),emissiveIntensity:0.7}));cfSp1.position.set(-0.32,1.55,0);g.add(cfSp1);
+    var cfSp2=cfSp1.clone();cfSp2.position.x=0.32;g.add(cfSp2);
+    // Connection wisps from orb to chimes (visible link)
+    for(var cfW=0;cfW<2;cfW++){
+      var cfDir=cfW===0?-1:1;
+      for(var cfWp=0;cfWp<3;cfWp++){
+        var cfWisp=new THREE.Mesh(new THREE.SphereGeometry(0.018,4,3),new THREE.MeshBasicMaterial({color:0xfff0a0,transparent:true,opacity:0.6}));
+        cfWisp.position.set(cfDir*(0.10+cfWp*0.08),1.35+cfWp*0.022,0);
+        g.add(cfWisp);
+      }
+    }
+
+  // ═══════════════════════════════════════════════════════════════
+  // v92.65 — XERON LEGENDARY WEAPONS — unique 3D meshes
+  // Photon Lance, Singularity Cannon, Voidsteel Edge, Railgun Array
+  // ═══════════════════════════════════════════════════════════════
+  } else if(itemId==='xn_w_photon_lance'){
+    // ── PHOTON LANCE — high-tech orbital staff with white-core photon emitter ──
+    // Black obsidian haft with cyan trim + white core photon orb at top + magenta accents
+    // Pommel — magenta crystal dome
+    var plPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.065,0),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    plPm.position.y=0.04; g.add(plPm);
+    // Pommel cap — dark steel
+    var plCap=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.055,0.06,8),new THREE.MeshLambertMaterial({color:0x14181f}));
+    plCap.position.y=0.10; g.add(plCap);
+    // Main haft — slim sleek black tech with cyan trim strips
+    var plHaft=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.032,1.10,8),new THREE.MeshLambertMaterial({color:0x0a0c14,emissive:new THREE.Color(0x040508),emissiveIntensity:0.20}));
+    plHaft.position.y=0.65; g.add(plHaft);
+    // Cyan trim strips running up the haft (4 vertical lines)
+    for(var plS=0; plS<4; plS++){
+      var plAng=plS/4*Math.PI*2;
+      var plStrip=new THREE.Mesh(new THREE.BoxGeometry(0.012,1.00,0.012),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));
+      plStrip.position.set(Math.cos(plAng)*0.030,0.65,Math.sin(plAng)*0.030);
+      g.add(plStrip);
+    }
+    // Magenta tech bands at intervals (3 bands)
+    for(var plB=0; plB<3; plB++){
+      var plBand=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.038,0.030,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+      plBand.position.y=0.30+plB*0.30; g.add(plBand);
+    }
+    // Crossguard housing — angular tech mount
+    var plMount=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.07,0.10),new THREE.MeshLambertMaterial({color:0x14181f,emissive:new THREE.Color(0x040508),emissiveIntensity:0.15}));
+    plMount.position.y=1.20; g.add(plMount);
+    // Cyan accent on crossguard
+    var plMountTrim=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.02,0.12),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));
+    plMountTrim.position.y=1.16; g.add(plMountTrim);
+    // 4 emitter prongs — angular, jutting forward in cross pattern
+    var plProng1=new THREE.Mesh(new THREE.ConeGeometry(0.020,0.18,4),new THREE.MeshLambertMaterial({color:0x252830}));
+    plProng1.position.set(0,1.32,0.10); plProng1.rotation.x=-0.5; g.add(plProng1);
+    var plProng2=plProng1.clone(); plProng2.position.set(0,1.32,-0.10); plProng2.rotation.x=0.5; g.add(plProng2);
+    var plProng3=plProng1.clone(); plProng3.position.set(0.10,1.32,0); plProng3.rotation.set(0,0,-0.5); g.add(plProng3);
+    var plProng4=plProng1.clone(); plProng4.position.set(-0.10,1.32,0); plProng4.rotation.set(0,0,0.5); g.add(plProng4);
+    // Bright cyan emitter rings on each prong tip
+    var plRingT=new THREE.Mesh(new THREE.TorusGeometry(0.025,0.008,4,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));
+    var plRing1=plRingT.clone(); plRing1.position.set(0,1.40,0.18); plRing1.rotation.x=Math.PI/2-0.5; g.add(plRing1);
+    var plRing2=plRingT.clone(); plRing2.position.set(0,1.40,-0.18); plRing2.rotation.x=Math.PI/2+0.5; g.add(plRing2);
+    var plRing3=plRingT.clone(); plRing3.position.set(0.18,1.40,0); plRing3.rotation.set(0,Math.PI/2,Math.PI/2-0.5); g.add(plRing3);
+    var plRing4=plRingT.clone(); plRing4.position.set(-0.18,1.40,0); plRing4.rotation.set(0,Math.PI/2,Math.PI/2+0.5); g.add(plRing4);
+    // CENTRAL PHOTON ORB — the white-core energy emitter (the staff's signature)
+    // Outer bright glow (additive)
+    var plGlow=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,9),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending,depthWrite:false}));
+    plGlow.position.y=1.55; g.add(plGlow);
+    // Mid cyan halo
+    var plHalo=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.85}));
+    plHalo.position.y=1.55; g.add(plHalo);
+    // White core (the photon)
+    var plCore=new THREE.Mesh(new THREE.SphereGeometry(0.075,9,7),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));
+    plCore.position.y=1.55; g.add(plCore);
+    // Hot bright center pinpoint
+    var plPin=new THREE.Mesh(new THREE.SphereGeometry(0.030,6,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));
+    plPin.position.y=1.55; g.add(plPin);
+    // Containment ring around orb (horizontal)
+    var plContain=new THREE.Mesh(new THREE.TorusGeometry(0.20,0.012,5,16),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.85}));
+    plContain.rotation.x=Math.PI/2; plContain.position.y=1.55; g.add(plContain);
+    // Second containment ring (vertical)
+    var plContain2=new THREE.Mesh(new THREE.TorusGeometry(0.20,0.012,5,16),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.85}));
+    plContain2.position.y=1.55; g.add(plContain2);
+    // Top spike — the lance "tip" from which beams fire
+    var plTip=new THREE.Mesh(new THREE.ConeGeometry(0.045,0.22,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));
+    plTip.position.y=1.85; g.add(plTip);
+    // Tiny red targeting reticle dot at tip
+    var plRet=new THREE.Mesh(new THREE.SphereGeometry(0.025,5,4),new THREE.MeshBasicMaterial({color:0xff2244,transparent:true,opacity:0.95}));
+    plRet.position.y=1.97; g.add(plRet);
+
+  } else if(itemId==='xn_w_singularity_cannon'){
+    // ── SINGULARITY CANNON — long-rifle that fires gravity wells ──
+    // Heavy black-steel rifle with magenta singularity core barrel
+    // Pommel/grip
+    var scGr=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.18,0.16),new THREE.MeshLambertMaterial({color:0x1a1820}));
+    scGr.position.y=0.08; g.add(scGr);
+    // Trigger guard
+    var scTg=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.10,0.04),new THREE.MeshLambertMaterial({color:0x0a0c14}));
+    scTg.position.set(0,0.14,0.10); g.add(scTg);
+    // Stock (rear)
+    var scSt=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.12,0.30),new THREE.MeshLambertMaterial({color:0x14181f}));
+    scSt.position.set(0,0.20,-0.18); g.add(scSt);
+    // Body of rifle (main receiver)
+    var scBd=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.14,0.65),new THREE.MeshLambertMaterial({color:0x14181f,emissive:new THREE.Color(0x040508),emissiveIntensity:0.20}));
+    scBd.position.set(0,0.32,0.22); g.add(scBd);
+    // Magenta data screens / sight rail on top
+    var scRail=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.04,0.55),new THREE.MeshLambertMaterial({color:0x14181f}));
+    scRail.position.set(0,0.42,0.22); g.add(scRail);
+    // Optical sight (magenta lens)
+    var scSight=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.07,0.18,8),new THREE.MeshLambertMaterial({color:0x14181f}));
+    scSight.rotation.x=Math.PI/2; scSight.position.set(0,0.50,0.22); g.add(scSight);
+    var scLens=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.04,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    scLens.rotation.x=Math.PI/2; scLens.position.set(0,0.50,0.31); g.add(scLens);
+    // BARREL — heavy main barrel with magenta singularity core
+    var scBar=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.95,9),new THREE.MeshLambertMaterial({color:0x14181f}));
+    scBar.rotation.x=Math.PI/2; scBar.position.set(0,0.32,0.85); g.add(scBar);
+    // Magenta containment rings on barrel (3 rings)
+    for(var scR=0; scR<3; scR++){
+      var scRing=new THREE.Mesh(new THREE.TorusGeometry(0.085,0.016,5,12),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+      scRing.rotation.y=Math.PI/2; scRing.position.set(0,0.32,0.55+scR*0.22); g.add(scRing);
+    }
+    // Glowing singularity at muzzle (the gravity well core)
+    var scWell=new THREE.Mesh(new THREE.SphereGeometry(0.10,9,7),new THREE.MeshBasicMaterial({color:0xff00ff,transparent:true,opacity:0.85}));
+    scWell.position.set(0,0.32,1.34); g.add(scWell);
+    // Inner dark core (event horizon)
+    var scHor=new THREE.Mesh(new THREE.SphereGeometry(0.05,7,5),new THREE.MeshBasicMaterial({color:0x000000}));
+    scHor.position.set(0,0.32,1.34); g.add(scHor);
+    // Outer glow
+    var scWG=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.30,blending:THREE.AdditiveBlending,depthWrite:false}));
+    scWG.position.set(0,0.32,1.34); g.add(scWG);
+    // Vent slits on barrel (cyan glow showing through)
+    for(var scV=0; scV<4; scV++){
+      var scVent=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.012,0.08),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.85}));
+      scVent.position.set(0,0.40,0.55+scV*0.13); g.add(scVent);
+    }
+
+  } else if(itemId==='xn_w_voidsteel_edge'){
+    // ── VOIDSTEEL EDGE — purple plasma blade with rolling lightning ──
+    // Black-steel hilt with purple plasma blade, lightning arcing along edge
+    // Pommel — purple crystal
+    var veP=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.95}));
+    veP.position.y=0.04; g.add(veP);
+    // Grip — wrapped black with purple bands
+    var veGr=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.040,0.32,7),new THREE.MeshLambertMaterial({color:0x10081a}));
+    veGr.position.y=0.20; g.add(veGr);
+    // Purple grip wraps
+    for(var veI=0; veI<5; veI++){
+      var veW=new THREE.Mesh(new THREE.CylinderGeometry(0.043,0.043,0.020,7),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.85}));
+      veW.position.y=0.07+veI*0.060; g.add(veW);
+    }
+    // Crossguard — angular black-steel with purple inlay
+    var veCg=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.075,0.10),new THREE.MeshLambertMaterial({color:0x14081f,emissive:new THREE.Color(0x080410),emissiveIntensity:0.30}));
+    veCg.position.y=0.40; g.add(veCg);
+    // Purple inlay on crossguard
+    var veCgT=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.020,0.04),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.95}));
+    veCgT.position.y=0.43; g.add(veCgT);
+    // Crossguard tips — angular purple shards
+    var veSh=new THREE.Mesh(new THREE.OctahedronGeometry(0.045,0),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    var veSh1=veSh.clone(); veSh1.position.set(-0.24,0.40,0); veSh1.scale.set(0.6,1.4,0.6); g.add(veSh1);
+    var veSh2=veSh.clone(); veSh2.position.set(0.24,0.40,0); veSh2.scale.set(0.6,1.4,0.6); g.add(veSh2);
+    // BLADE — wide purple plasma slab with darker void core
+    var veBl=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.05,0.045),new THREE.MeshBasicMaterial({color:0x6a00aa,transparent:true,opacity:0.85}));
+    veBl.position.y=0.97; g.add(veBl);
+    // Darker void core down center
+    var veCore=new THREE.Mesh(new THREE.BoxGeometry(0.04,1.00,0.05),new THREE.MeshBasicMaterial({color:0x14001a}));
+    veCore.position.y=0.97; g.add(veCore);
+    // Bright purple edges
+    var veE1=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.95,0.022),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    veE1.position.set(0.058,0.97,0); g.add(veE1);
+    var veE2=veE1.clone(); veE2.position.x=-0.058; g.add(veE2);
+    // Lightning arcs — small bright zigzags along the blade (3 arcs)
+    for(var veA=0; veA<3; veA++){
+      var veArc=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.10,0.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.85}));
+      veArc.position.set((veA%2===0?0.060:-0.060),0.65+veA*0.30,0.020);
+      veArc.rotation.z=(veA%2===0?0.4:-0.4);
+      g.add(veArc);
+    }
+    // Glow halo around blade (additive)
+    var veGlow=new THREE.Mesh(new THREE.BoxGeometry(0.30,1.10,0.16),new THREE.MeshBasicMaterial({color:0xaa00ff,transparent:true,opacity:0.20,blending:THREE.AdditiveBlending,depthWrite:false}));
+    veGlow.position.y=0.97; g.add(veGlow);
+    // Tip
+    var veT=new THREE.Mesh(new THREE.ConeGeometry(0.060,0.18,4),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    veT.position.y=1.59; g.add(veT);
+
+  } else if(itemId==='xn_w_railgun_array'){
+    // ── RAILGUN ARRAY — twin-barrel rifle, cyan left + magenta right ──
+    // Heavy mech-style shoulder rig
+    // Body — heavy plated receiver
+    var raBd=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.18,0.55),new THREE.MeshLambertMaterial({color:0x252830,emissive:new THREE.Color(0x040508),emissiveIntensity:0.20}));
+    raBd.position.set(0,0.30,0.20); g.add(raBd);
+    // Top accent panel
+    var raTop=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.04,0.50),new THREE.MeshLambertMaterial({color:0x14181f}));
+    raTop.position.set(0,0.41,0.20); g.add(raTop);
+    // Grip
+    var raGr=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.20,0.10),new THREE.MeshLambertMaterial({color:0x1a1820}));
+    raGr.position.set(0,0.10,0.05); g.add(raGr);
+    // Shoulder mount
+    var raMt=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.20),new THREE.MeshLambertMaterial({color:0x252830}));
+    raMt.position.set(0,0.30,-0.12); g.add(raMt);
+    // CYAN BARREL (left)
+    var raCB=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.050,0.85,8),new THREE.MeshLambertMaterial({color:0x14181f}));
+    raCB.rotation.x=Math.PI/2; raCB.position.set(-0.07,0.34,0.85); g.add(raCB);
+    // Cyan rail strips on barrel
+    for(var raCS=0; raCS<3; raCS++){
+      var raCSt=new THREE.Mesh(new THREE.BoxGeometry(0.012,0.012,0.80),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));
+      var raAng=raCS/3*Math.PI*2;
+      raCSt.position.set(-0.07+Math.cos(raAng)*0.052,0.34+Math.sin(raAng)*0.052,0.85);
+      g.add(raCSt);
+    }
+    // Cyan muzzle ring
+    var raCMR=new THREE.Mesh(new THREE.TorusGeometry(0.060,0.012,5,12),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));
+    raCMR.rotation.y=Math.PI/2; raCMR.position.set(-0.07,0.34,1.27); g.add(raCMR);
+    // Cyan muzzle glow
+    var raCG=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,6),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+    raCG.position.set(-0.07,0.34,1.30); g.add(raCG);
+    // MAGENTA BARREL (right)
+    var raMB=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.050,0.85,8),new THREE.MeshLambertMaterial({color:0x14181f}));
+    raMB.rotation.x=Math.PI/2; raMB.position.set(0.07,0.34,0.85); g.add(raMB);
+    // Magenta rail strips
+    for(var raMS=0; raMS<3; raMS++){
+      var raMSt=new THREE.Mesh(new THREE.BoxGeometry(0.012,0.012,0.80),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+      var raAng2=raMS/3*Math.PI*2;
+      raMSt.position.set(0.07+Math.cos(raAng2)*0.052,0.34+Math.sin(raAng2)*0.052,0.85);
+      g.add(raMSt);
+    }
+    // Magenta muzzle ring
+    var raMMR=new THREE.Mesh(new THREE.TorusGeometry(0.060,0.012,5,12),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));
+    raMMR.rotation.y=Math.PI/2; raMMR.position.set(0.07,0.34,1.27); g.add(raMMR);
+    // Magenta muzzle glow
+    var raMG=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,6),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false}));
+    raMG.position.set(0.07,0.34,1.30); g.add(raMG);
+    // Capacitor banks on top of receiver (4 pillars)
+    for(var raC=0; raC<4; raC++){
+      var raCap=new THREE.Mesh(new THREE.BoxGeometry(0.030,0.10,0.030),new THREE.MeshBasicMaterial({color:(raC%2===0?0x00ffff:0xff44ff),transparent:true,opacity:0.85}));
+      raCap.position.set(-0.075+raC*0.050,0.48,0.20); g.add(raCap);
+    }
+
+  } else if(itemId==='cv_w_warrior'){
+    // ═══════════════════════════════════════════════════════════════
+    // v93.0-a113 -- CONVERGENT EDGE rebuild: shorter, chunkier blade.
+    // Total length 1.05 (was 1.42). Blade WIDTH bumped to 0.16 (was 0.075).
+    // The blade is now the dominant visual feature.
+    // ═══════════════════════════════════════════════════════════════
+    // Massive magenta pommel orb -- 2.5x bigger
+    var ceP=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.95}));ceP.position.y=0.06;g.add(ceP);
+    var cePCore=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));cePCore.position.y=0.06;g.add(cePCore);
+    // Short grip
+    var ceG=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.050,0.18,8),new THREE.MeshLambertMaterial({color:0x0a0820}));ceG.position.y=0.20;g.add(ceG);
+    for(var ceI=0;ceI<3;ceI++){var ceW=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.028,8),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:0.95}));ceW.position.y=0.14+ceI*0.06;g.add(ceW);}
+    // CHUNKY crossguard -- wider + thicker
+    var ceCG=new THREE.Mesh(new THREE.BoxGeometry(0.50,0.10,0.12),new THREE.MeshLambertMaterial({color:0x00f0ff,emissive:new THREE.Color(0x00aacc),emissiveIntensity:1.0}));ceCG.position.y=0.34;g.add(ceCG);
+    var ceCGL=new THREE.Mesh(new THREE.ConeGeometry(0.060,0.18,4),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.98}));ceCGL.position.set(-0.30,0.38,0);ceCGL.rotation.z=Math.PI/2;g.add(ceCGL);
+    var ceCGR=ceCGL.clone();ceCGR.position.x=0.30;ceCGR.rotation.z=-Math.PI/2;g.add(ceCGR);
+    // BIG WIDE BLADE -- this is the showpiece
+    var ceBL=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.62,0.060),new THREE.MeshLambertMaterial({color:0x8810b8,emissive:new THREE.Color(0xff44ff),emissiveIntensity:0.9}));ceBL.position.y=0.72;g.add(ceBL);
+    // Wide cyan core running through blade (bright fuller)
+    var ceCore=new THREE.Mesh(new THREE.BoxGeometry(0.060,0.58,0.030),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));ceCore.position.y=0.71;g.add(ceCore);
+    var ceCoreBright=new THREE.Mesh(new THREE.BoxGeometry(0.024,0.54,0.020),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));ceCoreBright.position.y=0.71;g.add(ceCoreBright);
+    // 4 energy nodes -- bigger
+    for(var ceN=0;ceN<4;ceN++){var ceNd=new THREE.Mesh(new THREE.OctahedronGeometry(0.060,0),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.95}));ceNd.position.set(0,0.50+ceN*0.13,0.034);g.add(ceNd);}
+    // Wider tip
+    var ceTip=new THREE.Mesh(new THREE.ConeGeometry(0.085,0.18,4),new THREE.MeshLambertMaterial({color:0xff44ff,emissive:new THREE.Color(0xaa00aa),emissiveIntensity:1.0}));ceTip.position.y=1.06;g.add(ceTip);
+    // MASSIVE aura -- additive so it pops on any background
+    var ceAura=new THREE.Mesh(new THREE.SphereGeometry(0.55,12,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.28,blending:THREE.AdditiveBlending,depthWrite:false}));ceAura.position.y=0.72;g.add(ceAura);
+    var ceAura2=new THREE.Mesh(new THREE.SphereGeometry(0.38,10,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending,depthWrite:false}));ceAura2.position.y=0.72;g.add(ceAura2);
+
+  } else if(itemId==='cv_w_mage'){
+    // ═══════════════════════════════════════════════════════════════
+    // v93.0-a113 -- SINGULARITY STAFF rebuild. Was too long (1.60) with
+    // tiny orb (0.10). Now: shorter shaft (0.80), MASSIVE orb (0.22 core
+    // + 0.40 event horizon ring + 0.65 outer halo). The orb dominates
+    // the silhouette so it reads as a magic staff at any camera angle.
+    // ═══════════════════════════════════════════════════════════════
+    // Pommel
+    var ssP=new THREE.Mesh(new THREE.SphereGeometry(0.090,10,8),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:0.95}));ssP.position.y=0.06;g.add(ssP);
+    var ssPCore=new THREE.Mesh(new THREE.SphereGeometry(0.045,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));ssPCore.position.y=0.06;g.add(ssPCore);
+    // SHORT shaft (0.80 instead of 1.20)
+    var ssSh=new THREE.Mesh(new THREE.CylinderGeometry(0.044,0.048,0.80,8),new THREE.MeshLambertMaterial({color:0x100828,emissive:new THREE.Color(0x4400aa),emissiveIntensity:0.55}));ssSh.position.y=0.50;g.add(ssSh);
+    // 4 chunky magenta wrap bands
+    for(var ssB=0;ssB<4;ssB++){var ssBd=new THREE.Mesh(new THREE.CylinderGeometry(0.058,0.058,0.038,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:1.0}));ssBd.position.y=0.20+ssB*0.20;g.add(ssBd);}
+    // Cap before the orb
+    var ssCap=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.080,0.10,12),new THREE.MeshLambertMaterial({color:0x00f0ff,emissive:new THREE.Color(0x00aacc),emissiveIntensity:1.0}));ssCap.position.y=0.95;g.add(ssCap);
+    // ═══ THE SINGULARITY ORB (this is now massive) ═══
+    // White-hot inner core (was 0.10, now 0.22 -- 2.2x bigger)
+    var ssCore=new THREE.Mesh(new THREE.SphereGeometry(0.22,14,10),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));ssCore.position.y=1.25;g.add(ssCore);
+    // Magenta event-horizon torus (bigger + thicker)
+    var ssER1=new THREE.Mesh(new THREE.TorusGeometry(0.32,0.055,8,20),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:1.0}));ssER1.position.y=1.25;ssER1.rotation.x=Math.PI/2.5;g.add(ssER1);
+    // Second perpendicular event-horizon ring (cross pattern)
+    var ssER2=new THREE.Mesh(new THREE.TorusGeometry(0.32,0.055,8,20),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:1.0}));ssER2.position.y=1.25;ssER2.rotation.x=Math.PI/2.5;ssER2.rotation.y=Math.PI/2;g.add(ssER2);
+    // BIG cyan outer halo
+    var ssHalo=new THREE.Mesh(new THREE.SphereGeometry(0.42,12,10),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:0.35}));ssHalo.position.y=1.25;g.add(ssHalo);
+    // 6 orbiting crystals (more + bigger)
+    for(var ssO=0;ssO<6;ssO++){var ssOa=ssO/6*Math.PI*2;var ssOc=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),new THREE.MeshBasicMaterial({color:(ssO%2===0)?0x00f0ff:0xff44ff,transparent:true,opacity:1.0}));ssOc.position.set(Math.cos(ssOa)*0.46,1.25,Math.sin(ssOa)*0.46);g.add(ssOc);}
+    // 4 white rift-crack spokes (radiating from core)
+    for(var ssR=0;ssR<4;ssR++){var ssRa=ssR/4*Math.PI*2+Math.PI/4;var ssRk=new THREE.Mesh(new THREE.CylinderGeometry(0.020,0.020,0.50,4),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));ssRk.position.set(Math.cos(ssRa)*0.30,1.25,Math.sin(ssRa)*0.30);ssRk.rotation.z=ssRa+Math.PI/2;g.add(ssRk);}
+    // MASSIVE triple-layer additive aura
+    var ssAura1=new THREE.Mesh(new THREE.SphereGeometry(0.85,14,10),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.25,blending:THREE.AdditiveBlending,depthWrite:false}));ssAura1.position.y=1.25;g.add(ssAura1);
+    var ssAura2=new THREE.Mesh(new THREE.SphereGeometry(0.62,12,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.35,blending:THREE.AdditiveBlending,depthWrite:false}));ssAura2.position.y=1.25;g.add(ssAura2);
+    var ssAura3=new THREE.Mesh(new THREE.SphereGeometry(0.42,10,8),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.50,blending:THREE.AdditiveBlending,depthWrite:false}));ssAura3.position.y=1.25;g.add(ssAura3);
+
+  } else if(itemId==='cv_w_rogue'){
+    // ═══════════════════════════════════════════════════════════════
+    // v93.0-a113 -- PHASESHIFT DAGGERS rebuild: WIDER blade (0.12 vs
+    // 0.055), shorter overall (0.72 vs 1.01), bigger ghost silhouettes
+    // for the phase-shift effect to be visible.
+    // ═══════════════════════════════════════════════════════════════
+    // Bigger pommel
+    var pdP=new THREE.Mesh(new THREE.SphereGeometry(0.10,10,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:1.0}));pdP.position.y=0.06;g.add(pdP);
+    var pdPCore=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));pdPCore.position.y=0.06;g.add(pdPCore);
+    // Short grip
+    var pdG=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.046,0.16,8),new THREE.MeshLambertMaterial({color:0x180830}));pdG.position.y=0.18;g.add(pdG);
+    for(var pdI=0;pdI<3;pdI++){var pdW=new THREE.Mesh(new THREE.CylinderGeometry(0.052,0.052,0.030,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:1.0}));pdW.position.y=0.13+pdI*0.05;g.add(pdW);}
+    // CHUNKY crossguard
+    var pdCG=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.075,0.090),new THREE.MeshLambertMaterial({color:0xff44ff,emissive:new THREE.Color(0xaa00aa),emissiveIntensity:1.0}));pdCG.position.y=0.30;g.add(pdCG);
+    var pdCL=new THREE.Mesh(new THREE.ConeGeometry(0.040,0.12,4),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:1.0}));pdCL.position.set(-0.18,0.34,0);pdCL.rotation.z=Math.PI/2;g.add(pdCL);
+    var pdCR=pdCL.clone();pdCR.position.x=0.18;pdCR.rotation.z=-Math.PI/2;g.add(pdCR);
+    // WIDE BLADE -- the showpiece
+    var pdBL=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.42,0.055),new THREE.MeshLambertMaterial({color:0x00f0ff,emissive:new THREE.Color(0x00aacc),emissiveIntensity:1.0}));pdBL.position.y=0.56;g.add(pdBL);
+    // Wide magenta core through blade
+    var pdCore=new THREE.Mesh(new THREE.BoxGeometry(0.045,0.38,0.025),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:1.0}));pdCore.position.y=0.55;g.add(pdCore);
+    var pdCoreBright=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.34,0.014),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));pdCoreBright.position.y=0.55;g.add(pdCoreBright);
+    // BIGGER phase-shift ghost blades
+    var pdGhost1=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.42,0.055),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending,depthWrite:false}));pdGhost1.position.set(-0.06,0.56,-0.05);g.add(pdGhost1);
+    var pdGhost2=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.42,0.055),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.35,blending:THREE.AdditiveBlending,depthWrite:false}));pdGhost2.position.set(0.06,0.56,0.05);g.add(pdGhost2);
+    // Sharper tip
+    var pdTip=new THREE.Mesh(new THREE.ConeGeometry(0.060,0.14,4),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));pdTip.position.y=0.84;g.add(pdTip);
+    // 3 white energy dots
+    for(var pdN=0;pdN<3;pdN++){var pdNd=new THREE.Mesh(new THREE.OctahedronGeometry(0.045,0),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));pdNd.position.set(0,0.42+pdN*0.13,0.030);g.add(pdNd);}
+    // MASSIVE aura
+    var pdAura=new THREE.Mesh(new THREE.SphereGeometry(0.55,12,8),new THREE.MeshBasicMaterial({color:0x00ffff,transparent:true,opacity:0.30,blending:THREE.AdditiveBlending,depthWrite:false}));pdAura.position.y=0.56;g.add(pdAura);
+    var pdAura2=new THREE.Mesh(new THREE.SphereGeometry(0.38,10,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending,depthWrite:false}));pdAura2.position.y=0.56;g.add(pdAura2);
+
+  } else if(itemId==='cv_w_cleric'){
+    // ═══════════════════════════════════════════════════════════════
+    // v93.0-a113 -- HALO OF CONVERGENCE rebuild: thicker torus rings,
+    // bigger core, more spokes, lower position so the halo isn\'t up
+    // above the player\'s hand awkwardly.
+    // ═══════════════════════════════════════════════════════════════
+    // Outer ring - thicker torus
+    var hcOuter=new THREE.Mesh(new THREE.TorusGeometry(0.42,0.070,10,28),new THREE.MeshLambertMaterial({color:0x00f0ff,emissive:new THREE.Color(0x00aacc),emissiveIntensity:1.2}));hcOuter.position.y=0.60;hcOuter.rotation.x=Math.PI/2;g.add(hcOuter);
+    // Mid ring -- magenta, thicker
+    var hcMid=new THREE.Mesh(new THREE.TorusGeometry(0.28,0.055,8,24),new THREE.MeshLambertMaterial({color:0xff44ff,emissive:new THREE.Color(0xaa00aa),emissiveIntensity:1.2}));hcMid.position.y=0.60;hcMid.rotation.x=Math.PI/2;g.add(hcMid);
+    // Inner ring -- white-hot
+    var hcInner=new THREE.Mesh(new THREE.TorusGeometry(0.16,0.035,6,18),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));hcInner.position.y=0.60;hcInner.rotation.x=Math.PI/2;g.add(hcInner);
+    // 8 thick energy spokes from inner to outer
+    for(var hcS=0;hcS<8;hcS++){var hcSa=hcS/8*Math.PI*2;var hcSp=new THREE.Mesh(new THREE.CylinderGeometry(0.020,0.020,0.28,4),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));hcSp.position.set(Math.cos(hcSa)*0.34,0.60,Math.sin(hcSa)*0.34);hcSp.rotation.z=hcSa+Math.PI/2;hcSp.rotation.y=hcSa;g.add(hcSp);}
+    // BIG center core
+    var hcCore=new THREE.Mesh(new THREE.SphereGeometry(0.14,12,8),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1.0}));hcCore.position.y=0.60;g.add(hcCore);
+    // Core magenta halo
+    var hcCH=new THREE.Mesh(new THREE.SphereGeometry(0.22,10,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.55}));hcCH.position.y=0.60;g.add(hcCH);
+    // 6 orbiter dots on outer ring -- bigger
+    for(var hcO=0;hcO<6;hcO++){var hcOa=hcO/6*Math.PI*2+Math.PI/6;var hcOd=new THREE.Mesh(new THREE.OctahedronGeometry(0.080,0),new THREE.MeshBasicMaterial({color:(hcO%2===0)?0x00ffff:0xff44ff,transparent:true,opacity:1.0}));hcOd.position.set(Math.cos(hcOa)*0.42,0.60,Math.sin(hcOa)*0.42);g.add(hcOd);}
+    // Short handle
+    var hcH=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.042,0.22,8),new THREE.MeshLambertMaterial({color:0x180830,emissive:new THREE.Color(0xff44ff),emissiveIntensity:0.6}));hcH.position.y=0.15;g.add(hcH);
+    var hcHp=new THREE.Mesh(new THREE.SphereGeometry(0.085,8,6),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:1.0}));hcHp.position.y=0.04;g.add(hcHp);
+    // MASSIVE aura
+    var hcAura=new THREE.Mesh(new THREE.SphereGeometry(0.85,14,10),new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:0.28,blending:THREE.AdditiveBlending,depthWrite:false}));hcAura.position.y=0.60;g.add(hcAura);
+    var hcAura2=new THREE.Mesh(new THREE.SphereGeometry(0.55,12,8),new THREE.MeshBasicMaterial({color:0xff44ff,transparent:true,opacity:0.40,blending:THREE.AdditiveBlending,depthWrite:false}));hcAura2.position.y=0.60;g.add(hcAura2);
+    var hcAura3=new THREE.Mesh(new THREE.SphereGeometry(0.32,10,8),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false}));hcAura3.position.y=0.60;g.add(hcAura3);
+
+  } else if(itemId==='sf_w_trident'){
+    // ═══════════════════════════════════════════════════════════════
+    // a182 — DISCORDANT TRIDENT (stormforged, best magic weapon in game).
+    //   A three-pronged storm trident flowing with electricity. Built from
+    //   the grip (y≈0) up to the three prongs at the top. Animated parts are
+    //   tagged in userData (_tfxArc / _tfxCore / _tfxBall / _tfxOrbit) and a
+    //   dedicated ticker (_tickTridentFx, called each frame) makes the
+    //   lightning flicker, the core pulse, and arc-orbs crawl up the prongs.
+    //   IMPORTANT: animated parts use FRESH materials (not the cached mL/mT)
+    //   so pulsing emissive/opacity does not bleed into other meshes.
+    // ═══════════════════════════════════════════════════════════════
+    g.userData.isTridentFx = true;
+    var _tfxArcs = [], _tfxCores = [], _tfxBalls = [], _tfxOrbits = [];
+    // — Pommel: storm-iron cap with a glowing blue core —
+    var trPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.060,0),new THREE.MeshLambertMaterial({color:0x1a2740,emissive:new THREE.Color(0x0a1830),emissiveIntensity:0.5}));trPm.position.y=0.03;g.add(trPm);
+    var trPmC=new THREE.Mesh(new THREE.SphereGeometry(0.034,8,6),new THREE.MeshBasicMaterial({color:0x9fe8ff,transparent:true,opacity:0.95}));trPmC.position.y=0.03;trPmC.userData._tfxBall=1;g.add(trPmC);_tfxBalls.push(trPmC);
+    // — Shaft: dark storm-iron with electric inlay —
+    var trShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.038,0.86,9),new THREE.MeshLambertMaterial({color:0x232f44,emissive:new THREE.Color(0x0c1422),emissiveIntensity:0.35}));trShaft.position.y=0.50;g.add(trShaft);
+    // Spiral electric inlay up the shaft (thin glowing core strip)
+    var trInlay=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,0.84,6),new THREE.MeshBasicMaterial({color:0x4fc8ff,transparent:true,opacity:0.85}));trInlay.position.y=0.50;trInlay.userData._tfxCore=1;g.add(trInlay);_tfxCores.push(trInlay);
+    // Grip bands — storm-silver rings
+    for(var trI=0;trI<4;trI++){var trBnd=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.022,9),new THREE.MeshLambertMaterial({color:0x39506e,emissive:new THREE.Color(0x16263c),emissiveIntensity:0.4}));trBnd.position.y=0.18+trI*0.105;g.add(trBnd);}
+    // — Crossbar where the head fans out —
+    var trCol=new THREE.Mesh(new THREE.CylinderGeometry(0.072,0.052,0.075,9),new THREE.MeshLambertMaterial({color:0x4a6694,emissive:new THREE.Color(0x16263c),emissiveIntensity:0.6}));trCol.position.y=0.96;g.add(trCol);
+    // A focus gem sitting in the crossbar — the storm's heart
+    var trGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.075,0),new THREE.MeshBasicMaterial({color:0xbfefff,transparent:true,opacity:0.95}));trGem.position.y=1.00;trGem.userData._tfxBall=1;g.add(trGem);_tfxBalls.push(trGem);
+    var trGemHalo=new THREE.Mesh(new THREE.SphereGeometry(0.13,12,8),new THREE.MeshBasicMaterial({color:0x5cc8ff,transparent:true,opacity:0.32,blending:THREE.AdditiveBlending,depthWrite:false}));trGemHalo.position.y=1.00;trGemHalo.userData._tfxBall=1;g.add(trGemHalo);_tfxBalls.push(trGemHalo);
+    // — THREE PRONGS — center tall, two outer swept up —
+    // Prong geometry helper params: base near y=1.02, tips up around y=1.62
+    var _prongDefs=[ {x:0, baseY:1.04, len:0.62, tilt:0},
+                     {x:-0.17, baseY:1.02, len:0.52, tilt:0.26},
+                     {x:0.17, baseY:1.02, len:0.52, tilt:-0.26} ];
+    for(var trP=0;trP<_prongDefs.length;trP++){
+      var pd=_prongDefs[trP];
+      // Prong body — steel spike
+      var trShaftP=new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.032,pd.len,6),new THREE.MeshLambertMaterial({color:0x6e8bbd,emissive:new THREE.Color(0x1c2c44),emissiveIntensity:0.5}));
+      trShaftP.position.set(pd.x,pd.baseY+pd.len*0.5,0);trShaftP.rotation.z=pd.tilt;g.add(trShaftP);
+      // Barbed tip
+      var trTip=new THREE.Mesh(new THREE.ConeGeometry(0.030,0.14,5),new THREE.MeshLambertMaterial({color:0xa8c4ee}));
+      trTip.position.set(pd.x+Math.sin(pd.tilt)*pd.len*0.55, pd.baseY+pd.len+0.05, 0);trTip.rotation.z=pd.tilt;g.add(trTip);
+      // Glowing tip ball (animated)
+      var trTb=new THREE.Mesh(new THREE.SphereGeometry(0.036,8,6),new THREE.MeshBasicMaterial({color:0xdff6ff,transparent:true,opacity:0.95}));
+      trTb.position.copy(trTip.position);trTb.userData._tfxBall=1;g.add(trTb);_tfxBalls.push(trTb);
+      // Electric arc strip running up each prong (animated flicker)
+      var trArc=new THREE.Mesh(new THREE.CylinderGeometry(0.009,0.009,pd.len*0.95,5),new THREE.MeshBasicMaterial({color:0x6fd0ff,transparent:true,opacity:0.8}));
+      trArc.position.set(pd.x,pd.baseY+pd.len*0.5,0.018);trArc.rotation.z=pd.tilt;trArc.userData._tfxArc=1;g.add(trArc);_tfxArcs.push(trArc);
+    }
+    // — Cross-arcs: little lightning links that jump between prong tips (animated) —
+    for(var trC=0;trC<3;trC++){
+      var trCross=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.012,0.012),new THREE.MeshBasicMaterial({color:0x9fe6ff,transparent:true,opacity:0.0,blending:THREE.AdditiveBlending,depthWrite:false}));
+      trCross.position.set(0,1.30+trC*0.12,0);trCross.userData._tfxArc=2;trCross.userData._tfxSeed=trC;g.add(trCross);_tfxArcs.push(trCross);
+    }
+    // — Orbiting spark motes around the head (animated crawl) —
+    for(var trO=0;trO<5;trO++){
+      var trOrb=new THREE.Mesh(new THREE.OctahedronGeometry(0.026,0),new THREE.MeshBasicMaterial({color:0xbfefff,transparent:true,opacity:0.9,blending:THREE.AdditiveBlending,depthWrite:false}));
+      trOrb.userData._tfxOrbit=1;trOrb.userData._tfxSeed=trO/5*Math.PI*2;g.add(trOrb);_tfxOrbits.push(trOrb);
+    }
+    // — Storm aura around the head —
+    var trAura=new THREE.Mesh(new THREE.SphereGeometry(0.46,12,8),new THREE.MeshBasicMaterial({color:0x4fb8ff,transparent:true,opacity:0.20,blending:THREE.AdditiveBlending,depthWrite:false}));trAura.position.y=1.28;trAura.userData._tfxBall=1;g.add(trAura);_tfxBalls.push(trAura);
+    // Register animated parts for the ticker
+    g.userData._tfxArcs=_tfxArcs; g.userData._tfxCores=_tfxCores; g.userData._tfxBalls=_tfxBalls; g.userData._tfxOrbits=_tfxOrbits;
+    // NOTE: registration into _tridentFxMeshes happens at the EQUIP attach sites
+    //   (not here) — the 2D inventory preview path overwrites userData and
+    //   disposes the mesh same-frame, so we must only register the in-world copy.
+
+  } else if(itemId==='geo_w_devourer'){
+    // ═══════════════════════════════════════════════════════════════
+    // a224 — DEVOURER'S EDGE (geometric melee). "It does not cut. It
+    //   reformats what it touches into clean, cubic nothing." A blade that
+    //   isn't a blade — a column of tessellating green cubes locked into an
+    //   edge, with a glowing grid core, a cube crossguard, and orbiting cube
+    //   motes. Animated via _tickGeoFx (isGeoFx).
+    // ═══════════════════════════════════════════════════════════════
+    g.userData.isGeoFx = true;
+    var _gO=[], _gS=[], _gP=[], _gF=[];
+    var GEO=0x30ff78;
+    var mGeoBody=new THREE.MeshLambertMaterial({color:0x0c3a1e,emissive:new THREE.Color(0x0a3018),emissiveIntensity:0.5});
+    var mGeoEdge=function(){return new THREE.MeshBasicMaterial({color:GEO,transparent:true,opacity:0.9});};
+    var mGeoGlow=function(op){return new THREE.MeshBasicMaterial({color:GEO,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false});};
+    // Pommel — a glowing green cube
+    var dvPm=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.10,0.10),mGeoEdge());dvPm.position.y=0.04;dvPm.userData._gfxSpinAxis='y';_gS.push(dvPm);dvPm.userData._gfxSpin=1;g.add(dvPm);
+    // Grip — dark, with green grid bands
+    var dvGr=new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.040,0.30,4),mGeoBody);dvGr.position.y=0.20;dvGr.rotation.y=0.78;g.add(dvGr);
+    for(var dvI=0;dvI<3;dvI++){var dvB=new THREE.Mesh(new THREE.BoxGeometry(0.085,0.022,0.085),mGeoEdge());dvB.position.y=0.10+dvI*0.09;dvB.rotation.y=0.78;g.add(dvB);}
+    // Crossguard — a horizontal bar of 3 locked cubes
+    for(var dvC=-1;dvC<=1;dvC++){var dvCg=new THREE.Mesh(new THREE.BoxGeometry(0.13,0.13,0.13),dvC===0?mGeoEdge():mGeoBody);dvCg.position.set(dvC*0.16,0.40,0);dvCg.rotation.set(0.4,0.4,0);g.add(dvCg);}
+    // Blade — a stacked column of tessellating cubes forming an edge
+    var dvBladeCubes=8;
+    for(var dvK=0;dvK<dvBladeCubes;dvK++){
+      var sz=0.16 - dvK*0.012;
+      var cube=new THREE.Mesh(new THREE.BoxGeometry(sz,0.135,sz),mGeoBody);
+      cube.position.set(0,0.56+dvK*0.135,0); cube.rotation.y=0.785 + dvK*0.06; g.add(cube);
+      // green grid edge on each cube (the glowing lattice)
+      var edge=new THREE.Mesh(new THREE.BoxGeometry(sz*1.02,0.022,sz*1.02),mGeoEdge());edge.position.set(0,0.56+dvK*0.135+0.06,0);edge.rotation.y=cube.rotation.y;g.add(edge);
+    }
+    // Glowing grid CORE running up the blade (pulses)
+    var dvCore=new THREE.Mesh(new THREE.BoxGeometry(0.035,1.05,0.035),mGeoGlow(0.85));dvCore.position.y=1.05;dvCore.userData._gfxBaseOp=0.85;dvCore.userData._gfxPulse=1;_gP.push(dvCore);g.add(dvCore);
+    // Tip — a sharp green cube point
+    var dvTip=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,0),mGeoEdge());dvTip.position.y=1.66;dvTip.userData._gfxSpinAxis='y';dvTip.userData._gfxSpin=1;_gS.push(dvTip);g.add(dvTip);
+    // Orbiting cube motes around the blade
+    for(var dvM=0;dvM<4;dvM++){var mote=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.05,0.05),mGeoGlow(0.9));mote.userData._gfxSeed=dvM/4*Math.PI*2;mote.userData._gfxRad=0.24;mote.userData._gfxCy=1.0;mote.userData._gfxOrbit=1;_gO.push(mote);g.add(mote);}
+    // soft aura
+    var dvAura=new THREE.Mesh(new THREE.SphereGeometry(0.34,10,8),mGeoGlow(0.16));dvAura.position.y=1.1;dvAura.userData._gfxBaseOp=0.16;dvAura.userData._gfxPulse=1;_gP.push(dvAura);g.add(dvAura);
+    g.userData._gfxOrbits=_gO; g.userData._gfxSpins=_gS; g.userData._gfxPulses=_gP; g.userData._gfxFloats=_gF;
+
+  } else if(itemId==='geo_w_grid'){
+    // ═══════════════════════════════════════════════════════════════
+    // a224 — STAFF OF THE PERFECT GRID (geometric magic). "Channels the
+    //   geometric code of the universe. Reality obeys, reluctantly." A dark
+    //   staff topped by a floating, rotating wireframe-cube lattice with a
+    //   pulsing green core — cubes orbit and bob around the focus. Animated
+    //   via _tickGeoFx.
+    // ═══════════════════════════════════════════════════════════════
+    g.userData.isGeoFx = true;
+    var _ggO=[], _ggS=[], _ggP=[], _ggF=[];
+    var GG=0x30ff78;
+    var mGgBody=new THREE.MeshLambertMaterial({color:0x0c3a1e,emissive:new THREE.Color(0x0a3018),emissiveIntensity:0.5});
+    var mGgEdge=function(){return new THREE.MeshBasicMaterial({color:GG,transparent:true,opacity:0.9});};
+    var mGgGlow=function(op){return new THREE.MeshBasicMaterial({color:GG,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false});};
+    // Pommel cube
+    var ggPm=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.08,0.08),mGgEdge());ggPm.position.y=0.03;ggPm.userData._gfxSpinAxis='y';ggPm.userData._gfxSpin=1;_ggS.push(ggPm);g.add(ggPm);
+    // Shaft — dark with green grid inlay
+    var ggShaft=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.036,1.05,4),mGgBody);ggShaft.position.y=0.58;ggShaft.rotation.y=0.785;g.add(ggShaft);
+    var ggInlay=new THREE.Mesh(new THREE.BoxGeometry(0.012,1.0,0.012),mGgGlow(0.8));ggInlay.position.y=0.58;ggInlay.userData._gfxBaseOp=0.8;ggInlay.userData._gfxPulse=1;_ggP.push(ggInlay);g.add(ggInlay);
+    // Grip bands
+    for(var ggI=0;ggI<4;ggI++){var ggB=new THREE.Mesh(new THREE.BoxGeometry(0.075,0.020,0.075),mGgEdge());ggB.position.y=0.16+ggI*0.10;ggB.rotation.y=0.785;g.add(ggB);}
+    // Head collar
+    var ggCol=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.10,0.12),mGgBody);ggCol.position.y=1.14;ggCol.rotation.y=0.785;g.add(ggCol);
+    // FOCUS — a central glowing green core cube + a rotating wireframe-cube shell
+    var ggCore=new THREE.Mesh(new THREE.BoxGeometry(0.13,0.13,0.13),mGgEdge());ggCore.position.y=1.34;ggCore.userData._gfxBaseOp=0.9;ggCore.userData._gfxPulse=1;_ggP.push(ggCore);g.add(ggCore);
+    var ggCoreHalo=new THREE.Mesh(new THREE.SphereGeometry(0.20,12,8),mGgGlow(0.32));ggCoreHalo.position.y=1.34;ggCoreHalo.userData._gfxBaseOp=0.32;ggCoreHalo.userData._gfxPulse=1;_ggP.push(ggCoreHalo);g.add(ggCoreHalo);
+    // a larger spinning wireframe-style cube shell (two nested boxes spinning opposite)
+    var ggShell1=new THREE.Mesh(new THREE.BoxGeometry(0.26,0.26,0.26),mGgGlow(0.22));ggShell1.position.y=1.34;ggShell1.userData._gfxSpinAxis='y';ggShell1.userData._gfxSpin=1;_ggS.push(ggShell1);g.add(ggShell1);
+    var ggShell2=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.20,0.20),mGgGlow(0.3));ggShell2.position.y=1.34;ggShell2.userData._gfxSpinAxis='x';ggShell2.userData._gfxSpin=1;_ggS.push(ggShell2);g.add(ggShell2);
+    // floating cubes orbiting + bobbing around the focus (tessellation)
+    for(var ggM=0;ggM<5;ggM++){var fc=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.055,0.055),mGgGlow(0.9));fc.userData._gfxSeed=ggM/5*Math.PI*2;fc.userData._gfxRad=0.30;fc.userData._gfxCy=1.34;fc.userData._gfxOrbit=1;_ggO.push(fc);g.add(fc);}
+    g.userData._gfxOrbits=_ggO; g.userData._gfxSpins=_ggS; g.userData._gfxPulses=_ggP; g.userData._gfxFloats=_ggF;
+
+  } else if(itemId==='geo_w_colossus'){
+    // ═══════════════════════════════════════════════════════════════
+    // a229 — TESSELLITH, THE WORLDCLEAVER (geometric two-handed greatsword).
+    //   A door-sized greatsword whose blade is a solid lattice of green cubes.
+    //   Wide cube crossguard, a long pulsing grid-core, big orbiting cube
+    //   motes, floating tessellation cubes drifting up the blade, and a heavy
+    //   green aura. Built tall (~2.4u) for a two-hander. Animated via _tickGeoFx.
+    // ═══════════════════════════════════════════════════════════════
+    g.userData.isGeoFx = true;
+    var _cO=[], _cS=[], _cP=[], _cF=[];
+    var GC=0x30ff78;
+    var mGcBody=new THREE.MeshLambertMaterial({color:0x0c3a1e,emissive:new THREE.Color(0x0a3018),emissiveIntensity:0.5});
+    var mGcEdge=function(){return new THREE.MeshBasicMaterial({color:GC,transparent:true,opacity:0.9});};
+    var mGcGlow=function(op){return new THREE.MeshBasicMaterial({color:GC,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false});};
+    // Pommel — big green cube, spinning
+    var cPm=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.14,0.14),mGcEdge());cPm.position.y=0.05;cPm.userData._gfxSpinAxis='y';cPm.userData._gfxSpin=1;_cS.push(cPm);g.add(cPm);
+    // Long two-hand grip
+    var cGr=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.050,0.50,4),mGcBody);cGr.position.y=0.32;cGr.rotation.y=0.785;g.add(cGr);
+    for(var cI=0;cI<4;cI++){var cB=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.024,0.10),mGcEdge());cB.position.y=0.14+cI*0.11;cB.rotation.y=0.785;g.add(cB);}
+    // WIDE cube crossguard — 5 locked cubes
+    for(var cC=-2;cC<=2;cC++){var cCg=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.15,0.15),(cC===0)?mGcEdge():mGcBody);cCg.position.set(cC*0.18,0.60,0);cCg.rotation.set(0.4,0.4,0);g.add(cCg);}
+    var cCgGlow=new THREE.Mesh(new THREE.BoxGeometry(0.95,0.05,0.05),mGcGlow(0.7));cCgGlow.position.y=0.60;cCgGlow.userData._gfxBaseOp=0.7;cCgGlow.userData._gfxPulse=1;_cP.push(cCgGlow);g.add(cCgGlow);
+    // BLADE — tall stacked column of tessellating cubes (door-sized)
+    var cBladeN=12;
+    for(var cK=0;cK<cBladeN;cK++){
+      var csz=0.26 - cK*0.012;
+      var cube=new THREE.Mesh(new THREE.BoxGeometry(csz,0.135,csz*0.5),mGcBody);
+      cube.position.set(0, 0.74+cK*0.135, 0); cube.rotation.y=0.785 + cK*0.04; g.add(cube);
+      var edge=new THREE.Mesh(new THREE.BoxGeometry(csz*1.02,0.020,csz*0.52),mGcEdge());edge.position.set(0,0.74+cK*0.135+0.06,0);edge.rotation.y=cube.rotation.y;g.add(edge);
+    }
+    // Long pulsing grid core up the blade
+    var cCore=new THREE.Mesh(new THREE.BoxGeometry(0.05,1.65,0.05),mGcGlow(0.85));cCore.position.y=1.55;cCore.userData._gfxBaseOp=0.85;cCore.userData._gfxPulse=1;_cP.push(cCore);g.add(cCore);
+    // Tip — big sharp green octahedron, spinning
+    var cTip=new THREE.Mesh(new THREE.OctahedronGeometry(0.17,0),mGcEdge());cTip.position.y=2.44;cTip.userData._gfxSpinAxis='y';cTip.userData._gfxSpin=1;_cS.push(cTip);g.add(cTip);
+    // Big orbiting cube motes around the blade
+    for(var cM=0;cM<6;cM++){var mote=new THREE.Mesh(new THREE.BoxGeometry(0.075,0.075,0.075),mGcGlow(0.9));mote.userData._gfxSeed=cM/6*Math.PI*2;mote.userData._gfxRad=0.36;mote.userData._gfxCy=1.5;mote.userData._gfxOrbit=1;_cO.push(mote);g.add(mote);}
+    // Floating tessellation cubes drifting up the blade
+    for(var cFl=0;cFl<4;cFl++){var fcl=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.06,0.06),mGcGlow(0.8));fcl.position.set((cFl%2?0.14:-0.14),0.9+cFl*0.35,0);fcl.userData._gfxSeed=cFl*1.4;fcl.userData._gfxBaseY=0.9+cFl*0.35;fcl.userData._gfxFloat=1;_cF.push(fcl);g.add(fcl);}
+    // Heavy aura around the blade
+    var cAura=new THREE.Mesh(new THREE.CylinderGeometry(0.30,0.18,1.7,8),mGcGlow(0.13));cAura.position.y=1.55;cAura.userData._gfxBaseOp=0.13;cAura.userData._gfxPulse=1;_cP.push(cAura);g.add(cAura);
+    g.userData._gfxOrbits=_cO; g.userData._gfxSpins=_cS; g.userData._gfxPulses=_cP; g.userData._gfxFloats=_cF;
+
+  } else if(itemId==='cv_w_greatsword'){
+    // ═══════════════════════════════════════════════════════════════
+    // a229 — SEVERANCE, BLADE OF THE CONVERGED (neon two-handed greatsword).
+    //   A broad slab-blade of dark metal traced with bright CYAN circuit lines
+    //   and a glowing energy fuller. Twin-prong crossguard, a pulsing cyan core,
+    //   orbiting energy motes, and a neon aura. Animated via _tickGeoFx (the
+    //   same fx system, just cyan).
+    // ═══════════════════════════════════════════════════════════════
+    g.userData.isGeoFx = true;
+    var _sO=[], _sS=[], _sP=[], _sF=[];
+    var NC=0x00ffcc, NC2=0x33fff0;
+    var mNvBody=new THREE.MeshLambertMaterial({color:0x0a2630,emissive:new THREE.Color(0x041820),emissiveIntensity:0.5});
+    var mNvSteel=new THREE.MeshLambertMaterial({color:0x16323e,emissive:new THREE.Color(0x06222c),emissiveIntensity:0.4});
+    var mNvEdge=function(){return new THREE.MeshBasicMaterial({color:NC,transparent:true,opacity:0.92});};
+    var mNvGlow=function(op){return new THREE.MeshBasicMaterial({color:NC,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false});};
+    // Pommel — cyan octahedron, spinning
+    var sPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,0),mNvEdge());sPm.position.y=0.04;sPm.userData._gfxSpinAxis='y';sPm.userData._gfxSpin=1;_sS.push(sPm);g.add(sPm);
+    // Long grip with cyan circuit bands
+    var sGr=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.052,0.52,8),mNvBody);sGr.position.y=0.33;g.add(sGr);
+    for(var sI=0;sI<4;sI++){var sB=new THREE.Mesh(new THREE.CylinderGeometry(0.056,0.056,0.03,8),mNvEdge());sB.position.y=0.14+sI*0.12;g.add(sB);}
+    // Twin-prong crossguard, swept up
+    var sCg=new THREE.Mesh(new THREE.BoxGeometry(0.70,0.08,0.10),mNvSteel);sCg.position.y=0.62;g.add(sCg);
+    var sCgC=new THREE.Mesh(new THREE.BoxGeometry(0.70,0.025,0.025),mNvGlow(0.85));sCgC.position.y=0.62;sCgC.userData._gfxBaseOp=0.85;sCgC.userData._gfxPulse=1;_sP.push(sCgC);g.add(sCgC);
+    var sPr1=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.22,4),mNvEdge());sPr1.position.set(-0.36,0.70,0);sPr1.rotation.z=0.6;g.add(sPr1);
+    var sPr2=sPr1.clone();sPr2.position.x=0.36;sPr2.rotation.z=-0.6;g.add(sPr2);
+    // Focus gem at the base of the blade
+    var sGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.11,0),mNvEdge());sGem.position.y=0.74;sGem.userData._gfxBaseOp=0.92;sGem.userData._gfxPulse=1;_sP.push(sGem);g.add(sGem);
+    // BROAD slab blade — dark steel
+    var sBl=new THREE.Mesh(new THREE.BoxGeometry(0.22,1.55,0.05),mNvSteel);sBl.position.y=1.55;g.add(sBl);
+    // Bright cyan edges (both sides)
+    var sE1=new THREE.Mesh(new THREE.BoxGeometry(0.025,1.45,0.025),mNvEdge());sE1.position.set(0.108,1.54,0.02);g.add(sE1);
+    var sE2=sE1.clone();sE2.position.x=-0.108;g.add(sE2);
+    // Glowing energy fuller down the center (pulses)
+    var sFul=new THREE.Mesh(new THREE.BoxGeometry(0.05,1.45,0.06),mNvGlow(0.8));sFul.position.y=1.54;sFul.userData._gfxBaseOp=0.8;sFul.userData._gfxPulse=1;_sP.push(sFul);g.add(sFul);
+    // Circuit-line rungs across the blade
+    for(var sC=0;sC<6;sC++){var sRn=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.02,0.055),mNvGlow(0.7));sRn.position.set(0,0.95+sC*0.22,0);_sP.push(sRn);sRn.userData._gfxBaseOp=0.7;sRn.userData._gfxPulse=1;g.add(sRn);}
+    // Sharp tip
+    var sTip=new THREE.Mesh(new THREE.ConeGeometry(0.11,0.34,4),mNvEdge());sTip.position.y=2.45;g.add(sTip);
+    // Orbiting neon energy motes around the blade
+    for(var sM=0;sM<5;sM++){var smo=new THREE.Mesh(new THREE.OctahedronGeometry(0.05,0),mNvGlow(0.9));smo.userData._gfxSeed=sM/5*Math.PI*2;smo.userData._gfxRad=0.32;smo.userData._gfxCy=1.6;smo.userData._gfxOrbit=1;_sO.push(smo);g.add(smo);}
+    // Neon aura
+    var sAura=new THREE.Mesh(new THREE.CylinderGeometry(0.26,0.16,1.6,8),mNvGlow(0.12));sAura.position.y=1.55;sAura.userData._gfxBaseOp=0.12;sAura.userData._gfxPulse=1;_sP.push(sAura);g.add(sAura);
+    g.userData._gfxOrbits=_sO; g.userData._gfxSpins=_sS; g.userData._gfxPulses=_sP; g.userData._gfxFloats=_sF;
+
+  } else {
+    // True last-resort fallback — plain grey stick (should never appear now)
+    var dbh2=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.16,0.04),mL(0x606060));dbh2.position.y=0.08;g.add(dbh2);
+    var db2=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.55,0.04),mL(0x808090));db2.position.y=0.43;g.add(db2);
+  }
+
+  return g;
+}
+
 /* ============================================================================
-   BESTIARY 3D — live specimen previews for the wiki (mobs + bosses).
+   BESTIARY / ARMORY 3D — live specimen + weapon previews for the wiki.
    Geometry comes from the game's own builders (bundled above, verbatim):
-     · mobs   -> mkEnemy(type)
-     · bosses -> mkEnemy(baseType) for world bosses that reuse mob meshes,
-                 or the dedicated mkBoss* builder for lair/depth bosses.
-   One shared WebGL canvas overlays the page and scissor-paints each specimen
-   into its card window; everything else stays transparent, so cards, text,
-   scroll and hover all work untouched (canvas is pointer-events:none).
+     · mobs    -> mkEnemy(type)
+     · bosses  -> mkEnemy(baseType) (world bosses) or mkBoss* (lair/depth)
+     · weapons -> buildWeaponMesh(itemId)
+   One shared WebGL canvas overlays the page and scissor-paints each preview
+   into its card window; everything else stays transparent (canvas is
+   pointer-events:none), so cards, text, scroll and hover all work untouched.
    ========================================================================== */
 (function(){
   if(!window.THREE){ console.warn('[bestiary3d] THREE not loaded'); return; }
   var THREE = window.THREE;
 
-  // sanctuary_guardian has no mesh in mkEnemy (stats-only) -> closest guardian.
   var ALIAS = { sanctuary_guardian:'ancient_guardian' };
   var TIER_ACCENT = { titan:0xff4d5e, elite:0xffcf4a, veteran:0x7dffb0, common:0x39d0ff };
+  var RARITY_ACCENT = { common:0xb8c8d4, uncommon:0x39ff8a, rare:0x4ea8de, epic:0xc084fc,
+    legendary:0xffaa00, mythic:0xff66ff, convergent:0x00ffaa, stormforged:0xff2a2a, geometric:0x30ff78 };
 
-  // boss id -> how to build + accent. World bosses build via mkEnemy(enemy);
-  // lair/depth bosses via their dedicated mkBoss* builder (resolved in-scope).
+  // Weapons with no bespoke model in buildWeaponMesh (would render the in-game
+  // grey-stick fallback) -> shown as a same-weaponType stand-in, with thematic
+  // matches where one exists. Disclosed to the user.
+  var WEAPON_STANDIN = {
+    sf_w_bolt:'w002', abf_w_reckoning:'rv_w_staff', abf_w_tally:'w002',
+    apex_t7_blade:'cv_w_warrior', nh_w_beam:'xu_w_cannon', nh_w_blade:'w002',
+    apex_t4_blade:'cv_w_warrior', apex_t1_blade:'w001', apex_t6_staff:'rv_w_staff',
+    apex_t2_hammer:'cv_w_greatsword', apex_t3_staff:'necro_w_staff', apex_t5_blade:'cv_w_greatsword',
+    dl_w_drakefang:'dragon_w_fang', vc_w_shard:'vc_w_voidblade', dl_w_void_fang:'dragon_w_void',
+    cod_w_drill:'dng_w_drillblade'
+  };
+
   var BOSS = {
-    forge_tyrant:       { enemy:'brute',               accent:0xff5520 },
-    ancient_wyrm:       { enemy:'eyexor',              accent:0xaa44ff },
-    hollow_reaper:      { enemy:'wraith',              accent:0x44ddff },
-    void_behemoth:      { enemy:'elite',               accent:0xff00ff },
-    abacus_of_flesh:    { enemy:'abacus_of_flesh',     accent:0xcc1810 },
-    overseer_of_discord:{ enemy:'overseer_of_discord', accent:0xffd84a },
-    patrol_boss:        { fn:'mkBossPatrol',           accent:0x9adb4a },
-    cemetery_boss:      { fn:'mkBossLichKing',         accent:0x7dffb0 },
-    void_boss:          { fn:'mkBossVoid',             accent:0x9a6cff },
-    citadel_boss:       { fn:'mkBossCitadel',          accent:0xff4d3a },
-    caves_of_despair_boss:{ fn:'mkBossMineForeman',    accent:0xff8a3a },
-    ashlands_boss:      { fn:'mkBossAshlands',          accent:0xff5a1e },
-    sunken_sands_boss:  { fn:'mkBossKhepri',           accent:0xffc24a },
-    fungal_boss:        { fn:'mkBossFungal',           accent:0x66ff9a },
-    frostveil_boss:     { fn:'mkBossFrostveil',        accent:0x8fd8ff },
-    ancient_boss:       { fn:'mkBossAncient',          accent:0xffd86a },
-    dragonlair_boss:    { fn:'mkBossDragon',           accent:0xff5a2a },
-    riftvale_boss:      { fn:'mkBossRiftSovereign',    accent:0xb04dff },
-    wyvernwastes_boss:  { fn:'mkBossStonewyrm',        accent:0x8fe0ff },
-    xumen_boss:         { fn:'mkBossXuOverlord',       accent:0x46e0ff },
-    necropolis_boss:    { fn:'mkBossNecropolis',       accent:0xc9b6ff },
-    xumen_fortress_boss:{ fn:'mkBossApexPyramid',      accent:0x3fd0ff },
-    void_citadel_boss:  { fn:'mkBossXerath',           accent:0x9a4dff },
-    neon_hollow_boss:   { fn:'mkBossCurator',          accent:0xff5cf0 },
-    veiled_sanctuary_boss:{ fn:'mkBossFinalAbbot',     accent:0xc0a0ff },
-    blooming_wilds_boss:{ fn:'mkBossWildmother',       accent:0xff8ad6 },
-    xeron_boss:         { fn:'mkBossOverseerZero',     accent:0x36e0ff },
-    convergence_boss:   { fn:'mkBossDepthSentinel',    accent:0xb088ff },
-    the_reach_boss:     { fn:'mkBossKeeperEnd',        accent:0xffcf4a },
-    convergence_d2_boss:{ fn:'mkBossDepthInferno',     accent:0xff5a2a },
-    convergence_d3_boss:{ fn:'mkBossArchon',           accent:0xffd86a },
-    convergence_d4_boss:{ fn:'mkBossXerathor',         accent:0xb04dff },
-    convergence_d5_boss:{ fn:'mkBossOverseerTech',     accent:0x46e0ff },
-    convergence_d6_boss:{ fn:'mkBossForestAncient',    accent:0x86e06a }
+    forge_tyrant:{enemy:'brute',accent:0xff5520}, ancient_wyrm:{enemy:'eyexor',accent:0xaa44ff},
+    hollow_reaper:{enemy:'wraith',accent:0x44ddff}, void_behemoth:{enemy:'elite',accent:0xff00ff},
+    abacus_of_flesh:{enemy:'abacus_of_flesh',accent:0xcc1810}, overseer_of_discord:{enemy:'overseer_of_discord',accent:0xffd84a},
+    patrol_boss:{fn:'mkBossPatrol',accent:0x9adb4a}, cemetery_boss:{fn:'mkBossLichKing',accent:0x7dffb0},
+    void_boss:{fn:'mkBossVoid',accent:0x9a6cff}, citadel_boss:{fn:'mkBossCitadel',accent:0xff4d3a},
+    caves_of_despair_boss:{fn:'mkBossMineForeman',accent:0xff8a3a}, ashlands_boss:{fn:'mkBossAshlands',accent:0xff5a1e},
+    sunken_sands_boss:{fn:'mkBossKhepri',accent:0xffc24a}, fungal_boss:{fn:'mkBossFungal',accent:0x66ff9a},
+    frostveil_boss:{fn:'mkBossFrostveil',accent:0x8fd8ff}, ancient_boss:{fn:'mkBossAncient',accent:0xffd86a},
+    dragonlair_boss:{fn:'mkBossDragon',accent:0xff5a2a}, riftvale_boss:{fn:'mkBossRiftSovereign',accent:0xb04dff},
+    wyvernwastes_boss:{fn:'mkBossStonewyrm',accent:0x8fe0ff}, xumen_boss:{fn:'mkBossXuOverlord',accent:0x46e0ff},
+    necropolis_boss:{fn:'mkBossNecropolis',accent:0xc9b6ff}, xumen_fortress_boss:{fn:'mkBossApexPyramid',accent:0x3fd0ff},
+    void_citadel_boss:{fn:'mkBossXerath',accent:0x9a4dff}, neon_hollow_boss:{fn:'mkBossCurator',accent:0xff5cf0},
+    veiled_sanctuary_boss:{fn:'mkBossFinalAbbot',accent:0xc0a0ff}, blooming_wilds_boss:{fn:'mkBossWildmother',accent:0xff8ad6},
+    xeron_boss:{fn:'mkBossOverseerZero',accent:0x36e0ff}, convergence_boss:{fn:'mkBossDepthSentinel',accent:0xb088ff},
+    the_reach_boss:{fn:'mkBossKeeperEnd',accent:0xffcf4a}, convergence_d2_boss:{fn:'mkBossDepthInferno',accent:0xff5a2a},
+    convergence_d3_boss:{fn:'mkBossArchon',accent:0xffd86a}, convergence_d4_boss:{fn:'mkBossXerathor',accent:0xb04dff},
+    convergence_d5_boss:{fn:'mkBossOverseerTech',accent:0x46e0ff}, convergence_d6_boss:{fn:'mkBossForestAncient',accent:0x86e06a}
   };
 
   var renderer, canvas, clock;
-  var cache = {};            // 'mob:type' | 'boss:id' -> built scene record
+  var cache = {};            // 'mob:x' | 'boss:x' | 'weapon:x' -> scene record
   var cells = [];            // [{el,kind,key,accent,rec}]
   var running = false, hoveredKey = null;
-  var BUILD_BUDGET = 2;      // max new scenes built per frame (avoid hitches)
+  var BUILD_BUDGET = 2;
 
   function ensureRenderer(){
     if(renderer) return;
@@ -18098,10 +19564,12 @@ function _getAbacusStoneTex(){
 
   function makeMesh(kind, key){
     if(kind === 'boss'){
-      var spec = BOSS[key];
-      if(!spec) return null;
+      var spec = BOSS[key]; if(!spec) return null;
       if(spec.enemy) return mkEnemy(spec.enemy);
-      try { return eval(spec.fn)(); } catch(e){ return null; }   // mkBoss* lives in this IIFE scope
+      try { return eval(spec.fn)(); } catch(e){ return null; }
+    }
+    if(kind === 'weapon'){
+      return buildWeaponMesh(WEAPON_STANDIN[key] || key);
     }
     return mkEnemy(ALIAS[key] || key);
   }
@@ -18115,6 +19583,7 @@ function _getAbacusStoneTex(){
       model = new THREE.Mesh(new THREE.IcosahedronGeometry(0.6,0),
         new THREE.MeshStandardMaterial({ color:0x39506a, wireframe:true }));
     }
+    if(kind === 'weapon') model.rotation.z = 0.0;  // upright; spun about its own Y in the loop
     pivot.add(model); scene.add(pivot);
 
     var box = new THREE.Box3().setFromObject(model);
@@ -18137,21 +19606,23 @@ function _getAbacusStoneTex(){
     });
 
     var acc = new THREE.Color(accentHex || 0x39d0ff);
-    scene.add(new THREE.AmbientLight(0x42506e, 0.92));
-    var keyL = new THREE.DirectionalLight(0xfff1d8, 1.28); keyL.position.set(4,8,7); scene.add(keyL);
-    var rim = new THREE.DirectionalLight(acc, 1.0); rim.position.set(-6,4,-7); scene.add(rim);
+    scene.add(new THREE.AmbientLight(0x44506e, kind==='weapon'?1.05:0.92));
+    var keyL = new THREE.DirectionalLight(0xfff1d8, 1.3); keyL.position.set(4,8,7); scene.add(keyL);
+    var rim = new THREE.DirectionalLight(acc, 1.05); rim.position.set(-6,4,-7); scene.add(rim);
     var fill = new THREE.PointLight(0x88aaff, 0.5, 0); fill.position.set(0, r*0.6, r*2.4); scene.add(fill);
 
     var cam = new THREE.PerspectiveCamera(40, 1, 0.05, 4000);
-    var dist = (r / Math.sin((40*Math.PI/180)/2)) * 1.16;
-    cam.position.set(0, r*0.10, dist); cam.lookAt(0,0,0);
+    var fit = (kind==='weapon') ? 1.08 : 1.16;
+    var dist = (r / Math.sin((40*Math.PI/180)/2)) * fit;
+    cam.position.set(0, kind==='weapon'? r*0.02 : r*0.10, dist); cam.lookAt(0,0,0);
 
     return {
       scene:scene, camera:cam, pivot:pivot, model:model, radius:r,
       glow:glow, emit:emit, anim:(model.userData && model.userData.anim) || null,
+      gfx:model.userData || null,
       baseRotY:(model.userData && model.userData._builtRotY) || 0,
       phase:Math.random()*Math.PI*2,
-      spin:(kind==='boss'? 0.32:0.45) + Math.random()*0.18, yaw:0
+      spin:(kind==='boss'?0.32 : kind==='weapon'?0.6 : 0.45) + Math.random()*0.18, yaw:0
     };
   }
 
@@ -18159,6 +19630,11 @@ function _getAbacusStoneTex(){
     var card = el.closest ? el.closest('.enemy-card') : null;
     if(card){ for(var t in TIER_ACCENT){ if(card.classList.contains(t)) return t; } }
     return 'common';
+  }
+  function rarityAccent(el){
+    var card = el.closest ? el.closest('.item-card') : null;
+    if(card){ for(var rk in RARITY_ACCENT){ if(card.classList.contains('r-'+rk)) return RARITY_ACCENT[rk]; } }
+    return 0x9fb0d4;
   }
 
   function animRig(a, t, ph){
@@ -18179,6 +19655,24 @@ function _getAbacusStoneTex(){
     }
   }
 
+  // Faithful weapon FX: spinning pommels, pulsing fullers, orbiting motes, floats.
+  function tickGfx(u, t){
+    var g = u.gfx; if(!g) return;
+    if(g._gfxSpins) g._gfxSpins.forEach(function(m){ var ax=(m.userData&&m.userData._gfxSpinAxis)||'y'; m.rotation[ax]+=0.05; });
+    if(g._gfxPulses) g._gfxPulses.forEach(function(m){
+      if(m.material && m.userData && m.userData._gfxBaseOp!=null)
+        m.material.opacity = m.userData._gfxBaseOp * (0.55 + 0.45*Math.sin(t*3 + (m.userData._gfxSeed||0)));
+    });
+    if(g._gfxOrbits) g._gfxOrbits.forEach(function(m){
+      var s=m.userData||{}; var a=t*1.6 + (s._gfxSeed||0); var rad=s._gfxRad||0.3;
+      m.position.set(Math.cos(a)*rad, (s._gfxCy!=null?s._gfxCy:m.position.y), Math.sin(a)*rad);
+    });
+    if(g._gfxFloats) g._gfxFloats.forEach(function(m){
+      if(m.userData._gfxBaseY==null) m.userData._gfxBaseY=m.position.y;
+      m.position.y = m.userData._gfxBaseY + Math.sin(t*2 + (m.userData._gfxSeed||0))*0.05;
+    });
+  }
+
   window.__refreshBestiary3D = function(){
     ensureRenderer();
     var next = [];
@@ -18189,6 +19683,9 @@ function _getAbacusStoneTex(){
       var spec = BOSS[el.dataset.boss];
       next.push({ el:el, kind:'boss', key:el.dataset.boss, accent:(spec&&spec.accent)||0xff4d5e, rec:null });
     });
+    document.querySelectorAll('#item-grid .item-preview[data-weapon]').forEach(function(el){
+      next.push({ el:el, kind:'weapon', key:el.dataset.weapon, accent:rarityAccent(el), rec:null });
+    });
     cells = next;
     if(!running){ running = true; requestAnimationFrame(loop); }
   };
@@ -18198,9 +19695,11 @@ function _getAbacusStoneTex(){
     if(!renderer || !cells.length) return;
     var pe = document.getElementById('panel-enemies');
     var pb = document.getElementById('panel-bosses');
-    var enemiesOn = pe && pe.classList.contains('active');
-    var bossesOn  = pb && pb.classList.contains('active');
-    if(!enemiesOn && !bossesOn) return;     // idle on other tabs
+    var pi = document.getElementById('panel-items');
+    var on = { mob: pe&&pe.classList.contains('active'),
+               boss: pb&&pb.classList.contains('active'),
+               weapon: pi&&pi.classList.contains('active') };
+    if(!on.mob && !on.boss && !on.weapon) return;
 
     var t = clock.getElapsedTime();
     var W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
@@ -18214,8 +19713,7 @@ function _getAbacusStoneTex(){
 
     for(var i=0;i<cells.length;i++){
       var cell = cells[i];
-      if(cell.kind === 'mob' && !enemiesOn) continue;
-      if(cell.kind === 'boss' && !bossesOn) continue;
+      if(!on[cell.kind]) continue;
       var rect = cell.el.getBoundingClientRect();
       if(rect.width < 2 || rect.height < 2) continue;
       if(rect.bottom < cutTop || rect.top > H || rect.right < 0 || rect.left > W) continue;
@@ -18230,12 +19728,18 @@ function _getAbacusStoneTex(){
 
       var fast = (hoveredKey === (cell.kind+':'+cell.key)) ? 1.9 : 1.0;
       u.yaw += u.spin * 0.016 * fast;
-      u.pivot.rotation.y = u.baseRotY + u.yaw;
+      if(cell.kind === 'weapon'){
+        u.model.rotation.y = u.yaw;            // spin about its own length axis
+        u.pivot.rotation.x = 0.16;             // slight back-tilt display angle
+      } else {
+        u.pivot.rotation.y = u.baseRotY + u.yaw;
+      }
       u.pivot.position.y = Math.sin(t*0.8 + u.phase) * u.radius * 0.02;
       var pulse = 0.7 + 0.3*Math.sin(t*2.1 + u.phase);
       for(var g=0; g<u.glow.length; g++) u.glow[g].m.opacity = u.glow[g].base * (0.55 + 0.45*pulse);
       for(var e=0; e<u.emit.length; e++) u.emit[e].m.emissiveIntensity = u.emit[e].base * (0.85 + 0.3*Math.sin(t*1.6 + u.phase));
       animRig(u.anim, t, u.phase);
+      if(cell.kind === 'weapon') tickGfx(u, t);
 
       var visTop = Math.max(rect.top, cutTop);
       var visBot = Math.min(rect.bottom, H);
@@ -18248,15 +19752,15 @@ function _getAbacusStoneTex(){
     }
   }
 
-  // hover -> spin that specimen faster (delegated; canvas is pointer-none)
   document.addEventListener('mouseover', function(ev){
     if(!ev.target.closest) return;
-    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card');
-    if(ec){ var pv = ec.querySelector('.enemy-preview[data-type]'); hoveredKey = pv?('mob:'+pv.dataset.type):null; }
-    else if(bc){ var pb2 = bc.querySelector('.boss-preview[data-boss]'); hoveredKey = pb2?('boss:'+pb2.dataset.boss):null; }
+    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card'), ic = ev.target.closest('.item-card');
+    if(ec){ var p1=ec.querySelector('.enemy-preview[data-type]'); hoveredKey = p1?('mob:'+p1.dataset.type):null; }
+    else if(bc){ var p2=bc.querySelector('.boss-preview[data-boss]'); hoveredKey = p2?('boss:'+p2.dataset.boss):null; }
+    else if(ic){ var p3=ic.querySelector('.item-preview[data-weapon]'); hoveredKey = p3?('weapon:'+p3.dataset.weapon):null; }
   });
   document.addEventListener('mouseout', function(ev){
-    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card'))) hoveredKey = null;
+    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card')||ev.target.closest('.item-card'))) hoveredKey = null;
   });
 
   if(document.readyState === 'loading')

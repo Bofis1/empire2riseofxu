@@ -192,6 +192,17 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .set-card{background:var(--xu-deep);border:1px solid rgba(255,170,0,0.15);padding:1.3rem;position:relative;transition:border-color 0.2s;}
 .set-card:hover{border-color:var(--set-col,var(--xu-gold));}
 .set-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--set-col,var(--xu-gold));}
+.set-preview{position:relative;height:230px;margin:-1.3rem -1.3rem 0.9rem;overflow:hidden;
+  border-bottom:1px solid color-mix(in srgb,var(--set-col,#ffaa00) 30%,transparent);
+  background:radial-gradient(120% 95% at 50% 28%,color-mix(in srgb,var(--set-col,#ffaa00) 13%,transparent),transparent 72%),
+             linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.42));}
+.set-preview::before{content:'';position:absolute;top:9px;left:9px;width:14px;height:14px;
+  border-top:1px solid color-mix(in srgb,var(--set-col,#ffaa00) 65%,transparent);
+  border-left:1px solid color-mix(in srgb,var(--set-col,#ffaa00) 65%,transparent);opacity:0;transition:opacity 0.2s;}
+.set-card:hover .set-preview::before{opacity:1;}
+.set-preview::after{content:'⛨ FULL SET · ELF';position:absolute;bottom:6px;right:9px;
+  font-family:'Share Tech Mono',monospace;font-size:0.52rem;letter-spacing:0.16em;
+  color:color-mix(in srgb,var(--set-col,#ffaa00) 60%,transparent);pointer-events:none;}
 .set-name{font-family:'Cinzel',serif;font-size:1.15rem;font-weight:900;color:var(--set-col,var(--xu-gold));margin-bottom:0.2rem;letter-spacing:0.02em;}
 .set-count{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:var(--xu-dim);text-transform:uppercase;margin-bottom:0.9rem;}
 .set-source{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--xu-cyan);letter-spacing:0.06em;background:rgba(0,229,255,0.08);border-left:2px solid var(--xu-cyan);padding:0.45rem 0.7rem;margin-bottom:0.7rem;}
@@ -1259,6 +1270,7 @@ function renderSets(){
     var s = WIKI.sets[keys[ki]];
     var col = s.color || '#ffaa00';
     html += '<div class="set-card" style="--set-col:' + col + '">';
+    html += '<div class="set-preview" data-set="' + keys[ki] + '"></div>';
     html += '<div class="set-name">' + escapeHtml(s.name) + '</div>';
     html += '<div class="set-count">' + s.items.length + ' pieces</div>';
     if(s.sourceBoss){
@@ -1282,6 +1294,7 @@ function renderSets(){
     html += '</div>';
   }
   grid.innerHTML = html;
+  if(window.__refreshBestiary3D) window.__refreshBestiary3D();
 }
 renderSets();
 
@@ -1685,7 +1698,7 @@ gsInput.addEventListener('keydown', function(e){
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ===== Empire II bestiary/armory: game mesh bundle (mkEnemy + mkBoss* + buildWeaponMesh[a246] + elf armor system, verbatim) + viewer ===== */
+/* ===== Empire II bestiary/armory: game mesh bundle + viewer (mobs/bosses/weapons/armor/sets) ===== */
 (function(){
 let _abacusStoneTex=null;
 const _matCacheL={}; const _matCacheT={}; const _matCacheB={};
@@ -21000,6 +21013,20 @@ function buildElfMesh(){
       applyArmorTexturesToMesh(body, slotTex, skinTex);
       return body;
     }
+    if(kind === 'set'){
+      var sd = (typeof WIKI !== 'undefined' && WIKI.sets) ? WIKI.sets[key] : null;
+      var sBody = buildElfMesh();
+      var sSkin = getRaceSkinTex(6);
+      var sSlotTex = {}; var SL = {helmet:1, chest:1, legs:1, boots:1};
+      if(sd && sd.items){
+        for(var sp=0; sp<sd.items.length; sp++){
+          var sit = getItem(sd.items[sp]);
+          if(sit && SL[sit.slot] && !sSlotTex[sit.slot]){ var stx = mkArmorTex(sit.id); if(stx) sSlotTex[sit.slot] = stx; }
+        }
+      }
+      applyArmorTexturesToMesh(sBody, sSlotTex, sSkin);   // full set worn at once
+      return sBody;
+    }
     return mkEnemy(ALIAS[key] || key);
   }
 
@@ -21118,6 +21145,11 @@ function buildElfMesh(){
     document.querySelectorAll('#item-grid .armor-preview[data-armor]').forEach(function(el){
       next.push({ el:el, kind:'armor', key:el.dataset.armor, accent:rarityAccent(el), rec:null });
     });
+    document.querySelectorAll('#set-grid .set-preview[data-set]').forEach(function(el){
+      var sk=el.dataset.set; var sc=(typeof WIKI!=='undefined'&&WIKI.sets&&WIKI.sets[sk])?WIKI.sets[sk].color:null;
+      var acc = sc ? parseInt(String(sc).replace('#',''),16) : 0xffaa00;
+      next.push({ el:el, kind:'set', key:sk, accent:acc, rec:null });
+    });
     cells = next;
     if(!running){ running = true; requestAnimationFrame(loop); }
   };
@@ -21128,11 +21160,13 @@ function buildElfMesh(){
     var pe = document.getElementById('panel-enemies');
     var pb = document.getElementById('panel-bosses');
     var pi = document.getElementById('panel-items');
+    var ps = document.getElementById('panel-sets');
     var on = { mob: pe&&pe.classList.contains('active'),
                boss: pb&&pb.classList.contains('active'),
                weapon: pi&&pi.classList.contains('active'),
-               armor: pi&&pi.classList.contains('active') };
-    if(!on.mob && !on.boss && !on.weapon) return;
+               armor: pi&&pi.classList.contains('active'),
+               set: ps&&ps.classList.contains('active') };
+    if(!on.mob && !on.boss && !on.weapon && !on.set) return;
 
     var t = clock.getElapsedTime();
     var W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
@@ -21187,7 +21221,7 @@ function buildElfMesh(){
 
   document.addEventListener('mouseover', function(ev){
     if(!ev.target.closest) return;
-    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card'), ic = ev.target.closest('.item-card');
+    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card'), ic = ev.target.closest('.item-card'), sc = ev.target.closest('.set-card');
     if(ec){ var p1=ec.querySelector('.enemy-preview[data-type]'); hoveredKey = p1?('mob:'+p1.dataset.type):null; }
     else if(bc){ var p2=bc.querySelector('.boss-preview[data-boss]'); hoveredKey = p2?('boss:'+p2.dataset.boss):null; }
     else if(ic){
@@ -21195,9 +21229,10 @@ function buildElfMesh(){
       if(p3){ hoveredKey='weapon:'+p3.dataset.weapon; }
       else { var p4=ic.querySelector('.armor-preview[data-armor]'); hoveredKey = p4?('armor:'+p4.dataset.armor):null; }
     }
+    else if(sc){ var p5=sc.querySelector('.set-preview[data-set]'); hoveredKey = p5?('set:'+p5.dataset.set):null; }
   });
   document.addEventListener('mouseout', function(ev){
-    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card')||ev.target.closest('.item-card'))) hoveredKey = null;
+    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card')||ev.target.closest('.item-card')||ev.target.closest('.set-card'))) hoveredKey = null;
   });
 
   if(document.readyState === 'loading')

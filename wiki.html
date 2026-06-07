@@ -109,9 +109,17 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
   border-top:1px solid color-mix(in srgb,var(--rar) 60%,transparent);
   border-left:1px solid color-mix(in srgb,var(--rar) 60%,transparent);opacity:0;transition:opacity 0.2s;}
 .item-card:hover .armor-preview::before{opacity:1;}
-.armor-preview::after{content:'⛨ WORN · ELF';position:absolute;bottom:5px;right:8px;
+.armor-preview::after{content:'⛨ WORN · HUMAN';position:absolute;bottom:5px;right:8px;
   font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;
   color:color-mix(in srgb,var(--rar) 55%,transparent);pointer-events:none;}
+/* ── race: naked full-body model preview (a285) ── */
+.race-preview{position:relative;height:240px;margin:-1.5rem -1.5rem 1rem;overflow:hidden;
+  border-bottom:1px solid rgba(57,208,255,0.28);
+  background:radial-gradient(120% 95% at 50% 28%,rgba(57,208,255,0.10),transparent 72%),
+             linear-gradient(180deg,rgba(0,0,0,0.14),rgba(0,0,0,0.42));}
+.race-preview::after{content:'◈ SPECIMEN';position:absolute;bottom:6px;right:9px;
+  font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;
+  color:rgba(57,208,255,0.5);pointer-events:none;}
 .item-head{display:flex;align-items:flex-start;gap:0.7rem;}
 .item-icon{font-size:1.6rem;line-height:1;width:2.4rem;height:2.4rem;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.1);flex-shrink:0;}
 .item-titles{flex:1;min-width:0;}
@@ -1362,7 +1370,7 @@ function renderRaces(){
   for(var ri=0; ri<WIKI.races.length; ri++){
     var r = WIKI.races[ri];
     var st = r.stats || {};
-    html += '<div class="race-card"><div class="race-head"><div><div class="race-name">' + escapeHtml(r.name) + '</div>';
+    html += '<div class="race-card"><div class="race-preview" data-race="' + escapeHtml(r.id) + '"></div><div class="race-head"><div><div class="race-name">' + escapeHtml(r.name) + '</div>';
     if(r.sub) html += '<div class="race-sub">' + escapeHtml(r.sub) + '</div>';
     html += '</div><div class="race-stats-mini">';
     var statKeys = ['str','def','spd','int','vit'];
@@ -20957,78 +20965,671 @@ function buildHumanMesh(){
   return g;
 }
 
-function buildElfMesh(){
+// a285 — NEW race meshes (copied verbatim from the game's builders). The wiki
+//   race page previews each race naked (skin only, no gear) on these. buildHumanMesh
+//   was already added in a284; these are the remaining six + the new elf (replacing the old).
+function buildXuMesh(){
   const g=new THREE.Group();
-  const sk=new THREE.MeshLambertMaterial({color:RACES[6].col});
-  const skD=new THREE.MeshLambertMaterial({color:RACES[6].colDark});
-  const ey=new THREE.MeshBasicMaterial({color:RACES[6].eyeCol});
-  const robe=mL(0x182a22);
-  const robeT=mL(0x243c30);
-  const arcane=new THREE.MeshBasicMaterial({color:0x00ffcc});
-  const gold=new THREE.MeshLambertMaterial({color:0xd4a020,emissive:0x806000,emissiveIntensity:.3});
+  const sk =new THREE.MeshLambertMaterial({color:RACES[0].col});       // scale green (texturable)
+  const skD=new THREE.MeshLambertMaterial({color:RACES[0].colDark});   // dark scale
+  const skL=mL(0x5aaa3a);                                              // light scale highlight
+  const belly=mL(0xb6c878);                                            // pale underbelly
+  const bone=mL(0xd8cdaa);                                             // claws / teeth / horns (texturable)
+  const eyeMat=new THREE.MeshBasicMaterial({color:0x55ff44});          // glowing green eyes (preserved)
+  const slit  =new THREE.MeshBasicMaterial({color:0x0a2606});          // slit pupil (preserved)
+  const gem=new THREE.MeshLambertMaterial({color:0x9bff77,emissive:0x3fbb2a,emissiveIntensity:0.8}); // glow crest (preserved)
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||16);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
 
-  // ── LEGS ──
-  const lLeg=new THREE.Group(); lLeg.position.set(-.12,.64,0);
-  const rLeg=new THREE.Group(); rLeg.position.set(.12,.64,0);
+  // ── TAIL (long tapering ridged tail, curving down-back) ──
+  const tail=[[0,.66,-.26,.16],[ -.02,.54,-.46,.13],[0,.40,-.62,.10],[0,.27,-.74,.07]];
+  tail.forEach((t,i)=>{ add(S(t[3],8,6),i<2?skD:sk,t[0],t[1],t[2]);
+    if(i<3) add(CO(.05,.12,5),skL,t[0],t[1]+.06,t[2]-.04,Math.PI*0.6,0,0); }); // dorsal ridge spikes
+  add(CO(.06,.16,6),bone,0,.20,-.82,Math.PI*0.62,0,0);                  // tail tip spike
+
+  // ── LEGS (powerful, scaled, taloned) — pivot 0.74, hand-of-foot at ground ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.24,.74,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.24,.74,0);
   [lLeg,rLeg].forEach(lg=>{
-    const lm=new THREE.Mesh(new THREE.BoxGeometry(.18,.64,.18),robe); lm.position.set(0,-.32,0); lg.add(lm);
-    const shoe=new THREE.Mesh(new THREE.BoxGeometry(.18,.12,.26),skD); shoe.position.set(0,-.60,.04); lg.add(shoe);
+    addTo(lg,C(.18,.20,.40,12),skD,0,-.20,0);                           // thigh
+    [-.11,.11].forEach(z=>addTo(lg,B(.10,.30,.06),skL,0,-.20,z));        // thigh scale ridges
+    addTo(lg,S(.16,10,8),sk,0,-.40,0);                                  // knee
+    addTo(lg,C(.145,.12,.34,12),sk,0,-.58,0);                           // shin
+    addTo(lg,B(.10,.34,.05),skL,0,-.58,.10);                            // shin scale
+    addTo(lg,B(.20,.12,.22),skD,0,-.76,.04);                            // foot
+    for(let t=0;t<3;t++) addTo(lg,CO(.04,.14,5),bone,-.07+t*.07,-.80,.20,Math.PI/2.1,0,0); // toe talons
+    addTo(lg,CO(.045,.12,5),bone,0,-.80,-.14,-Math.PI/2.2,0,0);         // rear spur
     g.add(lg);
   });
-  // robe skirt
-  const robeBtm=new THREE.Mesh(new THREE.BoxGeometry(.54,.56,.40),robe); robeBtm.position.set(0,.52,0); g.add(robeBtm);
 
-  // ── TORSO ──
-  const torso=new THREE.Mesh(new THREE.BoxGeometry(.46,.70,.30),robe); torso.position.set(0,.97,0); g.add(torso);
-  // arcane trim lines
-  const trim1=new THREE.Mesh(new THREE.BoxGeometry(.48,.04,.32),arcane); trim1.position.set(0,1.32,.01); g.add(trim1);
-  const trim2=trim1.clone(); trim2.position.y=.62; g.add(trim2);
-  const rune=new THREE.Mesh(new THREE.BoxGeometry(.06,.62,.06),arcane); rune.position.set(0,.97,.16); g.add(rune);
-  // sash
-  const sash=new THREE.Mesh(new THREE.BoxGeometry(.48,.08,.32),gold); sash.position.set(0,.64,0); g.add(sash);
-  // epaulettes
-  [-.26,.26].forEach(x=>{
-    const ep=new THREE.Mesh(new THREE.BoxGeometry(.14,.16,.30),robeT); ep.position.set(x,1.20,.02); g.add(ep);
-    const epG=new THREE.Mesh(new THREE.BoxGeometry(.12,.05,.26),gold); epG.position.set(x,1.22,.02); g.add(epG);
+  // ── TORSO (broad scaled body, pale belly, dorsal spine) ──
+  add(C(.28,.34,.46,16),sk,0,1.02,0);                                   // abdomen
+  [1.0,.86,.72].forEach((y,i)=>add(B(.30-i*.04,.10,.06),belly,0,y,.27-i*.02)); // belly plate segments
+  add(B(.60,.42,.36),sk,0,1.24,0);                                      // chest
+  [-.16,.16].forEach(x=>add(B(.22,.30,.10),skL,x,1.26,.16,0,0,x>0?-.1:.1)); // pectoral scale plates
+  add(S(.07,10,8),gem,0,1.30,.20);                                      // glowing chest crest (preserved)
+  // dorsal spine — row of swept-back spikes up the back
+  [.78,.96,1.14,1.30].forEach((y,i)=>add(CO(.07-i*.008,.20,6),skL,0,y,-.22+i*.02,Math.PI*0.78,0,0));
+  add(B(.62,.10,.36),skD,0,1.02,0);                                     // waist scale band
+  add(B(.20,.30,.30),belly,0,1.16,.10);                                 // ventral chest scales
+
+  // ── SHOULDERS (broad, spiked pauldron scales) ──
+  [-.42,.42].forEach(x=>{
+    add(S(.20,12,8),sk,x,1.32,0,0,0,0,[1,.8,1]);                        // shoulder scale dome
+    add(S(.22,12,8),skL,x,1.34,0,0,0,0,[1,.45,1]);                      // scale cap highlight
+    add(CO(.07,.22,6),bone,x+(x>0?.04:-.04),1.46,-.02,0,0,x>0?-.5:.5);  // shoulder spike
   });
 
-  // ── ARMS ──
+  // ── ARMS (muscular, scaled, clawed) — pivot 1.30, hand at -0.55 ──
+  const lArm=new THREE.Group(); lArm.position.set(-.46,1.30,0);
+  const rArm=new THREE.Group(); rArm.position.set(.46,1.30,0);
+  [lArm,rArm].forEach(a=>{
+    addTo(a,C(.13,.115,.32,12),sk,0,-.16,0);                            // upper arm
+    addTo(a,B(.06,.26,.05),skL,0,-.16,.10);                             // arm scale ridge
+    addTo(a,S(.115,10,8),skD,0,-.32,0);                                 // elbow
+    addTo(a,C(.105,.09,.26,12),sk,0,-.45,0);                            // forearm
+    addTo(a,B(.16,.13,.16),skD,0,-.55,0);                               // hand
+    for(let f=0;f<3;f++) addTo(a,CO(.035,.13,5),bone,-.05+f*.05,-.64,.06,Math.PI/2.3,0,0); // finger claws
+    g.add(a);
+  });
+
+  // ── HEAD (reptilian: muzzle, jaw, horned crest, glowing eyes) — center ~1.78 ──
+  add(C(.13,.16,.22,12),sk,0,1.54,0);                                   // neck
+  add(B(.34,.34,.32),sk,0,1.80,-.02);                                   // skull shell (helmet-wrappable)
+  // crown of swept-back horns
+  [-.12,0,.12].forEach((x,i)=>add(CO(.05,.30-Math.abs(i-1)*.06,6),bone,x,1.96,-.10,Math.PI*0.82,0,0));
+  [-.18,.18].forEach(x=>add(CO(.05,.20,6),bone,x,1.90,-.06,Math.PI*0.9,0,x>0?-.3:.3)); // side horns
+  // ── face (faceSkin) ──
+  face(add(B(.30,.26,.06),sk,0,1.78,.155));                             // face plate
+  face(add(B(.24,.18,.30),sk,0,1.72,.28));                             // muzzle/snout (forward)
+  face(add(B(.22,.08,.28),skD,0,1.64,.28));                            // lower jaw
+  face(add(B(.10,.05,.10),skD,0,1.78,.44));                            // snout tip
+  [-.05,.05].forEach(x=>face(add(S(.018,6,5),skD,x,1.80,.46)));         // nostrils
+  for(let t=0;t<4;t++){ face(add(CO(.02,.05,4),bone,-.075+t*.05,1.685,.40,Math.PI)); }   // upper teeth
+  face(add(B(.34,.06,.10),skD,0,1.90,.14));                            // brow ridge
+  [-.10,.10].forEach(x=>{ add(B(.10,.08,.05),eyeMat,x,1.84,.17); add(B(.025,.08,.05),slit,x,1.84,.185); }); // slit eyes
+  [-.17,.17].forEach(x=>face(add(CO(.05,.16,5),skL,x,1.86,.02,0,0,x>0?-.5:.5))); // cheek frill spikes
+  face(add(B(.34,.10,.10),skL,0,1.66,.16));                            // jaw scale band
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
+}
+
+function buildGnomeMesh(){
+  const g=new THREE.Group(); g.scale.set(.72,.72,.72);
+  const sk =new THREE.MeshLambertMaterial({color:RACES[2].col});       // skin (texturable)
+  const skD=mL(0x607048), skL=mL(0xc0e0a0);
+  const cloth=mL(0x33402a), clothL=mL(0x4a5a38), leather=mL(0x5a3e22);
+  const copper=mL(0xb07828), copperD=mL(0x7a5018), brass=mL(0xd0a838), steel=mL(0x8a8f96);
+  const lens =new THREE.MeshBasicMaterial({color:0xe6fbff});           // glowing goggle lenses (preserved)
+  const coreP=new THREE.MeshLambertMaterial({color:0x66e0ff,emissive:0x1f9cd6,emissiveIntensity:0.85}); // backpack power core (preserved)
+  const beardP=new THREE.MeshLambertMaterial({color:0xe7ddc6,emissive:0x39342a,emissiveIntensity:0.35}); // white beard/brows (preserved)
+  const rosyP =new THREE.MeshLambertMaterial({color:0xd07a58,emissive:0x521a10,emissiveIntensity:0.22}); // rosy cheeks (preserved)
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||12);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+
+  // ── LEGS (short, stout, sturdy boots) — pivot 0.46 ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.15,.46,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.15,.46,0);
+  [lLeg,rLeg].forEach(lg=>{
+    addTo(lg,C(.12,.14,.34,10),cloth,0,-.18,0);                        // stubby trouser leg
+    addTo(lg,TR(.135,.025,6,10),leather,0,-.30,0,Math.PI/2,0,0);       // cuff
+    addTo(lg,B(.24,.16,.30),leather,0,-.42,.05);                       // big boot
+    addTo(lg,B(.22,.07,.12),copperD,0,-.40,.18);                       // boot toe-cap (brass)
+    g.add(lg);
+  });
+
+  // ── TORSO (stout artificer body) ──
+  add(B(.50,.56,.34),cloth,0,.82,0);                                   // torso
+  add(B(.40,.46,.10),clothL,0,.84,.18);                                // vest front
+  add(B(.05,.46,.13),leather,0,.84,.16);                               // vest seam
+  [.66,.80,.94].forEach(y=>add(S(.034,6,5),brass,0,y,.235));           // brass buttons
+  add(B(.56,.12,.38),leather,0,.54,0);                                 // wide tool belt
+  add(B(.16,.14,.10),brass,0,.54,.20);                                 // big belt buckle
+  [-1,1].forEach(o=>add(B(.12,.16,.12),leather,o*.20,.50,.18));        // belt pouches
+  add(C(.04,.04,.16,8),steel,.16,.52,.22,0.3,0,0);                     // wrench tucked in belt
+  add(B(.07,.05,.05),steel,.16,.60,.235);                             // wrench head
+  // copper pauldrons
+  [-.32,.32].forEach(x=>{ add(B(.16,.13,.30),copper,x,1.0,.02); add(B(.16,.04,.30),brass,x,1.07,.02); });
+
+  // ── BACKPACK GADGET (worn — replaces the old standing bot) ──
+  add(B(.34,.40,.18),copper,0,.88,-.24);                               // brass pack
+  add(B(.30,.10,.06),copperD,0,1.02,-.30);                            // pack lid
+  add(C(.07,.07,.14,10),steel,0,1.04,-.24);                           // valve stack
+  add(TR(.06,.018,6,10),brass,0,1.12,-.24,Math.PI/2,0,0);            // valve wheel
+  add(S(.07,10,8),coreP,-.10,.86,-.31);                               // glowing power core (preserved)
+  add(TR(.05,.012,6,10),brass,-.10,.86,-.31,0,0,0);                  // core ring
+  add(C(.022,.022,.40,8),steel,.16,.95,-.20,0.2,0,-.3);               // pipe over shoulder
+  add(C(.022,.022,.18,8),steel,.10,1.16,-.05,1.1,0,-.2);              // pipe elbow to front
+
+  // ── ARMS (stubby; right has a mechanical gauntlet) — pivot 1.02, hand at -0.44 ──
+  const lArm=new THREE.Group(); lArm.position.set(-.34,1.02,0);
+  const rArm=new THREE.Group(); rArm.position.set(.34,1.02,0);
+  [lArm,rArm].forEach((a,idx)=>{
+    addTo(a,C(.105,.10,.34,10),cloth,0,-.20,0);                        // sleeve
+    addTo(a,TR(.11,.02,6,10),clothL,0,-.34,0,Math.PI/2,0,0);          // cuff
+    if(idx===1){ // right mechanical gauntlet
+      addTo(a,B(.20,.18,.20),copper,0,-.44,0);
+      addTo(a,B(.21,.05,.21),brass,0,-.37,0);
+      for(let f=0;f<3;f++) addTo(a,B(.04,.10,.05),steel,-.05+f*.05,-.53,.07);
+    } else { // left glove
+      addTo(a,B(.17,.15,.17),leather,0,-.44,0);
+      for(let f=0;f<3;f++) addTo(a,B(.04,.09,.05),leather,-.05+f*.05,-.52,.06);
+    }
+    g.add(a);
+  });
+
+  // ── HEAD (big characterful noggin) — center 1.40 ──
+  add(B(.20,.12,.20),sk,0,1.16,0);                                     // neck
+  add(B(.52,.50,.48),sk,0,1.42,0);                                     // head shell (helmet-wrappable)
+  // ── face (faceSkin) ──
+  face(add(B(.46,.40,.06),sk,0,1.40,.235));                            // face plate
+  add(S(.115,8,6),sk,0,1.36,.30) && face(add(S(.115,8,6),sk,0,1.36,.30)); // big round nose (faceSkin)
+  [-.18,.18].forEach(x=>add(S(.085,6,5),rosyP,x,1.33,.25));            // rosy cheeks (preserved)
+  // bushy white brows + beard (preserved beardP)
+  [-.13,.13].forEach(x=>add(B(.17,.07,.08),beardP,x,1.50,.255,0,0,x<0?-.12:.12)); // brows
+  add(B(.46,.20,.16),beardP,0,1.22,.20);                               // beard upper
+  add(B(.36,.18,.14),beardP,0,1.08,.20);                               // beard mid
+  add(CO(.13,.20,7),beardP,0,.96,.18,Math.PI);                        // beard point
+  [-.20,.20].forEach(x=>add(B(.10,.22,.12),beardP,x,1.26,.18));        // sideburns
+  // GOGGLES (glowing lenses, copper rims) over the eyes
+  add(B(.50,.16,.05),copperD,0,1.44,.26);                             // goggle strap/frame
+  [-.13,.13].forEach(x=>{
+    add(C(.10,.10,.05,12),lens,x,1.44,.285,Math.PI/2,0,0);            // glowing lens (preserved)
+    add(TR(.10,.022,6,12),copper,x,1.44,.285,Math.PI/2,0,0);          // copper rim
+  });
+  // ── HAT (great artificer hat: brim, cone, band, gear, antenna) ── (texturable)
+  add(C(.36,.38,.07,12),cloth,0,1.69,0);                               // wide brim
+  add(C(.30,.31,.06,12),clothL,0,1.72,0);                              // brim top
+  add(CO(.27,.46,10),cloth,0,1.98,0);                                  // cone
+  add(C(.275,.275,.08,12),leather,0,1.76,0);                           // hat band
+  add(TR(.085,.022,5,10),brass,.20,1.86,.0,0,0.3,0);                  // gear emblem
+  add(C(.028,.028,.05,6),steel,.20,1.86,.02);                          // gear hub
+  add(C(.012,.012,.12,6),steel,.04,2.12,-.02);                        // antenna
+  add(S(.04,8,6),coreP,.04,2.20,-.02);                                 // antenna bead (glow, preserved)
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
+}
+
+function buildOgreMesh(){
+  const g=new THREE.Group();
+  const sk =new THREE.MeshLambertMaterial({color:RACES[3].col});       // grey-green hide (texturable)
+  const skD=mL(0x404a38), skL=mL(0x809060);
+  const iron=mL(0x565a60), ironD=mL(0x35383d), rust=mL(0x6e5036), leather=mL(0x3a2a1a), fur=mL(0x5a4a36), scar=mL(0x8a6a52);
+  const rivet=mL(0x8a8f96);
+  const eyeMat=new THREE.MeshBasicMaterial({color:0xff8a28});          // angry orange eyes (preserved)
+  const pup   =new THREE.MeshBasicMaterial({color:0x2a0c00});          // pupil (preserved)
+  const boneP =new THREE.MeshLambertMaterial({color:0xe7ddc1,emissive:0x4a4636,emissiveIntensity:0.55}); // tusks/teeth (preserved bone)
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||12);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+
+  // ── LEGS (thick, short, wrapped) — pivot 0.70 ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.28,.70,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.28,.70,0);
+  [lLeg,rLeg].forEach(lg=>{
+    addTo(lg,C(.24,.28,.40,12),sk,0,-.20,0);                            // thigh (huge)
+    addTo(lg,C(.21,.22,.34,12),skD,0,-.50,0);                           // calf
+    for(let i=0;i<3;i++) addTo(lg,TR(.22,.025,6,12),leather,0,-.40-i*.08,0,Math.PI/2,0,0); // wraps
+    addTo(lg,B(.34,.16,.42),ironD,0,-.70,.05);                          // crude foot
+    for(let t=0;t<3;t++) addTo(lg,CO(.04,.10,5),boneP,-.10+t*.10,-.66,.26,Math.PI/2.2,0,0); // toe claws
+    g.add(lg);
+  });
+
+  // ── TORSO (massive, hunched) ──
+  add(S(.52,14,12),sk,0,1.02,.04,0,0,0,[1,.95,.9]);                     // belly/chest mass
+  add(S(.46,14,12),skL,0,1.30,-.02,0,0,0,[1.28,.72,.92]);               // upper-back hunch
+  add(B(.50,.36,.10),iron,-.04,1.14,.40,0,0,.06);                       // chest plate
+  for(let i=0;i<6;i++) add(S(.032,6,5),rivet,-.24+(i%3)*.20,(i<3?1.24:1.02),.43); // rivets
+  add(B(.10,.56,.10),leather,.34,1.18,.20,0,0,-.5);                     // shoulder strap
+  add(C(.54,.56,.18,16),leather,0,.66,0);                               // huge belt
+  add(B(.24,.22,.12),rust,0,.66,.50);                                   // belt plate
+  add(S(.06,6,5),rivet,0,.66,.57);
+  add(B(.42,.10,.05),scar,-.06,1.06,.46,0,0,.4);                        // chest scar
+  // fur pelt over right shoulder
+  add(S(.24,10,8),fur,.38,1.36,.02,0,0,0,[1,.7,1.25]);
+  for(let i=0;i<5;i++) add(CO(.045,.18,5),fur,.22+i*.07,1.22,.12,Math.PI,0,0);
+  // bone shoulder spikes (left)
+  [0,.12,.24].forEach((dz,i)=>add(CO(.07,.22+i*.02,6),boneP,-.48,1.30+i*.03,-.02+dz,0,0,0.32));
+
+  // ── SHOULDERS (huge) ──
+  [-.50,.50].forEach(x=>add(S(.26,12,10),sk,x,1.34,0,0,0,0,[1,.85,1]));
+
+  // ── ARMS (huge, big fists) — pivot 1.32, FIST at -0.70 (weapon slot) ──
+  const lArm=new THREE.Group(); lArm.position.set(-.56,1.32,0);
+  const rArm=new THREE.Group(); rArm.position.set(.56,1.32,0);
+  [lArm,rArm].forEach(a=>{
+    addTo(a,C(.20,.17,.42,12),sk,0,-.22,0);                             // upper arm
+    addTo(a,S(.18,10,8),skD,0,-.44,0);                                  // elbow
+    addTo(a,C(.17,.19,.30,12),sk,0,-.58,0);                             // forearm (flares to fist)
+    addTo(a,S(.22,12,10),sk,0,-.70,0);                                  // fist (= weapon slot)
+    for(let k=0;k<3;k++){ addTo(a,B(.07,.10,.10),skD,-.11+k*.11,-.80,.12); addTo(a,CO(.028,.07,5),boneP,-.11+k*.11,-.80,.20,Math.PI/2.2,0,0); } // knuckles + claws
+    g.add(a);
+  });
+  addTo(rArm,C(.20,.21,.16,12),iron,0,-.58,0);                          // iron bracer (right)
+  for(let i=0;i<5;i++) addTo(rArm,S(.024,6,5),rivet,Math.cos(i*1.3)*.20,-.58,Math.sin(i*1.3)*.20);
+
+  // ── HEAD (FIXED: clean upward tusks + neat teeth, heavy brow, underbite) — center 1.66 ──
+  add(C(.22,.26,.16,12),skD,0,1.46,0);                                  // thick neck
+  add(B(.40,.36,.40),sk,0,1.68,0);                                      // skull shell (helmet-wrappable)
+  // hair / top-knot
+  add(B(.34,.10,.36),skD,0,1.84,-.02);                                  // coarse scalp
+  add(C(.05,.03,.10,8),leather,0,1.92,-.02);                            // top-knot tie
+  add(S(.10,10,8),fur,0,2.0,-.04,0,0,0,[.8,1.2,.8]);                    // top-knot tuft
+  // ── face (faceSkin) ──
+  face(add(B(.36,.30,.05),sk,0,1.68,.205));                             // face plate
+  face(add(B(.42,.12,.16),skD,0,1.80,.20));                            // heavy brow ridge
+  [-.11,.11].forEach(x=>{ add(S(.06,8,6),eyeMat,x,1.72,.225); add(S(.03,6,5),pup,x,1.72,.25); }); // sunken orange eyes
+  face(add(B(.18,.16,.16),skL,0,1.66,.28));                            // broad flat nose
+  [-.05,.05].forEach(x=>face(add(S(.025,6,5),skD,x,1.62,.36)));         // nostrils
+  // big protruding lower jaw (underbite)
+  face(add(B(.40,.18,.34),sk,0,1.54,.12));                             // jaw
+  face(add(B(.34,.06,.30),skD,0,1.60,.16));                            // upper-lip line (mouth top)
+  // CLEAN upward tusks from the lower jaw (cones point +Y by default — no flip)
+  [-1,1].forEach(s=>add(CO(.06,.34,6),boneP,s*.15,1.66,.26,0.18,0,s*0.26));
+  // neat row of lower teeth (clean individual blocks)
+  for(let t=0;t<5;t++) face(add(B(.05,.08,.05),boneP,-.16+t*.08,1.62,.30));
+  // two small upper fangs (point down, slight)
+  [-.07,.07].forEach(x=>add(CO(.03,.10,5),boneP,x,1.605,.30,Math.PI,0,0));
+  [-.22,.22].forEach(x=>face(add(B(.06,.14,.07),sk,x,1.66,-.02)));      // ears
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
+}
+
+function buildCentaurMesh(){
+  const g=new THREE.Group();
+  const inner=new THREE.Group(); inner.rotation.y=Math.PI; g.add(inner);
+  const sk =new THREE.MeshLambertMaterial({color:RACES[4].col});       // palomino coat / skin (texturable)
+  const skD=mL(0x7a5a30), skL=mL(0xe8c888), belly=mL(0xdcc89a);
+  const hoofM=mL(0x241a12), leather=mL(0x5a3e22), metal=mL(0x8a909a), gold=mL(0xc6a648);
+  const maneP=new THREE.MeshLambertMaterial({color:0x4a3016,emissive:0x281606,emissiveIntensity:0.5}); // mane/tail hair (preserved)
+  const scl =new THREE.MeshBasicMaterial({color:0xf2efe2});            // sclera (preserved)
+  const iris=new THREE.MeshBasicMaterial({color:0x46e86a});            // green iris (preserved)
+  const pup =new THREE.MeshBasicMaterial({color:0x0a0a0a});
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||12);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);inner.add(m);return m;};
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+
+  // ════ HORSE LOWER BODY (palomino) ════
+  // barrel + chest + rump (rounded)
+  add(B(.56,.50,1.04),sk,0,1.05,.06,0,0,0,[1,1,1]);                    // barrel
+  add(S(.30,12,10),sk,0,1.06,-.44,0,0,0,[1.05,1.1,.95]);              // chest swell (front)
+  add(S(.34,12,10),sk,0,1.08,.56,0,0,0,[1.12,1.05,1.2]);             // rump/haunch (back)
+  add(B(.50,.18,.92),belly,0,.84,.08);                                // pale underbelly
+  add(B(.10,.40,.80),skD,0,1.30,.10);                                 // spine ridge
+
+  // four jointed legs (own pivot groups; front straight, rear hocked)
+  function frontLeg(piv){
+    addTo(piv,C(.135,.115,.42,10),sk,0,-.22,0);                       // forearm
+    addTo(piv,S(.115,8,6),skD,0,-.42,0);                              // knee
+    addTo(piv,C(.085,.075,.40,10),sk,0,-.64,0);                       // cannon
+    addTo(piv,S(.08,8,6),skD,0,-.84,0);                               // fetlock
+    addTo(piv,C(.06,.07,.05,8),maneP,0,-.80,.0);                      // fetlock feather
+    addTo(piv,B(.15,.13,.20),hoofM,0,-.95,.03);                       // hoof
+  }
+  function rearLeg(piv){
+    addTo(piv,C(.17,.14,.38,10),sk,0,-.16,.05);                       // thigh
+    addTo(piv,S(.13,8,6),skD,0,-.34,.07);                             // stifle
+    addTo(piv,C(.115,.09,.32,10),sk,0,-.50,-.02,0.34,0,0);            // gaskin (angled back)
+    addTo(piv,S(.10,8,6),skD,0,-.64,-.11);                            // hock (points back)
+    addTo(piv,C(.082,.072,.34,10),sk,0,-.80,-.03);                    // cannon (down)
+    addTo(piv,S(.078,8,6),skD,0,-.94,-.02);                           // fetlock
+    addTo(piv,C(.06,.07,.05,8),maneP,0,-.90,-.02);                    // fetlock feather
+    addTo(piv,B(.15,.13,.20),hoofM,0,-1.0,.03);                       // hoof
+  }
+  const FL=new THREE.Group(); FL.position.set(-.21,1.02,-.40); frontLeg(FL); inner.add(FL);
+  const FR=new THREE.Group(); FR.position.set(.21,1.02,-.40); frontLeg(FR); inner.add(FR);
+  const RL=new THREE.Group(); RL.position.set(-.23,1.04,.44); rearLeg(RL); inner.add(RL);
+  const RR=new THREE.Group(); RR.position.set(.23,1.04,.44); rearLeg(RR); inner.add(RR);
+
+  // ════ FLOWING TAIL (from the rump) ════
+  add(S(.12,8,6),skD,0,1.18,.70);                                      // dock (tail base)
+  const T=[[0,1.10,.76,.13,1.3],[ -.01,.92,.82,.145,1.4],[.01,.72,.85,.14,1.45],
+           [0,.52,.83,.125,1.4],[0,.34,.77,.10,1.3],[0,.20,.68,.075,1.2]];
+  T.forEach(t=>add(S(t[3],9,7),maneP,t[0],t[1],t[2],0,0,0,[t[4],1.25,t[4]]));
+  // wispy flowing ends
+  [[-.07,.16,.66],[.07,.15,.67],[0,.10,.60]].forEach(w=>add(CO(.05,.22,5),maneP,w[0],w[1],w[2],0.5,0,0));
+
+  // ════ HUMAN UPPER BODY (rises from the horse chest, z negative=front) ════
+  add(C(.24,.30,.36,14),sk,0,1.28,-.40);                              // waist / horse-human join
+  add(B(.46,.54,.30),sk,0,1.62,-.42);                                 // human torso
+  [-.13,.13].forEach(x=>add(B(.18,.22,.10),skL,x,1.70,-.55,0,0,x>0?-.1:.1)); // pectorals
+  add(B(.30,.26,.10),belly,0,1.46,-.55);                              // abdomen
+  add(B(.48,.10,.32),leather,0,1.36,-.42);                            // belt
+  add(B(.13,.11,.10),gold,0,1.36,-.58);                               // belt buckle
+  add(B(.10,.46,.10),leather,-.16,1.62,-.55,0,0,.3);                  // bandolier strap
+  // shoulder armor (metal, texturable)
+  [-.30,.30].forEach(x=>{ add(S(.16,12,8),metal,x,1.86,-.42,0,0,0,[1,.75,1]); add(B(.18,.04,.30),gold,x,1.92,-.42); });
+
+  // arms — pivot 1.84, hand at -0.50 (weapon slot) ; z=-.42 (front)
+  const lArm=new THREE.Group(); lArm.position.set(-.34,1.84,-.42);
+  const rArm=new THREE.Group(); rArm.position.set(.34,1.84,-.42);
+  [lArm,rArm].forEach(a=>{
+    addTo(a,C(.105,.092,.30,12),sk,0,-.16,0);                         // upper arm
+    addTo(a,S(.09,8,6),skD,0,-.30,0);                                 // elbow
+    addTo(a,C(.092,.08,.24,12),sk,0,-.40,0);                          // forearm
+    addTo(a,B(.13,.12,.13),sk,0,-.50,0);                              // hand (= weapon slot, rArm-0.50)
+    inner.add(a);
+  });
+
+  // ════ HUMAN HEAD ════
+  add(C(.12,.16,.20,12),sk,0,2.04,-.42);                              // neck
+  add(B(.36,.40,.36),sk,0,2.26,-.44);                                 // head shell (helmet-wrappable)
+  // flowing hair / mane down the back (preserved)
+  add(B(.38,.20,.30),maneP,0,2.40,-.46);                              // hair top
+  add(B(.34,.50,.12),maneP,0,2.14,-.30);                             // mane down nape
+  add(B(.30,.50,.10),maneP,0,1.74,-.27);                             // mane down spine
+  add(B(.26,.40,.10),maneP,0,1.40,-.27);                             // mane to join
+  [-.16,.16].forEach(x=>add(B(.08,.34,.12),maneP,x,2.18,-.40));       // side hair
+  // ── face (faceSkin) ──
+  face(add(B(.30,.34,.05),sk,0,2.26,-.62));                           // face plate (faces -z)
+  face(add(B(.32,.06,.08),skD,0,2.36,-.62));                          // brow
+  [-.09,.09].forEach(x=>{ add(S(.06,8,6),scl,x,2.28,-.625); add(S(.04,8,6),iris,x,2.28,-.645); add(S(.02,5,4),pup,x,2.28,-.658); }); // eyes
+  face(add(B(.07,.12,.09),sk,0,2.24,-.64));                          // nose
+  face(add(B(.14,.03,.05),skD,0,2.16,-.63));                         // mouth
+  [-.20,.20].forEach(x=>face(add(CO(.05,.16,5),sk,x,2.32,-.40,0,0,x>0?-.4:.4))); // pointed ears
+  face(add(B(.22,.10,.10),skD,0,2.14,-.50));                         // jaw
+
+  g.userData.anim={lLeg:FL,rLeg:FR,lLeg2:RL,rLeg2:RR,lArm,rArm,type:'centaur',bob:0};
+  return g;
+}
+
+function buildMinotaurMesh(){
+  const g=new THREE.Group();
+  const fur =new THREE.MeshLambertMaterial({color:RACES[5].col});      // brown fur/hide (texturable)
+  const furD=mL(0x4a3624), furL=mL(0xa08060);
+  const muzz=mL(0x55473a);                                             // darker muzzle (texturable, faceSkin)
+  const hoof=mL(0x241b14), leather=mL(0x4a3420), iron=mL(0x565a60), gold=mL(0xc6a648), rivet=mL(0x8a8f96);
+  const eyeMat=new THREE.MeshBasicMaterial({color:0x35e874});          // glowing green eyes (preserved)
+  const pup   =new THREE.MeshBasicMaterial({color:0x05230f});          // pupil (preserved)
+  const boneP =new THREE.MeshLambertMaterial({color:0xe9e0c6,emissive:0x4a4636,emissiveIntensity:0.5}); // horns/hooves edge (preserved bone)
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||12);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+
+  // ── TAIL (thin bull tail with fur tuft) ──
+  [[0,.74,-.24,.06],[.02,.58,-.34,.05],[0,.42,-.36,.045]].forEach(t=>add(C(t[3],t[3]*.8,.16,8),furD,t[0],t[1],t[2],0.5,0,0));
+  add(S(.08,8,6),furD,0,.34,-.34,0,0,0,[.8,1.3,.8]);                    // tail tuft
+
+  // ── LEGS (powerful bull legs, cloven hooves) — pivot 0.80 ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.26,.78,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.26,.78,0);
+  [lLeg,rLeg].forEach(lg=>{
+    addTo(lg,C(.20,.23,.40,12),fur,0,-.18,.02);                        // thigh (huge)
+    addTo(lg,S(.18,10,8),furD,0,-.36,0);                               // knee
+    addTo(lg,C(.165,.15,.34,12),fur,0,-.52,-.02);                      // shin
+    addTo(lg,S(.16,10,8),furL,0,-.64,-.02,0,0,0,[1,.6,1]);             // fetlock fur tuft
+    addTo(lg,C(.15,.16,.12,10),hoof,0,-.70,.02);                       // pastern
+    addTo(lg,B(.10,.12,.22),hoof,-.06,-.74,.06);                       // hoof toe L
+    addTo(lg,B(.10,.12,.22),hoof,.06,-.74,.06);                        // hoof toe R (cloven)
+    addTo(lg,B(.075,.04,.07),boneP,-.06,-.76,.16); addTo(lg,B(.075,.04,.07),boneP,.06,-.76,.16); // hoof tips
+    g.add(lg);
+  });
+
+  // ── TORSO (broad, muscular, furred — "wide as a doorway") ──
+  add(C(.30,.40,.52,16),fur,0,1.08,0);                                 // broad chest/abdomen
+  add(S(.46,14,12),fur,0,1.30,-.02,0,0,0,[1.5,.78,.95]);               // massive upper chest
+  [-.20,.20].forEach(x=>add(S(.18,12,10),furL,x,1.34,.18,0,0,0,[1,1.2,.7])); // pecs
+  add(S(.30,12,10),furL,0,1.18,.20,0,0,0,[1.3,1.1,.6]);                // chest fur ruff
+  for(let i=0;i<7;i++) add(CO(.05,.16,5),furL,-.30+i*.10,1.04,.26,Math.PI,0,0); // belly fur tufts
+  add(C(.46,.50,.16,16),leather,0,.78,0);                              // wide belt
+  add(B(.22,.20,.12),iron,0,.78,.42); add(S(.05,6,5),rivet,0,.78,.49); // belt buckle
+  add(B(.10,.50,.10),leather,-.22,1.10,.30,0,0,.4);                    // chest harness strap
+  add(B(.10,.50,.10),leather,.22,1.10,.30,0,0,-.4);
+
+  // ── SHOULDERS (very broad) ──
+  [-.50,.50].forEach(x=>{ add(S(.24,12,10),fur,x,1.38,0,0,0,0,[1,.9,1]); add(S(.15,10,8),furD,x,1.28,.06); });
+
+  // ── ARMS (thick, muscular, humanoid hands) — pivot 1.42, hand at -0.62 ──
+  const lArm=new THREE.Group(); lArm.position.set(-.54,1.40,0);
+  const rArm=new THREE.Group(); rArm.position.set(.54,1.40,0);
+  [lArm,rArm].forEach(a=>{
+    addTo(a,C(.17,.15,.40,12),fur,0,-.22,0);                           // upper arm
+    addTo(a,S(.155,10,8),furD,0,-.42,0);                               // elbow
+    addTo(a,C(.15,.14,.34,12),fur,0,-.56,0);                           // forearm
+    addTo(a,B(.15,.05,.18),leather,0,-.46,0,Math.PI/2,0,0);            // wrist wrap
+    addTo(a,B(.17,.15,.17),furD,0,-.62,0);                             // hand/fist (= weapon slot)
+    for(let f=0;f<4;f++) addTo(a,B(.035,.10,.05),furD,-.06+f*.04,-.71,.05); // fingers
+    g.add(a);
+  });
+
+  // ── HEAD (BULL: muzzle, big curved horns, ears, ring, green eyes) — center 1.84 ──
+  add(C(.18,.22,.20,12),fur,0,1.58,0);                                 // thick neck
+  add(B(.36,.36,.34),fur,0,1.84,-.02);                                 // skull shell (helmet-wrappable)
+  add(B(.30,.10,.36),furL,0,1.96,-.02);                                // forehead fur tuft
+  // EARS (bovine, out to sides under horns)
+  [-1,1].forEach(s=>face(add(S(.10,8,6),fur,s*.27,1.86,-.04,0,0,0,[.6,1.3,.5])));
+  // BIG CURVED HORNS (out, then up — bone, preserved)
+  [-1,1].forEach(s=>{
+    add(C(.078,.062,.26,8),boneP,s*.20,1.95,.04, 0,0, s*1.10);         // base — sweeps outward
+    add(C(.062,.046,.24,8),boneP,s*.37,2.0,.06, 0,0, s*0.58);          // mid — curving up
+    add(CO(.046,.22,7),boneP,s*.46,2.16,.08, -0.2,0, s*0.22);          // tip — up & forward
+  });
+  // ── face (faceSkin) ──
+  face(add(B(.32,.30,.05),fur,0,1.82,.155));                           // face plate
+  face(add(B(.30,.08,.16),furD,0,1.94,.18));                           // heavy brow
+  [-.10,.10].forEach(x=>{ add(B(.10,.08,.05),eyeMat,x,1.88,.18); add(B(.035,.08,.05),pup,x,1.88,.195); }); // green eyes
+  face(add(B(.26,.22,.22),muzz,0,1.72,.26));                           // broad muzzle/snout
+  face(add(B(.28,.10,.20),furD,0,1.62,.22));                           // lower jaw
+  [-.07,.07].forEach(x=>face(add(S(.04,7,6),hoof,x,1.76,.37)));        // big nostrils (dark)
+  add(TR(.06,.018,6,12),gold,0,1.70,.40,Math.PI/2.4,0,0);              // gold nose ring
+  add(S(.04,6,5),gold,0,1.66,.40);                                     // ring bead
+  face(add(B(.24,.12,.12),furL,0,1.58,.20));                           // chin beard fur
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
+}
+
+function buildVampireMesh(){
+  const g=new THREE.Group();
+  const sk =new THREE.MeshLambertMaterial({color:RACES[7].col});       // pale skin (texturable)
+  const skD=mL(0x70638e);                                              // skin shadow
+  const hair=mL(0x171320);                                             // slicked near-black hair
+  const coat=mL(0x271633), coatD=mL(0x180c22);                         // dark coat
+  const capeO=mL(0x140a18), capeR=mL(0x6e1322);                        // cape: near-black / crimson lining
+  const vest=mL(0x611026);                                             // crimson vest
+  const cloth=mL(0x3a2a48), gold=mL(0xc6a648);                         // cuffs / aristocratic gold trim
+  const claw=mL(0x241c2e);                                             // dark claws
+  const eyeMat=new THREE.MeshBasicMaterial({color:0xff2a44});          // glowing red eyes (preserved)
+  const fang  =new THREE.MeshBasicMaterial({color:0xf2ede2});          // white fangs (preserved)
+  const pup   =new THREE.MeshBasicMaterial({color:0x300008});          // pupil (preserved)
+  const brooch=new THREE.MeshLambertMaterial({color:0xff3850,emissive:0xbb1024,emissiveIntensity:0.85}); // throat gem (preserved)
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+  const addTo=(p,geo,mat,x,y,z,rx,ry,rz)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);p.add(m);return m;};
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+
+  // ── CAPE (long flowing panels down the back) ──
+  [-.17,0,.17].forEach((x,i)=>add(B(.22,.92,.03),capeO,x,.92,-.20,0.10,(i-1)*0.18,0)); // outer panels
+  add(B(.48,.84,.02),capeR,0,.94,-.225,0.10,0,0);                       // crimson under-lining (peeks)
+
+  // ── LEGS (slim, elegant) — pivot 0.66 ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.15,.66,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.15,.66,0);
+  [lLeg,rLeg].forEach(lg=>{
+    addTo(lg,C(.10,.115,.40,12),coatD,0,-.21,0);                        // thigh
+    addTo(lg,C(.085,.075,.34,12),coat,0,-.50,0);                        // shin
+    addTo(lg,B(.155,.10,.24),hair,0,-.66,.04);                          // boot
+    addTo(lg,B(.13,.07,.10),hair,0,-.64,.17);                           // boot toe
+    addTo(lg,B(.11,.06,.10),gold,0,-.50,.075);                          // boot buckle
+    g.add(lg);
+  });
+
+  // ── TORSO (slim aristocrat coat + vest) ──
+  add(C(.16,.22,.44,14),coat,0,1.00,0);                                 // lower coat
+  add(B(.44,.44,.26),coat,0,1.24,0);                                    // chest coat
+  add(B(.16,.42,.16),vest,0,1.22,.10);                                  // crimson vest front
+  add(B(.05,.42,.18),coatD,0,1.22,.07);                                 // lapel
+  for(let i=0;i<3;i++) add(S(.022,8,6),gold,0,1.36-i*.11,.19);          // vest buttons
+  add(B(.46,.08,.28),hair,0,.98,0);                                     // belt
+  add(B(.12,.10,.10),gold,0,.98,.16);                                   // belt buckle
+  add(B(.30,.22,.04),coatD,0,.78,.14,0.1,0,0);                          // coat tail front
+
+  // ── HIGH COLLAR (the iconic popped vampire collar) ──
+  [-1,1].forEach(s=>{
+    add(B(.06,.50,.24),capeO,s*.21,1.66,-.10,0,0,s*0.5);                // tall side panel (outer)
+    add(B(.04,.48,.22),capeR,s*.18,1.65,-.085,0,0,s*0.5);               // crimson inner lining
+  });
+  add(B(.42,.34,.05),capeO,0,1.58,-.21,-0.2,0,0);                       // back collar panel
+  add(B(.38,.30,.03),capeR,0,1.57,-.185,-0.2,0,0);                      // back crimson lining
+
+  // ── SHOULDERS (slim epaulettes) ──
+  [-.30,.30].forEach(x=>{ add(S(.13,12,8),coat,x,1.38,0,0,0,0,[1,.7,1]); add(B(.20,.05,.18),gold,x,1.42,0); });
+
+  // ── ARMS (slim sleeves, cuffs, clawed hands) — pivot 1.22, hand at -0.50 ──
+  const lArm=new THREE.Group(); lArm.position.set(-.34,1.22,0);
+  const rArm=new THREE.Group(); rArm.position.set(.34,1.22,0);
+  [lArm,rArm].forEach(a=>{
+    addTo(a,C(.085,.075,.28,12),coat,0,-.14,0);                         // upper sleeve
+    addTo(a,S(.072,8,6),coatD,0,-.27,0);                                // elbow
+    addTo(a,C(.072,.062,.22,12),coat,0,-.37,0);                         // forearm sleeve
+    addTo(a,C(.082,.082,.06,12),cloth,0,-.46,0);                        // cuff
+    addTo(a,B(.10,.09,.11),sk,0,-.50,0);                                // pale hand
+    for(let f=0;f<3;f++) addTo(a,CO(.02,.10,5),claw,-.03+f*.03,-.57,.04,Math.PI/2.2,0,0); // long claws
+    g.add(a);
+  });
+
+  // ── HEAD (gaunt aristocrat: red eyes, fangs, slicked hair, widow's peak) — center 1.62 ──
+  add(C(.07,.10,.16,12),sk,0,1.42,0);                                   // neck
+  add(S(.05,8,6),brooch,0,1.40,.12);                                    // throat brooch (preserved glow)
+  add(B(.28,.36,.30),sk,0,1.62,0);                                      // head shell (helmet-wrappable)
+  add(B(.30,.16,.32),hair,0,1.76,-.02);                                 // hair top
+  add(B(.30,.30,.10),hair,0,1.64,-.16);                                 // hair back
+  [-.14,.14].forEach(x=>add(B(.06,.32,.20),hair,x,1.62,-.04));          // hair sides
+  add(CO(.05,.10,4),hair,0,1.72,.155,Math.PI);                          // widow's peak
+  // ── face (faceSkin) ──
+  face(add(B(.26,.32,.04),sk,0,1.62,.15));                              // face plate
+  face(add(B(.26,.06,.07),skD,0,1.71,.16));                             // heavy brow
+  [-.07,.07].forEach(x=>{ add(B(.085,.05,.04),eyeMat,x,1.66,.17); add(B(.03,.05,.05),pup,x,1.66,.185); }); // red eyes
+  face(add(B(.045,.10,.07),sk,0,1.60,.175));                            // sharp nose
+  face(add(B(.12,.025,.04),skD,0,1.53,.165));                           // thin mouth
+  [-.035,.035].forEach(x=>add(CO(.012,.05,4),fang,x,1.50,.175,Math.PI)); // fangs (preserved)
+  [-.135,.135].forEach(x=>face(add(B(.06,.10,.05),skD,x,1.655,.06)));   // gaunt cheek hollows
+  [-.155,.155].forEach(x=>face(add(B(.05,.13,.06),sk,x,1.62,-.02)));    // ears
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
+}
+
+function buildElfMesh(){
+  const g=new THREE.Group();
+  // Texturable body materials — colours are placeholders; applyRaceTextures /
+  // applyArmorTextures map the skin texture + equipped-armor textures onto these
+  // by height fraction. PRESERVED accents: MeshBasicMaterial (cyan glow) and gold
+  // (non-black emissive) are skipped by the texture pass, so they always show.
+  const sk =new THREE.MeshLambertMaterial({color:RACES[6].col});
+  const skD=new THREE.MeshLambertMaterial({color:RACES[6].colDark});
+  const cloth =mL(0x1f7a6c), clothD=mL(0x12463e), silver=mL(0xc6d0da), leaf=mL(0x4fae7a), leather=mL(0x5a4632);
+  const gold=new THREE.MeshLambertMaterial({color:0xd4a020,emissive:0x806000,emissiveIntensity:.35}); // preserved gold
+  const glow=new THREE.MeshBasicMaterial({color:RACES[6].eyeCol});  // preserved aether glow
+  const pupil=new THREE.MeshBasicMaterial({color:0x001a14});
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||16);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+
+  // ── LEGS (slender, soft boots) ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.13,.64,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.13,.64,0);
+  [lLeg,rLeg].forEach(lg=>{
+    const t=new THREE.Mesh(C(.075,.09,.34,12),clothD); t.position.set(0,-.18,0); lg.add(t);
+    const sh=new THREE.Mesh(C(.07,.06,.26,12),cloth); sh.position.set(0,-.42,0); lg.add(sh);
+    const sg=new THREE.Mesh(B(.04,.24,.03),silver); sg.position.set(0,-.42,.07); lg.add(sg);
+    const kr=new THREE.Mesh(TR(.07,.012,6,12),gold); kr.rotation.x=Math.PI/2; kr.position.set(0,-.30,0); lg.add(kr);
+    const bt=new THREE.Mesh(B(.13,.10,.22),leather); bt.position.set(0,-.585,.04); lg.add(bt);
+    const to=new THREE.Mesh(B(.10,.06,.10),leather); to.position.set(0,-.565,.16); lg.add(to);
+    g.add(lg);
+  });
+  [-.13,.13].forEach(x=>add(B(.18,.34,.05),clothD,x,.54,.12,0.12,0,0));   // front skirt panels
+  add(B(.30,.36,.05),cloth,0,.52,-.13,-.08,0,0);                          // back panel
+
+  // ── TORSO (fitted cuirass) ──
+  add(C(.20,.24,.44,14),cloth,0,.95,0);
+  add(B(.40,.40,.26),cloth,0,.99,0);
+  [-.10,.10].forEach(x=>add(B(.15,.28,.06),clothD,x,1.03,.13,0,0,x>0?-.12:.12)); // chest plates
+  add(TR(.21,.02,6,18),gold,0,1.19,0,Math.PI/2,0,0);                      // collar ring
+  add(B(.42,.07,.27),gold,0,.66,0);                                       // belt
+  add(B(.05,.30,.03),glow,0,.99,.16);                                     // chest rune (glow)
+  add(S(.045,8,6),glow,0,1.06,.18);                                       // chest gem (glow)
+
+  // ── SHOULDERS (leaf guards) ──
+  [-.27,.27].forEach(x=>{
+    add(S(.12,12,8),silver,x,1.19,0,0,0,0,[1,.5,1.1]);
+    add(CO(.11,.22,6),leaf,x*1.05,1.23,0,0,0,x>0?-.5:.5);
+    add(TR(.10,.015,6,12),gold,x,1.16,0,Math.PI/2,0,0);
+  });
+
+  // ── ARMS (slender, bracers) — pivot y=1.20, hand at -0.56 (matches weapon slot) ──
   const lArm=new THREE.Group(); lArm.position.set(-.32,1.20,0);
   const rArm=new THREE.Group(); rArm.position.set(.32,1.20,0);
   [lArm,rArm].forEach(a=>{
-    const am=new THREE.Mesh(new THREE.BoxGeometry(.16,.56,.16),robe); am.position.set(0,-.28,0); a.add(am);
-    const sleeveT=new THREE.Mesh(new THREE.BoxGeometry(.18,.04,.18),arcane); sleeveT.position.set(0,-.54,0); a.add(sleeveT);
-    const hand=new THREE.Mesh(new THREE.BoxGeometry(.14,.14,.12),sk); hand.position.set(0,-.58,0); a.add(hand);
+    const am=new THREE.Mesh(C(.065,.05,.36,12),cloth); am.position.set(0,-.22,0); a.add(am);
+    const br=new THREE.Mesh(C(.055,.05,.16,12),silver); br.position.set(0,-.44,0); a.add(br);
+    const brr=new THREE.Mesh(B(.02,.12,.04),glow); brr.position.set(0,-.44,.06); a.add(brr); // bracer rune (glow)
+    const hd=new THREE.Mesh(S(.06,8,6),sk); hd.position.set(0,-.56,0); a.add(hd);            // hand
     g.add(a);
   });
-  // spell orb floating near left hand
-  const orb=new THREE.Mesh(new THREE.SphereGeometry(.10,8,6),arcane); orb.position.set(-.32,.62,0); g.add(orb);
 
-  // ── HEAD ──
-  const neck=new THREE.Mesh(new THREE.BoxGeometry(.16,.14,.16),sk); neck.position.set(0,1.36,0); g.add(neck);
-  const head=new THREE.Mesh(new THREE.BoxGeometry(.38,.44,.36),sk); head.position.set(0,1.56,0); g.add(head);
-  // long pointed ears
-  [-.22,.22].forEach(x=>{
-    const earS=new THREE.Mesh(new THREE.BoxGeometry(.06,.08,.12),sk); earS.position.set(x,1.56,.02); g.add(earS);
-    const earT=new THREE.Mesh(new THREE.ConeGeometry(.05,.28,4),sk); earT.position.set(x*1.08,1.64,.02); earT.rotation.z=x<0?.50:-.50; g.add(earT);
-  });
-  // hair
-  const hairT=new THREE.Mesh(new THREE.BoxGeometry(.36,.14,.36),skD); hairT.position.set(0,1.76,-.01); g.add(hairT);
-  const hairB=new THREE.Mesh(new THREE.BoxGeometry(.34,.40,.08),skD); hairB.position.set(0,1.52,-.20); g.add(hairB);
-  // tiara
-  const tiara=new THREE.Mesh(new THREE.TorusGeometry(.21,.022,6,16),gold); tiara.rotation.x=Math.PI/2; tiara.position.set(0,1.74,0); g.add(tiara);
-  const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.05,0),arcane); gem.position.set(0,1.78,.18); g.add(gem);
-  // eyes almond-shaped
-  [-.10,.10].forEach(x=>{
-    const ey2=new THREE.Mesh(new THREE.BoxGeometry(.11,.09,.05),ey); ey2.position.set(x,1.57,.19); g.add(ey2);
-    const pu=new THREE.Mesh(new THREE.BoxGeometry(.06,.09,.06),mB(0x001808)); pu.position.set(x,1.57,.20); g.add(pu);
-  });
-  // arched brows
-  [-.10,.10].forEach(x=>{const br=new THREE.Mesh(new THREE.BoxGeometry(.12,.04,.04),skD);br.position.set(x,1.63,.18);br.rotation.z=x<0?.10:-.10;g.add(br);});
-  // high cheekbones
-  [-.13,.13].forEach(x=>{const c=new THREE.Mesh(new THREE.BoxGeometry(.10,.06,.06),skD);c.position.set(x,1.50,.17);g.add(c);});
-  // lips
-  const lips=new THREE.Mesh(new THREE.BoxGeometry(.14,.05,.05),skD); lips.position.set(0,1.44,.19); g.add(lips);
+  // ── HEAD (fine features, long ears, flowing hair, circlet) ──
+  // a263 — face() flags front-of-face parts so the armor/helmet texture pass keeps
+  //   them as bare skin. The head BOX stays texturable (a helmet wraps it like a
+  //   helm); the face plate + features sit in front and stay skin (open-faced).
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+  add(C(.07,.09,.16,12),sk,0,1.37,0);                                     // neck
+  add(B(.28,.36,.30),sk,0,1.56,0);                                        // head shell (helmet-wrappable)
+  face(add(B(.26,.34,.03),sk,0,1.55,.155));                               // face plate — always skin
+  face(add(B(.24,.08,.28),skD,0,1.41,0));                                 // jaw
+  face(add(B(.30,.05,.08),skD,0,1.66,.16));                               // brow
+  [-.075,.075].forEach(x=>{ add(B(.085,.05,.04),glow,x,1.59,.17); add(B(.04,.05,.05),pupil,x,1.59,.185); }); // eyes
+  face(add(B(.05,.09,.07),sk,0,1.53,.18));                                // nose
+  face(add(B(.10,.025,.04),skD,0,1.47,.175));                             // mouth
+  [-.13,.13].forEach(x=>face(add(B(.08,.07,.06),skD,x,1.52,.12)));        // cheekbones
+  [-.155,.155].forEach(x=>face(add(CO(.045,.24,5),sk,x,1.58,-.02,0,0,x>0?-.7:.7))); // long ears
+  add(B(.30,.16,.32),skD,0,1.74,-.01);                                    // hair top
+  [-.15,.15].forEach(x=>add(B(.07,.52,.10),skD,x,1.38,-.12));             // side locks
+  add(B(.26,.50,.08),skD,0,1.38,-.18);                                    // back hair
+  add(CO(.05,.14,5),skD,0,1.84,-.02);                                     // top tuft
+  add(TR(.155,.014,6,16),gold,0,1.68,0,Math.PI/2.1,0,0);                  // circlet
+  add(CO(.05,.12,4),gold,0,1.78,.10);                                     // circlet crest
+  add(S(.04,8,6),glow,0,1.70,.155);                                       // brow gem (glow)
+
+  // ── HALF-CLOAK ──
+  [[-0.12,1.18,-0.16],[0.12,1.18,-0.16]].forEach(p=>add(B(.22,.66,.03),clothD,p[0],p[1]-.32,p[2],0.08,0,0));
+  add(TR(.06,.02,6,12),gold,0,1.22,-.14,Math.PI/2,0,0);                   // cloak clasp
 
   g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
   return g;
@@ -21240,6 +21841,17 @@ function _attachRacePlayerSlots(g, raceIdx){
       }
       return sBody;
     }
+    if(kind === 'race'){
+      // a285 — naked race preview: build the new race mesh, apply ONLY the skin
+      //   texture (empty slotTex => whole body skin, faceSkin honored, glows kept). No gear.
+      var _rb={xu:buildXuMesh,human:buildHumanMesh,gnome:buildGnomeMesh,ogre:buildOgreMesh,centaur:buildCentaurMesh,minotaur:buildMinotaurMesh,elf:buildElfMesh,vampire:buildVampireMesh};
+      var _ridx={xu:0,human:1,gnome:2,ogre:3,centaur:4,minotaur:5,elf:6,vampire:7};
+      var rfn=_rb[key]; if(!rfn) return null;
+      var ridx=_ridx[key]; if(ridx==null) ridx=1;
+      var rbody=rfn();
+      applyArmorTexturesToMesh(rbody, {}, getRaceSkinTex(ridx));
+      return rbody;
+    }
     return mkEnemy(ALIAS[key] || key);
   }
 
@@ -21367,6 +21979,9 @@ function _attachRacePlayerSlots(g, raceIdx){
       var acc = sc ? parseInt(String(sc).replace('#',''),16) : 0xffaa00;
       next.push({ el:el, kind:'set', key:sk, accent:acc, rec:null });
     });
+    document.querySelectorAll('#race-grid .race-preview[data-race]').forEach(function(el){
+      next.push({ el:el, kind:'race', key:el.dataset.race, accent:0x39d0ff, rec:null });
+    });
     cells = next;
     if(!running){ running = true; requestAnimationFrame(loop); }
   };
@@ -21384,12 +21999,14 @@ function _attachRacePlayerSlots(g, raceIdx){
     var pb = document.getElementById('panel-bosses');
     var pi = document.getElementById('panel-items');
     var ps = document.getElementById('panel-sets');
+    var pr = document.getElementById('panel-races');
     var on = { mob: pe&&pe.classList.contains('active'),
                boss: pb&&pb.classList.contains('active'),
                weapon: pi&&pi.classList.contains('active'),
                armor: pi&&pi.classList.contains('active'),
-               set: ps&&ps.classList.contains('active') };
-    if(!on.mob && !on.boss && !on.weapon && !on.set) return;
+               set: ps&&ps.classList.contains('active'),
+               race: pr&&pr.classList.contains('active') };
+    if(!on.mob && !on.boss && !on.weapon && !on.set && !on.race) return;
 
     var t = clock.getElapsedTime();
     var W = renderer.domElement.clientWidth, H = renderer.domElement.clientHeight;
@@ -21442,7 +22059,7 @@ function _attachRacePlayerSlots(g, raceIdx){
 
   document.addEventListener('mouseover', function(ev){
     if(!ev.target.closest) return;
-    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card'), ic = ev.target.closest('.item-card'), sc = ev.target.closest('.set-card');
+    var ec = ev.target.closest('.enemy-card'), bc = ev.target.closest('.boss-card'), ic = ev.target.closest('.item-card'), sc = ev.target.closest('.set-card'), rc = ev.target.closest('.race-card');
     if(ec){ var p1=ec.querySelector('.enemy-preview[data-type]'); hoveredKey = p1?('mob:'+p1.dataset.type):null; }
     else if(bc){ var p2=bc.querySelector('.boss-preview[data-boss]'); hoveredKey = p2?('boss:'+p2.dataset.boss):null; }
     else if(ic){
@@ -21451,9 +22068,10 @@ function _attachRacePlayerSlots(g, raceIdx){
       else { var p4=ic.querySelector('.armor-preview[data-armor]'); hoveredKey = p4?('armor:'+p4.dataset.armor):null; }
     }
     else if(sc){ var p5=sc.querySelector('.set-preview[data-set]'); hoveredKey = p5?('set:'+p5.dataset.set):null; }
+    else if(rc){ var p6=rc.querySelector('.race-preview[data-race]'); hoveredKey = p6?('race:'+p6.dataset.race):null; }
   });
   document.addEventListener('mouseout', function(ev){
-    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card')||ev.target.closest('.item-card')||ev.target.closest('.set-card'))) hoveredKey = null;
+    if(ev.target.closest && (ev.target.closest('.enemy-card')||ev.target.closest('.boss-card')||ev.target.closest('.item-card')||ev.target.closest('.set-card')||ev.target.closest('.race-card'))) hoveredKey = null;
   });
 
   if(document.readyState === 'loading')

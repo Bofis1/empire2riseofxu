@@ -33,7 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .nav-play-btn:hover{background:var(--xu-gold);}
 
 /* HERO */
-.wiki-hero{position:relative;padding:7rem 2rem 3.5rem;text-align:center;overflow:hidden;}
+.wiki-hero{position:relative;padding:7rem 2rem 3.5rem;text-align:center;overflow:visible;}
 .wiki-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(0,50,100,0.25) 0%,var(--xu-black) 70%);}
 .wiki-hero-scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 3px);pointer-events:none;}
 .eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.4em;color:var(--xu-cyan);text-transform:uppercase;margin-bottom:0.75rem;position:relative;z-index:2;}
@@ -47,7 +47,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 .ws-lab{font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;color:var(--xu-dim);text-transform:uppercase;margin-top:0.3rem;}
 
 /* GLOBAL SEARCH */
-.global-search-wrap{max-width:640px;margin:2rem auto 0;position:relative;z-index:5;}
+.global-search-wrap{max-width:640px;margin:2rem auto 0;position:relative;z-index:200;}
 .global-search-input{width:100%;background:rgba(2,4,8,0.85);border:1px solid rgba(0,229,255,0.3);color:var(--xu-text);padding:0.85rem 1.2rem;font-family:'Share Tech Mono',monospace;font-size:0.9rem;letter-spacing:0.05em;outline:none;transition:all 0.25s;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);}
 .global-search-input:focus{border-color:var(--xu-cyan);box-shadow:var(--glow-cyan);background:rgba(2,4,8,0.95);}
 .global-search-input::placeholder{color:var(--xu-dim);}
@@ -2185,6 +2185,44 @@ function mkEnemyPooled(type){
   return mkEnemy(type);
 }
 
+// a284 sync — RISE OF XU: the patrol "xu" soldiers (scout, commander) render as
+//   the real reptilian Xu race (buildXuMesh) in full armor gear with a random
+//   real weapon, matching the in-game build (was robot/recon-mech meshes).
+function _mkXuWarrior(type){
+  const xu = buildXuMesh();
+  const anim = xu.userData.anim || {};
+  const skinTex = getRaceSkinTex(0);
+  const LOADOUTS = [
+    {helmet:'xu_h_visor', chest:'xu_a_shell', legs:'l013', boots:'boss_b_xumen'},
+    {helmet:'h002',       chest:'c002',       legs:'l003', boots:'b003'},
+    {helmet:'h001',       chest:'c001',       legs:'l001', boots:'b001'},
+    {helmet:'xu_h_visor', chest:'c002',       legs:'l013', boots:'b003'},
+  ];
+  const lo = LOADOUTS[(Math.random()*LOADOUTS.length)|0];
+  const slotTex = {};
+  ['helmet','chest','legs','boots'].forEach(s=>{ try{ const tx=mkArmorTex(lo[s]); if(tx) slotTex[s]=tx; }catch(e){} });
+  try{ applyArmorTexturesToMesh(xu, slotTex, skinTex); }
+  catch(e){ try{ if(typeof applyRaceTextures==='function') applyRaceTextures(xu, 0); }catch(_){} }
+  try{
+    _attachRacePlayerSlots(xu, 0);
+    const WEAPONS = ['xu_w_blade','w002','w001','w006','w_grave_blade','w2h001','xu_w_cannon'];
+    const wId = WEAPONS[(Math.random()*WEAPONS.length)|0];
+    if(xu.userData.weaponSlot){
+      const wm = buildWeaponMesh(wId);
+      if(wm){
+        let two=false; try{ const it=getItem(wId); two=!!(it&&it.weaponType==='twohanded'); }catch(e){}
+        wm.scale.setScalar(two?1.0:0.8);
+        xu.userData.weaponSlot.add(wm);
+      }
+    }
+  }catch(e){}
+  _attachBipedAnim(xu, anim.lLeg||null, anim.rLeg||null, anim.lArm||null, anim.rArm||null, null);
+  xu.traverse(o=>{ if(o.isMesh) o.castShadow=true; });
+  if(type==='xu_commander') xu.scale.set(1.08,1.08,1.08);
+  else xu.scale.set(0.92,0.92,0.92);
+  return xu;
+}
+
 function mkEnemy(type){
   const g=new THREE.Group();
 
@@ -4004,66 +4042,11 @@ function mkEnemy(type){
   // ── XU PATROL ZONE — MILITARY ──
       _autoRigFloat(g, 0.3);
     } else if(type==='xu_scout'){
-    // a161 — Ship 2: XU SCOUT — visual upgrade. Old version had decent
-    //   silhouette but lacked the "sensor-bristled fast-recon" character.
-    //   Added: triple-eye optical lens cluster, multi-antenna array, hip
-    //   thruster vent (justifies the high speed), refined visor, shoulder
-    //   data ports, chest insignia. Materials lifted to feel more techy.
-    const mXS=new THREE.MeshLambertMaterial({color:0x1a1a2a,emissive:new THREE.Color(0x080810),emissiveIntensity:0.3});
-    const mXSr=mT(0xff2020,0.9);
-    const mXSg=mT(0xff4400,0.75);
-    const mXSt=new THREE.MeshLambertMaterial({color:0x2a2030,emissive:new THREE.Color(0x100818),emissiveIntensity:0.2});
-    const mXSb=new THREE.MeshBasicMaterial({color:0x00ccff,transparent:true,opacity:0.85});  // cyan accent
-    const mXSdk=new THREE.MeshLambertMaterial({color:0x0a0a14});
-    // Compact legs — digitigrade
-    [-0.18,0.18].forEach(ox=>{
-      const upper=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.32,0.14),mXS); upper.position.set(ox,0.38,0); g.add(upper);
-      const lower=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.28,0.14),mXS); lower.position.set(ox,0.12,-0.06); lower.rotation.x=0.3; g.add(lower);
-      const foot=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.08,0.22),mXSt); foot.position.set(ox,0.02,0.05); g.add(foot);
-      // Knee joint detail
-      const knee=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),mXSdk); knee.position.set(ox,0.24,0); g.add(knee);
-    });
-    // Hip thruster vent (back-facing — justifies the speed)
-    const thrust=new THREE.Mesh(new THREE.CylinderGeometry(0.10,0.12,0.10,6),mXSdk); thrust.rotation.x=Math.PI/2; thrust.position.set(0,0.56,-0.16); g.add(thrust);
-    const thrustGlow=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.04,0.06,6),mXSg); thrustGlow.rotation.x=Math.PI/2; thrustGlow.position.set(0,0.56,-0.22); g.add(thrustGlow);
-    // Torso — lean armoured chassis
-    const torso=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.42,0.28),mXS); torso.position.y=0.72; g.add(torso);
-    // XU insignia stripe (animated red w/ cyan accent)
-    const stripe=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.06,0.30),mXSr); stripe.position.y=0.82; g.add(stripe);
-    // Chest data port (small cyan)
-    const dataPort=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.04,0.05),mXSb); dataPort.position.set(0,0.66,0.15); g.add(dataPort);
-    // Shoulder data ports
-    [-0.22,0.22].forEach(ox=>{ const sp=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.04,0.04),mXSb); sp.position.set(ox,0.92,0); g.add(sp); });
-    // Arms — one weapon arm, one sensor arm
-    const rArm=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.36,0.12),mXS); rArm.position.set(0.30,0.72,0); rArm.rotation.z=-0.2; g.add(rArm);
-    // Laser barrel on right arm
-    const barrel=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.04,0.32,6),mXSt); barrel.rotation.z=Math.PI/2; barrel.position.set(0.52,0.60,0.06); g.add(barrel);
-    const muzzle=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.04,0.06,6),mXSr); muzzle.rotation.z=Math.PI/2; muzzle.position.set(0.70,0.60,0.06); g.add(muzzle);
-    // Heat fins on barrel
-    [0.46,0.54,0.62].forEach(bx=>{ const fin=new THREE.Mesh(new THREE.BoxGeometry(0.02,0.10,0.10),mXSdk); fin.position.set(bx,0.60,0.06); g.add(fin); });
-    const lArm=new THREE.Mesh(new THREE.BoxGeometry(0.11,0.32,0.11),mXS); lArm.position.set(-0.30,0.72,0); lArm.rotation.z=0.2; g.add(lArm);
-    // Sensor cluster on left arm — bigger and more techy
-    const sensor=new THREE.Mesh(new THREE.SphereGeometry(0.08,6,5),mXSg); sensor.position.set(-0.44,0.60,0); g.add(sensor);
-    const sensorRing=new THREE.Mesh(new THREE.TorusGeometry(0.10,0.015,4,8),mXSb); sensorRing.position.set(-0.44,0.60,0); sensorRing.rotation.y=Math.PI/2; g.add(sensorRing);
-    // Head — angular visor, TRIPLE red sensor eye (signature look)
-    const head=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.28,0.26),mXS); head.position.y=1.06; g.add(head);
-    const visor=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.10,0.04),mXSt); visor.position.set(0,1.08,0.14); g.add(visor);
-    // Triple optical lens cluster — central main + two side
-    const eyeMain=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,4),mXSr); eyeMain.position.set(0,1.08,0.16); g.add(eyeMain);
-    const eyeMainGlow=new THREE.Mesh(new THREE.SphereGeometry(0.08,6,4),mXSg); eyeMainGlow.position.set(0,1.08,0.14); g.add(eyeMainGlow);
-    // Smaller side lenses
-    [-0.10,0.10].forEach(ox=>{ const sEye=new THREE.Mesh(new THREE.SphereGeometry(0.03,5,4),mXSr); sEye.position.set(ox,1.08,0.16); g.add(sEye); });
-    // Cheek plate / jaw guard
-    const jaw=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.08,0.22),mXSdk); jaw.position.y=0.96; g.add(jaw);
-    // Multi-antenna array (3 antennas — recon comm)
-    const antA=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.020,0.26,4),mXSt); antA.position.set(0.12,1.30,0); antA.rotation.z=-0.08; g.add(antA);
-    const antB=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.016,0.20,4),mXSt); antB.position.set(-0.10,1.26,-0.04); antB.rotation.z=0.12; g.add(antB);
-    const antC=new THREE.Mesh(new THREE.CylinderGeometry(0.010,0.014,0.16,4),mXSt); antC.position.set(0,1.24,-0.08); g.add(antC);
-    // Tip blinker on tallest antenna
-    const blinker=new THREE.Mesh(new THREE.SphereGeometry(0.02,4,3),mXSr); blinker.position.set(0.12,1.44,0); g.add(blinker);
-    g.scale.set(0.95,0.95,0.95);
-
-      _attachBipedAnim(g, null, null, lArm, rArm, torso);
+      // a284 sync — Xu RACE warrior (reptilian Xu in real gear + random weapon)
+      const _xu = _mkXuWarrior(type);
+      g.add(_xu);
+      g.userData.anim = _xu.userData.anim;
+      g.userData.weaponSlot = _xu.userData.weaponSlot;
     } else if(type==='xu_siege_bot'){
     // a161 — Ship 2: XU SIEGE BOT — visual polish on top of Ship 1's rig
     //   fix. The wheeled rig now works (tank rolls properly), so let's
@@ -4161,86 +4144,11 @@ function mkEnemy(type){
       g.userData.noRig = true;
       _attachWheeledAnim(g, { bodyMesh: hull, turretMesh: turret, treadStripes: treadStripes, muzzleGlow: muzzleG });
     } else if(type==='xu_commander'){
-    // a161 — Ship 2: XU COMMANDER — visual polish. Already had decent
-    //   silhouette (greaves, cape, helm w/ crest, baton, medal). Added:
-    //   floating holographic tac-display over left forearm, banner mount
-    //   on back, glowing rank pip rows on chest, eye-slit halo glow,
-    //   wider cape with secondary trim. Reads as more imposing.
-    const mAr=new THREE.MeshLambertMaterial({color:0x1a0808,emissive:new THREE.Color(0x0a0404),emissiveIntensity:0.3});
-    const mArT=new THREE.MeshLambertMaterial({color:0x2a0a0a,emissive:new THREE.Color(0x180606),emissiveIntensity:0.4});
-    const mGold=mT(0xddaa00,0.9);
-    const mEye=mT(0xff2020,0.95);
-    const mCape=new THREE.MeshLambertMaterial({color:0x3a0606,emissive:new THREE.Color(0x180204),emissiveIntensity:0.3});
-    const mHolo=new THREE.MeshBasicMaterial({color:0x00aaff,transparent:true,opacity:0.55});  // holographic blue
-    const mGoldT=new THREE.MeshBasicMaterial({color:0xffd040,transparent:true,opacity:0.85});  // bright gold glow
-    // Legs — armoured greaves
-    [-0.14,0.14].forEach(ox=>{ const l=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.52,0.20),mAr); l.position.set(ox,0.26,0); g.add(l); const boot=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.12,0.26),mArT); boot.position.set(ox,0.06,0.04); g.add(boot); });
-    // Knee gold trim
-    [-0.14,0.14].forEach(ox=>{ const kt=new THREE.Mesh(new THREE.BoxGeometry(0.21,0.03,0.21),mGold); kt.position.set(ox,0.36,0); g.add(kt); });
-    // Waist plate
-    const waist=new THREE.Mesh(new THREE.BoxGeometry(0.50,0.14,0.26),mArT); waist.position.y=0.62; g.add(waist);
-    // Belt buckle (gold crest)
-    const buckle=new THREE.Mesh(new THREE.BoxGeometry(0.14,0.10,0.04),mGold); buckle.position.set(0,0.62,0.15); g.add(buckle);
-    // Chest — ornate command plate with gold trim
-    const chest=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.54,0.28),mAr); chest.position.y=0.96; g.add(chest);
-    // Gold rank trim on chest
-    const trimH=new THREE.Mesh(new THREE.BoxGeometry(0.56,0.05,0.30),mGold); trimH.position.y=1.22; g.add(trimH);
-    const trimL=new THREE.Mesh(new THREE.BoxGeometry(0.56,0.05,0.30),mGold); trimL.position.y=0.72; g.add(trimL);
-    // Rank pips — 4 small glowing gold dots across left chest
-    for(let pi=0;pi<4;pi++){
-      const pip=new THREE.Mesh(new THREE.SphereGeometry(0.025,5,4),mGoldT);
-      pip.position.set(-0.22 + pi*0.08, 1.10, 0.15);
-      g.add(pip);
-    }
-    // Medal/insignia on chest (right side)
-    const medal=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.04,7),mGold); medal.position.set(0.16,1.04,0.15); g.add(medal);
-    const medalGem=new THREE.Mesh(new THREE.SphereGeometry(0.03,5,4),mEye); medalGem.position.set(0.16,1.04,0.18); g.add(medalGem);
-    // Pauldrons — ornate with gold edge
-    [-0.36,0.36].forEach((ox,i)=>{
-      const paul=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.18,0.26),mArT); paul.position.set(ox,1.14,0); g.add(paul);
-      const goldEdge=new THREE.Mesh(new THREE.BoxGeometry(0.24,0.04,0.28),mGold); goldEdge.position.set(ox,1.26,0); g.add(goldEdge);
-      // Spiked top stud
-      const spike=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.10,5),mGold); spike.position.set(ox,1.34,0); g.add(spike);
-    });
-    // Arms
-    [-0.38,0.38].forEach(ox=>{ const a=new THREE.Mesh(new THREE.BoxGeometry(0.17,0.46,0.17),mAr); a.position.set(ox,0.86,0); g.add(a); });
-    // Holographic tactical display over LEFT forearm (signature command-feel)
-    const holoBase=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.04,0.08),mArT); holoBase.position.set(-0.38,0.66,0.06); g.add(holoBase);
-    const holoScreen=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.22,0.02),mHolo); holoScreen.position.set(-0.38,0.74,0.14); holoScreen.rotation.x=-0.45; g.add(holoScreen);
-    // Holo grid lines (tactical overlay feel)
-    for(let hi=0;hi<3;hi++){
-      const hLine=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.005,0.005),mGoldT); hLine.position.set(-0.38,0.66+hi*0.06,0.12); hLine.rotation.x=-0.45; g.add(hLine);
-    }
-    // Right hand — command baton
-    const baton=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.48,6),mArT); baton.position.set(0.44,0.64,0.08); baton.rotation.z=0.4; g.add(baton);
-    const batonTip=new THREE.Mesh(new THREE.SphereGeometry(0.07,6,4),mEye); batonTip.position.set(0.54,0.48,0.10); g.add(batonTip);
-    const batonGlow=new THREE.Mesh(new THREE.SphereGeometry(0.10,5,4),new THREE.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:0.30})); batonGlow.position.set(0.54,0.48,0.10); g.add(batonGlow);
-    // Banner mount on upper back (vertical spike with small banner)
-    const bannerPole=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,0.50,5),mGold); bannerPole.position.set(0,1.20,-0.22); g.add(bannerPole);
-    const bannerCloth=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.30,0.18),mCape); bannerCloth.position.set(0.04,1.30,-0.22); g.add(bannerCloth);
-    const bannerSigil=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.10,0.12),mGold); bannerSigil.position.set(0.05,1.30,-0.22); g.add(bannerSigil);
-    // Cape behind (wider, two-layer)
-    const cape=new THREE.Mesh(new THREE.BoxGeometry(0.58,0.80,0.06),mCape); cape.position.set(0,0.78,-0.18); cape.rotation.x=0.15; g.add(cape);
-    const capeTrim=new THREE.Mesh(new THREE.BoxGeometry(0.60,0.04,0.05),mGold); capeTrim.position.set(0,1.16,-0.16); cape.rotation.x=0.15; g.add(capeTrim);
-    // Helmet — full command helm with face shield and crest
-    const helm=new THREE.Mesh(new THREE.BoxGeometry(0.40,0.34,0.36),mAr); helm.position.y=1.50; g.add(helm);
-    const faceplate=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.18,0.06),mArT); faceplate.position.set(0,1.48,0.21); g.add(faceplate);
-    // Red visor slit with glow halo
-    const visor=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.06,0.04),mEye); visor.position.set(0,1.52,0.24); g.add(visor);
-    const visorGlow=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.10,0.02),new THREE.MeshBasicMaterial({color:0xff4040,transparent:true,opacity:0.45})); visorGlow.position.set(0,1.52,0.26); g.add(visorGlow);
-    // Helmet cheek guards
-    [-0.20,0.20].forEach(ox=>{ const cg=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.18,0.20),mArT); cg.position.set(ox,1.42,0.10); g.add(cg); });
-    // Gold crest on helmet (wider, more imposing)
-    const crest=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.22,0.46),mGold); crest.position.set(0,1.78,0); g.add(crest);
-    // Crest filigree (3 small spikes along crest)
-    for(let ci=0;ci<3;ci++){
-      const cspk=new THREE.Mesh(new THREE.ConeGeometry(0.03,0.10,4),mGold);
-      cspk.position.set(0,1.92,-0.16 + ci*0.16);
-      g.add(cspk);
-    }
-    g.scale.set(1.05,1.05,1.05);
-
-      _autoRigBiped(g);
+      // a284 sync — Xu RACE commander (larger reptilian Xu in real gear + random weapon)
+      const _xu = _mkXuWarrior(type);
+      g.add(_xu);
+      g.userData.anim = _xu.userData.anim;
+      g.userData.weaponSlot = _xu.userData.weaponSlot;
     } else if(type==='xu_shieldbot'){
     // XU Shield Bot — squat heavy unit, large rectangular shield, single cannon arm
     const mStl=new THREE.MeshLambertMaterial({color:0x1a1a2a,emissive:new THREE.Color(0x080810),emissiveIntensity:0.3});

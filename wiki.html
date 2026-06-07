@@ -100,7 +100,7 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .item-preview::after{content:'⚔ LIVE MODEL';position:absolute;bottom:5px;right:8px;
   font-family:'Share Tech Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;
   color:color-mix(in srgb,var(--rar) 55%,transparent);pointer-events:none;}
-/* ── armor: worn on an elf model ── */
+/* ── armor: worn on the human knight model (a284) ── */
 .armor-preview{position:relative;height:200px;margin:-1rem -1rem 0.55rem;overflow:hidden;
   border-bottom:1px solid color-mix(in srgb,var(--rar) 28%,transparent);
   background:radial-gradient(120% 95% at 50% 30%,color-mix(in srgb,var(--rar) 11%,transparent),transparent 72%),
@@ -20832,6 +20832,13 @@ function applyArmorTexturesToMesh(targetMesh, slotTex, skinTex){
     mats.forEach((mat,mi)=>{
       if(!mat || mat.isMeshBasicMaterial) return;
       if(mat.emissive && (mat.emissive.r>0.1||mat.emissive.g>0.1||mat.emissive.b>0.1)) return;
+      // a284 — honor faceSkin: the human knight has an open-faced helm, so its
+      //   face parts must always show skin, never the helmet armor texture.
+      if(obj.userData && obj.userData.faceSkin){
+        if(skinTex){ const fm = mat.clone(); fm.map = skinTex; fm.color.set(0xffffff); fm.needsUpdate = true;
+          if(Array.isArray(obj.material)) obj.material[mi]=fm; else obj.material=fm; }
+        return;
+      }
       // Slot by height fraction
       const objY = obj.getWorldPosition(new THREE.Vector3()).y;
       const frac = (objY - bbox.min.y) / totalH;
@@ -20850,6 +20857,104 @@ function applyArmorTexturesToMesh(targetMesh, slotTex, skinTex){
       if(Array.isArray(obj.material)) obj.material[mi]=m; else obj.material=m;
     });
   });
+}
+
+// a284 — NEW human knight mesh (copied verbatim from the game's buildHumanMesh).
+//   The wiki armor & set previews render on this instead of the old elf model.
+function buildHumanMesh(){
+  const g=new THREE.Group();
+  // All body/armor materials are texturable Lambert (placeholder colours) so the
+  // height-based armor system maps the skin texture + equipped gear onto them.
+  // Only the eyes use MeshBasic (preserved), matching the original human.
+  const sk =new THREE.MeshLambertMaterial({color:RACES[1].col});
+  const skD=new THREE.MeshLambertMaterial({color:RACES[1].colDark});
+  const hair=mL(0x4a3320);
+  const steel=mL(0x9aa6b6), steelD=mL(0x646e7e), steelHi=mL(0xc2ccd8);
+  const blue=mL(0x2c4d96), blueD=mL(0x1d3464), leather=mL(0x4a3526), gold=mL(0xd9b24a);
+  const eyeMat=new THREE.MeshBasicMaterial({color:0xcdd8e6});   // preserved
+  const pupil =new THREE.MeshBasicMaterial({color:0x16223a});   // preserved
+  const C=(rt,rb,h,s)=>new THREE.CylinderGeometry(rt,rb,h,s||12);
+  const S=(r,a,b)=>new THREE.SphereGeometry(r,a||10,b||8);
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  const CO=(r,h,s)=>new THREE.ConeGeometry(r,h,s||6);
+  const TR=(r,t,s,p)=>new THREE.TorusGeometry(r,t,s||6,p||16);
+  const add=(geo,mat,x,y,z,rx,ry,rz,sc)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);m.rotation.set(rx||0,ry||0,rz||0);if(sc)m.scale.set(sc[0],sc[1],sc[2]);g.add(m);return m;};
+
+  // ── LEGS (tapered greaves + sabatons + knee cops) ──
+  const lLeg=new THREE.Group(); lLeg.position.set(-.17,.62,0);
+  const rLeg=new THREE.Group(); rLeg.position.set(.17,.62,0);
+  [lLeg,rLeg].forEach(lg=>{
+    const th=new THREE.Mesh(C(.115,.135,.30,12),blueD); th.position.set(0,-.16,0); lg.add(th);
+    const kc=new THREE.Mesh(S(.115,10,8),steel); kc.position.set(0,-.30,.02); lg.add(kc);
+    const kt=new THREE.Mesh(B(.13,.05,.16),gold); kt.position.set(0,-.30,.10); lg.add(kt);
+    const gr=new THREE.Mesh(C(.115,.10,.30,12),steel); gr.position.set(0,-.46,0); lg.add(gr);
+    const gd=new THREE.Mesh(B(.10,.30,.05),steelHi); gd.position.set(0,-.46,.085); lg.add(gd);
+    const sb=new THREE.Mesh(B(.20,.10,.30),steelD); sb.position.set(0,-.62,.05); lg.add(sb);
+    const to=new THREE.Mesh(B(.18,.06,.12),steel); to.position.set(0,-.60,.18); lg.add(to);
+    g.add(lg);
+  });
+
+  // ── TORSO (sculpted cuirass) ──
+  add(C(.30,.34,.40,16),blue,0,.92,0);                                  // gambeson core
+  add(B(.56,.46,.34),steel,0,.98,0);                                    // cuirass
+  add(B(.58,.10,.36),gold,0,1.18,0);                                    // collar trim
+  [-.14,.14].forEach(x=>add(B(.22,.30,.10),steelHi,x,1.0,.16,0,0,x>0?-.12:.12)); // pectoral plates
+  add(B(.06,.40,.12),gold,0,.98,.18);                                   // central ridge
+  add(S(.05,8,6),gold,0,1.14,.21);                                      // gorget stud
+  [-.18,0,.18].forEach(x=>add(B(.20,.16,.30),steelD,x,.70,.02,0.12,0,0)); // faulds
+  add(B(.60,.09,.36),leather,0,.66,0);                                  // belt
+  add(B(.13,.11,.10),gold,0,.66,.20);                                   // buckle
+  add(B(.26,.42,.04),blue,0,.80,.20);                                   // tabard
+  add(CO(.14,.16,4),blue,0,.56,.20,0,Math.PI/4);                        // tabard point
+  add(B(.04,.40,.05),gold,0,.80,.225);                                  // tabard stripe
+
+  // ── SHOULDERS (layered pauldrons) ──
+  [-.34,.34].forEach(x=>{
+    add(S(.18,12,8),steel,x,1.18,.02,0,0,0,[1,.7,1]);
+    add(S(.20,12,8),steelHi,x,1.20,.02,0,0,0,[1,.4,1]);
+    add(TR(.16,.025,6,14),gold,x,1.16,.02,Math.PI/2,0,0);
+    add(CO(.04,.09,6),steelHi,x,1.30,.05);
+  });
+
+  // ── ARMS (upper + elbow + vambrace + gauntlet) — pivot 1.12, hand at -0.50 ──
+  const lArm=new THREE.Group(); lArm.position.set(-.40,1.12,0);
+  const rArm=new THREE.Group(); rArm.position.set(.40,1.12,0);
+  [lArm,rArm].forEach(a=>{
+    const up=new THREE.Mesh(C(.10,.085,.26,12),blue); up.position.set(0,-.13,0); a.add(up);
+    const el=new THREE.Mesh(S(.095,10,8),steel); el.position.set(0,-.26,0); a.add(el);
+    const vb=new THREE.Mesh(C(.085,.075,.22,12),steel); vb.position.set(0,-.38,0); a.add(vb);
+    const vr=new THREE.Mesh(B(.05,.20,.05),steelHi); vr.position.set(0,-.38,.08); a.add(vr);
+    const ga=new THREE.Mesh(B(.15,.12,.16),steelD); ga.position.set(0,-.50,0); a.add(ga);
+    for(let f=0;f<3;f++){const fm=new THREE.Mesh(B(.035,.08,.04),steel); fm.position.set(-.045+f*.045,-.57,.04); a.add(fm);}
+    g.add(a);
+  });
+
+  // ── HEAD (structured face + hair + circlet) ──
+  // a263 — face() flags front-of-face parts so an equipped helmet wraps the head
+  //   shell + hair but the face stays bare skin (open-faced helm).
+  const face=m=>{ m.userData.faceSkin=true; return m; };
+  add(C(.11,.13,.12,12),sk,0,1.28,0);                                   // neck
+  add(B(.20,.05,.20),steel,0,1.235,0);                                  // gorget
+  add(B(.34,.40,.36),sk,0,1.50,0);                                      // head shell (helmet-wrappable)
+  face(add(B(.30,.34,.04),sk,0,1.50,.18));                              // face plate — always skin
+  face(add(B(.30,.10,.34),skD,0,1.34,0));                               // jaw
+  face(add(B(.36,.07,.10),skD,0,1.60,.18));                             // brow
+  [-.09,.09].forEach(x=>{ add(B(.10,.07,.04),eyeMat,x,1.53,.205); add(B(.045,.07,.05),pupil,x,1.53,.22); }); // eyes
+  face(add(B(.07,.10,.09),sk,0,1.46,.215));                             // nose
+  face(add(B(.14,.03,.05),skD,0,1.39,.205));                            // mouth
+  [-.16,.16].forEach(x=>face(add(S(.05,8,6),skD,x,1.48,0)));            // ears
+  add(B(.37,.14,.39),hair,0,1.69,-.01);                                 // hair top
+  add(B(.39,.20,.12),hair,0,1.58,-.20);                                 // hair back
+  [-.18,.18].forEach(x=>add(B(.07,.22,.30),hair,x,1.54,-.04));          // hair sides
+  add(TR(.18,.022,6,16),gold,0,1.64,0,Math.PI/2.1,0,0);                 // circlet
+  add(CO(.05,.10,4),gold,0,1.76,.14);                                   // circlet crest
+
+  // ── CAPE ──
+  [[-0.13,1.18,-0.18],[0,1.16,-0.20],[0.13,1.18,-0.18]].forEach(p=>add(B(.20,.62,.04),blueD,p[0],p[1]-.30,p[2],0.10,0,0));
+  add(B(.50,.10,.06),gold,0,1.20,-.19);                                 // cape clasp
+
+  g.userData.anim={lLeg,rLeg,lArm,rArm,type:'biped',bob:0};
+  return g;
 }
 
 function buildElfMesh(){
@@ -21103,9 +21208,9 @@ function _attachRacePlayerSlots(g, raceIdx){
       return buildWeaponMesh(WEAPON_STANDIN[key] || key);
     }
     if(kind === 'armor'){
-      var body = buildElfMesh();                 // the game's elf model
+      var body = buildHumanMesh();               // a284 — new human knight model (was elf)
       var it = getItem(key); var slot = (it && it.slot) || 'chest';
-      var skinTex = getRaceSkinTex(6);           // elf = race index 6
+      var skinTex = getRaceSkinTex(1);           // human = race index 1
       var aTex = mkArmorTex(key);
       var slotTex = {}; if(aTex) slotTex[slot] = aTex;
       applyArmorTexturesToMesh(body, slotTex, skinTex);
@@ -21113,9 +21218,9 @@ function _attachRacePlayerSlots(g, raceIdx){
     }
     if(kind === 'set'){
       var sd = (typeof WIKI !== 'undefined' && WIKI.sets) ? WIKI.sets[key] : null;
-      var sBody = buildElfMesh();
-      _attachRacePlayerSlots(sBody, 6);                   // wire hand/helmet slots on the elf
-      var sSkin = getRaceSkinTex(6);
+      var sBody = buildHumanMesh();              // a284 — new human knight model (was elf)
+      _attachRacePlayerSlots(sBody, 1);                   // wire hand/helmet slots on the human
+      var sSkin = getRaceSkinTex(1);
       var sSlotTex = {}; var SL = {helmet:1, chest:1, legs:1, boots:1};
       var sWeaponId = null;
       if(sd && sd.items){

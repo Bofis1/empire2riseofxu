@@ -21655,6 +21655,123 @@ function _attachRacePlayerSlots(g, raceIdx){
   if(!window.THREE){ console.warn('[bestiary3d] THREE not loaded'); return; }
   var THREE = window.THREE;
 
+  // ── a315 — Lucidwilde bestiary meshes (ported verbatim from the a314 game:
+  //   prismaraptor / sporegon / vortexwisp via _mkLucidMob, THE PIXIELORD via
+  //   mkBossPixielord). Use the shared mB/mL/mT + _attachBipedAnim helpers. ──
+function _mkLucidMob(type){
+  if(type!=='prismaraptor' && type!=='sporegon' && type!=='vortexwisp') return null;
+  const g=new THREE.Group();
+  const vis=new THREE.Group(); g.add(vis);
+  let lLeg=null,rLeg=null,lArm=null,rArm=null,torso=null,S=3.6;
+  if(type==='prismaraptor'){
+    S=3.8;
+    const mSkin =new THREE.MeshLambertMaterial({color:0x1a3a4a, emissive:new THREE.Color(0x0a1a22), emissiveIntensity:0.30});
+    const mSkin2=new THREE.MeshLambertMaterial({color:0x2a1a4a, emissive:new THREE.Color(0x140a26), emissiveIntensity:0.30});
+    const prism=[0xff3caa,0x00e0ff,0x44ff88,0xffd24a];
+    torso=new THREE.Mesh(new THREE.SphereGeometry(0.42,8,7),mSkin); torso.scale.set(0.8,0.72,1.5); torso.position.set(0,0.95,0); torso.rotation.x=-0.25; vis.add(torso);
+    const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.20,0.5,7),mSkin); neck.position.set(0,1.28,0.55); neck.rotation.x=0.7; vis.add(neck);
+    const head=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.30,0.50),mSkin2); head.position.set(0,1.45,0.85); vis.add(head);
+    const jaw =new THREE.Mesh(new THREE.BoxGeometry(0.26,0.12,0.42),mSkin); jaw.position.set(0,1.34,0.92); vis.add(jaw);
+    const eL=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),mB(0xffe040)); eL.position.set(0.12,1.52,1.00); vis.add(eL);
+    const eR=eL.clone(); eR.position.x=-0.12; vis.add(eR);
+    for(let i=0;i<5;i++){ const c=prism[i%prism.length]; const sp=new THREE.Mesh(new THREE.ConeGeometry(0.10,0.34,4), new THREE.MeshBasicMaterial({color:c})); sp.position.set(0, 1.20 - i*0.02, 0.40 - i*0.22); sp.rotation.x=-0.3; vis.add(sp); }
+    const tail=new THREE.Mesh(new THREE.ConeGeometry(0.20,1.1,6),mSkin); tail.position.set(0,0.90,-0.85); tail.rotation.x=Math.PI*0.46; vis.add(tail);
+    lLeg=new THREE.Group(); const lThigh=new THREE.Mesh(new THREE.CylinderGeometry(0.10,0.08,0.5,6),mSkin2); lThigh.position.y=-0.25; lLeg.add(lThigh); lLeg.position.set(0.18,0.70,0); vis.add(lLeg);
+    rLeg=new THREE.Group(); const rThigh=lThigh.clone(); rLeg.add(rThigh); rLeg.position.set(-0.18,0.70,0); vis.add(rLeg);
+  } else if(type==='sporegon'){
+    S=4.5;
+    const mHide =new THREE.MeshLambertMaterial({color:0x2a4a2a, emissive:new THREE.Color(0x102010), emissiveIntensity:0.25});
+    const mHide2=new THREE.MeshLambertMaterial({color:0x3a3a1a, emissive:new THREE.Color(0x1a1a08), emissiveIntensity:0.25});
+    torso=new THREE.Mesh(new THREE.SphereGeometry(0.70,9,8),mHide); torso.scale.set(1.1,0.85,1.4); torso.position.y=0.85; vis.add(torso);
+    const head=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.36,0.50),mHide2); head.position.set(0,0.62,0.95); vis.add(head);
+    const eL=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),mB(0xff66cc)); eL.position.set(0.14,0.70,1.18); vis.add(eL);
+    const eR=eL.clone(); eR.position.x=-0.14; vis.add(eR);
+    const capMat =new THREE.MeshLambertMaterial({color:0xff3c88, emissive:new THREE.Color(0x661030), emissiveIntensity:0.60});
+    const stemMat=mL(0xe8e0d0);
+    [[0,1.50,0,0.34],[0.40,1.35,0.20,0.24],[-0.40,1.35,0.10,0.24],[0.20,1.40,-0.40,0.20],[-0.25,1.38,-0.30,0.22]].forEach(function(p){
+      const x=p[0],y=p[1],z=p[2],r=p[3];
+      const stem=new THREE.Mesh(new THREE.CylinderGeometry(r*0.3,r*0.4,0.3,6),stemMat); stem.position.set(x,y-0.15,z); vis.add(stem);
+      const cap=new THREE.Mesh(new THREE.SphereGeometry(r,8,5,0,Math.PI*2,0,Math.PI*0.5),capMat); cap.position.set(x,y,z); vis.add(cap);
+      const glow=new THREE.Mesh(new THREE.SphereGeometry(r*0.5,6,4),mT(0xff88cc,0.5)); glow.position.set(x,y-0.05,z); vis.add(glow);
+    });
+    const legs=[];
+    [[0.40,0.50],[-0.40,0.50],[0.40,-0.50],[-0.40,-0.50]].forEach(function(p){
+      const lg=new THREE.Group(); const m=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.15,0.5,6),mHide2); m.position.y=-0.25; lg.add(m); lg.position.set(p[0],0.50,p[1]); vis.add(lg); legs.push(lg);
+    });
+    lLeg=legs[0]; rLeg=legs[3]; lArm=legs[1]; rArm=legs[2];
+  } else { // vortexwisp
+    S=3.6;
+    const mCore=new THREE.MeshLambertMaterial({color:0x2a0a4a, emissive:new THREE.Color(0x18062e), emissiveIntensity:0.40});
+    const orb=new THREE.Mesh(new THREE.SphereGeometry(0.40,10,9),mCore); orb.position.y=1.00; vis.add(orb); torso=orb;
+    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.18,8,7),mB(0xb84dff)); eye.position.set(0,1.00,0.36); vis.add(eye);
+    const pupil=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,5),mB(0x1a001a)); pupil.position.set(0,1.00,0.50); vis.add(pupil);
+    const glow=new THREE.Mesh(new THREE.SphereGeometry(0.50,8,6),mT(0x8800ff,0.30)); glow.position.y=1.00; vis.add(glow);
+    const shardMat=new THREE.MeshBasicMaterial({color:0xff3cff});
+    for(let i=0;i<7;i++){ const a=i/7*Math.PI*2; const sh=new THREE.Mesh(new THREE.OctahedronGeometry(0.12,0), i%2?shardMat:mB(0x00e0ff)); sh.position.set(Math.cos(a)*0.60, 1.00+Math.sin(a*2)*0.18, Math.sin(a)*0.60); vis.add(sh); }
+  }
+  vis.scale.setScalar(S);
+  // anim (refs point into vis; animator works in local space — scale-agnostic)
+  g.userData.anim={type:'biped', lLeg:lLeg,rLeg:rLeg,lArm:lArm,rArm:rArm, torso:torso, torsoY: torso?torso.position.y:0, _idleOffset:Math.random()*6.28, bob:0};
+  // drop so feet sit on the ground (py from the spawner then adds any hover)
+  vis.updateMatrixWorld(true);
+  try{ const bb=new THREE.Box3().setFromObject(vis); if(isFinite(bb.min.y)) vis.position.y = -bb.min.y; }catch(_e){}
+  g.userData._builtRotY = g.rotation.y;
+  return g;
+}
+
+function mkBossPixielord(){
+  const g=new THREE.Group();
+  const mSkin =new THREE.MeshLambertMaterial({color:0xf0c8e8, emissive:new THREE.Color(0x3a1a30), emissiveIntensity:0.30});
+  const mDress=new THREE.MeshLambertMaterial({color:0xb84dff, emissive:new THREE.Color(0x3a1466), emissiveIntensity:0.50});
+  const mDress2=new THREE.MeshLambertMaterial({color:0xff3caa, emissive:new THREE.Color(0x4a0e30), emissiveIntensity:0.50});
+  const mGold =new THREE.MeshLambertMaterial({color:0xffd24a, emissive:new THREE.Color(0x7a5a00), emissiveIntensity:0.60});
+  const mHair =new THREE.MeshLambertMaterial({color:0x8822cc, emissive:new THREE.Color(0x2a0a44), emissiveIntensity:0.40});
+  const mWing =new THREE.MeshBasicMaterial({color:0xc488ff, transparent:true, opacity:0.50, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false});
+  const mWing2=new THREE.MeshBasicMaterial({color:0x00e0ff, transparent:true, opacity:0.40, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false});
+  // Gown
+  const dress =new THREE.Mesh(new THREE.ConeGeometry(0.90,2.0,10),mDress);  dress.position.y=1.20; g.add(dress);
+  const dress2=new THREE.Mesh(new THREE.ConeGeometry(0.65,1.4,10),mDress2); dress2.position.y=1.50; g.add(dress2);
+  const torso =new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.45,0.9,8),mDress); torso.position.y=2.50; g.add(torso);
+  // Head + face
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.34,10,9),mSkin); head.position.y=3.30; g.add(head);
+  const eL=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),mB(0x00e0ff)); eL.position.set(0.13,3.34,0.28); g.add(eL);
+  const eR=eL.clone(); eR.position.x=-0.13; g.add(eR);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.40,10,8),mHair); hair.position.set(0,3.42,-0.05); hair.scale.set(1.05,1.10,1.05); g.add(hair);
+  // Crown
+  for(let i=0;i<7;i++){ const a=i/7*Math.PI*2; const sp=new THREE.Mesh(new THREE.ConeGeometry(0.07,0.36,4),mGold); sp.position.set(Math.cos(a)*0.32,3.74,Math.sin(a)*0.32); g.add(sp); }
+  const crownGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.14,0),mB(0xff3cff)); crownGem.position.set(0,3.78,0.30); g.add(crownGem);
+  // Arms (animated by _runPixielordAI). Each is a Group pivoting at the SHOULDER;
+  //   the cylinder hangs down, so rotating the group swings the whole arm.
+  const lArm=new THREE.Group(); const la=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.11,0.9,6),mSkin); la.position.y=-0.45; lArm.add(la); lArm.position.set(0.42,2.85,0); lArm.rotation.set(0.10,0,0.40); g.add(lArm);
+  const rArm=new THREE.Group(); const ra=la.clone(); rArm.add(ra); rArm.position.set(-0.42,2.85,0); rArm.rotation.set(0.15,0,-0.30); g.add(rArm);
+  // a309/a310 — the staff is HELD UPRIGHT in the right hand: parented to a `hand`
+  //   pivot at the end of the arm and extending UP (+Y) with the orb at the TOP,
+  //   like a proper wizard's staff. _runPixielordAI tips this hand pivot forward to
+  //   level the staff and point the orb at you on a cast, then returns it to vertical.
+  const hand=new THREE.Group(); hand.position.set(0,-0.92,0.10); rArm.add(hand);
+  const staff=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,1.55,6),mGold); staff.position.y=0.62; hand.add(staff);
+  const staffOrb =new THREE.Mesh(new THREE.SphereGeometry(0.24,10,8),mT(0xff3cff,0.90)); staffOrb.position.y=1.50; hand.add(staffOrb);
+  const staffGlow=new THREE.Mesh(new THREE.SphereGeometry(0.40,8,6),mT(0xb84dff,0.38)); staffGlow.position.y=1.50; hand.add(staffGlow);
+  g.userData.lArm=lArm; g.userData.rArm=rArm; g.userData.wandHand=hand;
+  // a309 — Four iridescent fairy wings on left/right PIVOT groups at the spine so
+  //   _runPixielordAI can flap them. Bigger wingspan (larger radius + wider spread).
+  const wings=new THREE.Group(); const SPINE=2.95;
+  const wingPivL=new THREE.Group(); wingPivL.position.set(0,SPINE,-0.20); wings.add(wingPivL);
+  const wingPivR=new THREE.Group(); wingPivR.position.set(0,SPINE,-0.20); wings.add(wingPivR);
+  function wing(piv, matw, sx, sy, px, py, rz){ const w=new THREE.Mesh(new THREE.CircleGeometry(1.25,14),matw); w.scale.set(sx,sy,1); w.position.set(px, py-SPINE, 0); w.rotation.z=rz; piv.add(w); return w; }
+  wing(wingPivL, mWing, 1.30, 1.80, 1.05, 3.00, -0.30);
+  wing(wingPivL, mWing2,1.05, 1.30, 0.92, 2.30, -0.62);
+  const wuR=wing(wingPivR, mWing, 1.30, 1.80, -1.05, 3.00, 0.30); wuR.scale.x*=-1;
+  const wlR=wing(wingPivR, mWing2,1.05, 1.30, -0.92, 2.30, 0.62); wlR.scale.x*=-1;
+  g.add(wings); g.userData.wings=wings; g.userData.wingPivL=wingPivL; g.userData.wingPivR=wingPivR;
+  // Dream aura
+  const aura=new THREE.Mesh(new THREE.SphereGeometry(1.6,10,8),mT(0xb84dff,0.10)); aura.position.y=2.00; g.add(aura);
+  _attachBipedAnim(g, null, null, lArm, rArm, torso);
+  g.scale.setScalar(3.3);
+  g.userData._builtRotY = g.rotation.y;
+  return g;
+}
+
   var ALIAS = { sanctuary_guardian:'ancient_guardian' };
   var TIER_ACCENT = { titan:0xff4d5e, elite:0xffcf4a, veteran:0x7dffb0, common:0x39d0ff };
   var RARITY_ACCENT = { common:0xb8c8d4, uncommon:0x39ff8a, rare:0x4ea8de, epic:0xc084fc,
@@ -21666,6 +21783,7 @@ function _attachRacePlayerSlots(g, raceIdx){
   var WEAPON_STANDIN = {};  // a246: all 20 former stubs now have real game meshes — no stand-ins needed
 
   var BOSS = {
+    lucidwilde_boss:{fn:'mkBossPixielord',accent:0xb84dff},
     forge_tyrant:{enemy:'brute',accent:0xff5520}, ancient_wyrm:{enemy:'eyexor',accent:0xaa44ff},
     hollow_reaper:{enemy:'wraith',accent:0x44ddff}, void_behemoth:{enemy:'elite',accent:0xff00ff},
     abacus_of_flesh:{enemy:'abacus_of_flesh',accent:0xcc1810}, overseer_of_discord:{enemy:'overseer_of_discord',accent:0xffd84a},
@@ -21760,6 +21878,7 @@ function _attachRacePlayerSlots(g, raceIdx){
       applyArmorTexturesToMesh(rbody, {}, getRaceSkinTex(ridx));
       return rbody;
     }
+    var _luc = _mkLucidMob(key); if(_luc) return _luc;
     return mkEnemy(ALIAS[key] || key);
   }
 

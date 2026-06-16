@@ -19758,6 +19758,69 @@ function buildWeaponMesh(itemId){
     var wgTip=new THREE.Mesh(new THREE.ConeGeometry(0.11,0.34,4),new THREE.MeshLambertMaterial({color:0x7a6038}));wgTip.position.y=2.45;g.add(wgTip);
     for(var wge=0;wge<5;wge++){var wgEm=new THREE.Mesh(new THREE.SphereGeometry(0.022,5,4),new THREE.MeshBasicMaterial({color:WDw,transparent:true,opacity:0.8}));wgEm.userData._gfxSeed=wge/5*Math.PI*2;wgEm.userData._gfxRad=0.18;wgEm.userData._gfxCy=1.6;_sO.push(wgEm);g.add(wgEm);}
     g.userData._gfxOrbits=_sO;g.userData._gfxSpins=_sS;g.userData._gfxPulses=_sP;g.userData._gfxFloats=_sF;
+  } else if(itemId==='xul_w_staff'){
+    // ── AEON PULSE STAFF — Xu harmonic staff: gold shaft, caged humming cyan core ──
+    var xsPm=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.12,6),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xsPm.rotation.x=Math.PI;xsPm.position.y=0.02;g.add(xsPm);
+    var xsSh=new THREE.Mesh(new THREE.CylinderGeometry(0.026,0.030,1.20,8),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xsSh.position.y=0.66;g.add(xsSh);
+    for(var xsi=0;xsi<3;xsi++){var xsB=new THREE.Mesh(new THREE.CylinderGeometry(0.034,0.034,0.03,8),new THREE.MeshLambertMaterial({color:0x6a5018}));xsB.position.y=0.18+xsi*0.10;g.add(xsB);}
+    for(var xsr=0;xsr<3;xsr++){var xsR=new THREE.Mesh(new THREE.TorusGeometry(0.040,0.010,5,12),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.7}));xsR.rotation.x=Math.PI/2;xsR.position.y=0.55+xsr*0.18;g.add(xsR);}
+    var xsCol=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.035,0.10,8),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xsCol.position.y=1.30;g.add(xsCol);
+    for(var xsc=0;xsc<4;xsc++){var xsa=xsc/4*Math.PI*2;var xsClaw=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.20,0.018),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xsClaw.position.set(Math.cos(xsa)*0.085,1.44,Math.sin(xsa)*0.085);xsClaw.rotation.set(Math.sin(xsa)*0.5,0,-Math.cos(xsa)*0.5);g.add(xsClaw);}
+    var xsCore=new THREE.Mesh(new THREE.OctahedronGeometry(0.10,0),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.9}));xsCore.position.y=1.46;g.add(xsCore);
+    var xsCoreI=new THREE.Mesh(new THREE.OctahedronGeometry(0.05,0),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95}));xsCoreI.position.y=1.46;g.add(xsCoreI);
+    var xsHalo=new THREE.Mesh(new THREE.TorusGeometry(0.15,0.012,6,18),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.6}));xsHalo.position.y=1.46;g.add(xsHalo);
+
+  } else if(itemId==='xul_w_maul'){
+    // ── XULCANIUM WARMAUL — two-handed gold maul, blocky head, cyan harmonic runes ──
+    var xmPm=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.07,0.10),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xmPm.position.y=0.04;g.add(xmPm);
+    var xmSh=new THREE.Mesh(new THREE.CylinderGeometry(0.040,0.046,1.00,8),new THREE.MeshLambertMaterial({color:0xb89028}));xmSh.position.y=0.56;g.add(xmSh);
+    for(var xmi=0;xmi<4;xmi++){var xmB=new THREE.Mesh(new THREE.CylinderGeometry(0.050,0.050,0.03,8),new THREE.MeshLambertMaterial({color:0x6a5018}));xmB.position.y=0.10+xmi*0.12;g.add(xmB);}
+    var xmCol=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.052,0.10,8),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xmCol.position.y=1.06;g.add(xmCol);
+    var xmHd=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.40,0.42),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xmHd.position.y=1.34;g.add(xmHd);
+    var xmTop=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.06,0.46),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xmTop.position.y=1.56;g.add(xmTop);
+    var xmBot=xmTop.clone();xmBot.position.y=1.12;g.add(xmBot);
+    for(var xmf=0;xmf<4;xmf++){var xma=xmf/4*Math.PI*2;var xmRune=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.02),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.55}));xmRune.position.set(Math.cos(xma)*0.22,1.34,Math.sin(xma)*0.22);xmRune.rotation.y=xma+Math.PI/2;g.add(xmRune);}
+    var xmSpk=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.18,4),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.85}));xmSpk.position.y=1.70;g.add(xmSpk);
+
+  } else if(itemId==='xul_w_blade'){
+    // ── GRAVITON SLICER — sleek one-handed gold tech blade, cyan gravity-warp edge ──
+    var xbPm=new THREE.Mesh(new THREE.OctahedronGeometry(0.05,0),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.9}));xbPm.position.y=0.04;g.add(xbPm);
+    var xbGr=new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.034,0.24,7),new THREE.MeshLambertMaterial({color:0x6a5018}));xbGr.position.y=0.16;g.add(xbGr);
+    for(var xbi=0;xbi<3;xbi++){var xbB=new THREE.Mesh(new THREE.CylinderGeometry(0.038,0.038,0.022,7),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xbB.position.y=0.07+xbi*0.07;g.add(xbB);}
+    var xbCg=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.05,0.07),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.35}));xbCg.position.y=0.30;g.add(xbCg);
+    var xbT1=new THREE.Mesh(new THREE.ConeGeometry(0.02,0.10,4),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.85}));xbT1.position.set(-0.18,0.34,0);xbT1.rotation.z=0.6;g.add(xbT1);
+    var xbT2=xbT1.clone();xbT2.position.x=0.18;xbT2.rotation.z=-0.6;g.add(xbT2);
+    var xbBl=new THREE.Mesh(new THREE.BoxGeometry(0.075,0.78,0.040),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xbBl.position.y=0.74;g.add(xbBl);
+    var xbEdge=new THREE.Mesh(new THREE.BoxGeometry(0.022,0.72,0.020),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.85}));xbEdge.position.set(0.040,0.73,0);g.add(xbEdge);
+    var xbCore=new THREE.Mesh(new THREE.BoxGeometry(0.016,0.66,0.016),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.7}));xbCore.position.y=0.74;g.add(xbCore);
+    var xbGem=new THREE.Mesh(new THREE.OctahedronGeometry(0.04,0),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.92}));xbGem.position.set(0,0.55,0.028);g.add(xbGem);
+    var xbTip=new THREE.Mesh(new THREE.ConeGeometry(0.038,0.16,4),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xbTip.position.y=1.20;g.add(xbTip);
+
+  } else if(itemId==='xul_w_lance'){
+    // ── HARMONIC LANCER — slim gold energy spear, narrow cyan spearhead, resonance rings ──
+    var xlPm=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.10,5),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xlPm.rotation.x=Math.PI;xlPm.position.y=0.02;g.add(xlPm);
+    var xlHa=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.026,1.05,7),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xlHa.position.y=0.60;g.add(xlHa);
+    for(var xli=0;xli<2;xli++){var xlB=new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.030,0.025,7),new THREE.MeshLambertMaterial({color:0x6a5018}));xlB.position.y=0.22+xli*0.10;g.add(xlB);}
+    var xlCol=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.030,0.09,8),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xlCol.position.y=1.14;g.add(xlCol);
+    for(var xlr=0;xlr<2;xlr++){var xlR=new THREE.Mesh(new THREE.TorusGeometry(0.06,0.010,5,14),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.7}));xlR.rotation.x=Math.PI/2;xlR.position.y=1.22+xlr*0.10;g.add(xlR);}
+    var xlHead=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.42,5),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.85}));xlHead.position.y=1.46;g.add(xlHead);
+    var xlCoreH=new THREE.Mesh(new THREE.ConeGeometry(0.022,0.36,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.9}));xlCoreH.position.y=1.45;g.add(xlCoreH);
+    var xlBase=new THREE.Mesh(new THREE.ConeGeometry(0.06,0.12,5),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x5a4410),emissiveIntensity:0.4}));xlBase.rotation.x=Math.PI;xlBase.position.y=1.30;g.add(xlBase);
+
+  } else if(itemId==='xul_w_cannon'){
+    // ── PRIME ZENITH CANNON — heavy gold/cyan energy cannon: body, charge chamber, barrel ──
+    var xcGrip=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.20,0.10),new THREE.MeshLambertMaterial({color:0x6a5018}));xcGrip.position.set(0,0.12,-0.06);xcGrip.rotation.x=0.25;g.add(xcGrip);
+    var xcBody=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.34,0.22),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xcBody.position.y=0.42;g.add(xcBody);
+    var xcPlate=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.10,0.24),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xcPlate.position.y=0.30;g.add(xcPlate);
+    var xcCham=new THREE.Mesh(new THREE.SphereGeometry(0.11,10,8),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.8}));xcCham.position.set(0,0.44,0.04);g.add(xcCham);
+    var xcChamI=new THREE.Mesh(new THREE.SphereGeometry(0.055,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.9}));xcChamI.position.set(0,0.44,0.04);g.add(xcChamI);
+    for(var xcr=0;xcr<2;xcr++){var xcR=new THREE.Mesh(new THREE.TorusGeometry(0.13,0.012,6,16),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.6}));xcR.position.set(0,0.44,0.04);xcR.rotation.y=xcr*0.8;g.add(xcR);}
+    var xcBar=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.090,0.62,10),new THREE.MeshLambertMaterial({color:0xd4a830,emissive:new THREE.Color(0x4a3810),emissiveIntensity:0.3}));xcBar.position.y=0.92;g.add(xcBar);
+    for(var xcb=0;xcb<3;xcb++){var xcBr=new THREE.Mesh(new THREE.CylinderGeometry(0.095,0.095,0.03,10),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xcBr.position.y=0.74+xcb*0.18;g.add(xcBr);}
+    for(var xcc=0;xcc<4;xcc++){var xca=xcc/4*Math.PI*2;var xcCh=new THREE.Mesh(new THREE.BoxGeometry(0.018,0.55,0.012),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.7}));xcCh.position.set(Math.cos(xca)*0.082,0.92,Math.sin(xca)*0.082);g.add(xcCh);}
+    var xcMuz=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.085,0.14,10),new THREE.MeshLambertMaterial({color:0xf0c850,emissive:new THREE.Color(0x6a5010),emissiveIntensity:0.4}));xcMuz.position.y=1.28;g.add(xcMuz);
+    var xcMuzGlow=new THREE.Mesh(new THREE.CylinderGeometry(0.10,0.10,0.04,10),new THREE.MeshBasicMaterial({color:0x3ce0ee,transparent:true,opacity:0.85}));xcMuzGlow.position.y=1.35;g.add(xcMuzGlow);
+
   } else {
     // True last-resort fallback — plain grey stick (should never appear now)
     var dbh2=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.16,0.04),mL(0x606060));dbh2.position.y=0.08;g.add(dbh2);

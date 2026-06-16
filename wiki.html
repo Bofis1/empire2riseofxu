@@ -159,6 +159,18 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .ost-card.sig .ost-title{color:var(--xu-gold);}
 .ost-desc{font-size:0.82rem;color:var(--xu-text);opacity:0.72;letter-spacing:0.02em;}
 .ost-glyph{font-size:1.25rem;opacity:0.28;}
+.ost-card{cursor:pointer;}
+.ost-play{font-size:1.05rem;color:var(--xu-cyan);opacity:0.6;min-width:1.9rem;text-align:center;transition:0.15s;}
+.ost-card:hover .ost-play{opacity:1;}
+.ost-card.sig .ost-play{color:var(--xu-gold);}
+.ost-card.playing{border-color:var(--xu-green);box-shadow:0 0 18px rgba(0,255,136,0.18);}
+.ost-card.playing::before{background:linear-gradient(to right,var(--xu-green),transparent);}
+.ost-card.playing .ost-play{color:var(--xu-green);opacity:1;}
+.ost-card.playing .ost-title{color:var(--xu-green);}
+.ost-bar{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.1rem;}
+.ost-bar .ost-head{margin:0;flex:1;min-width:240px;}
+.ost-vol{display:flex;align-items:center;gap:0.5rem;font-size:0.7rem;letter-spacing:0.12em;color:var(--xu-dim);white-space:nowrap;}
+.ost-vol input{accent-color:var(--xu-cyan);}
 /* ── 3D boss specimen previews (shared overlay canvas) ── */
 .boss-preview{position:relative;height:210px;margin:-1.4rem -1.4rem 1.1rem;overflow:hidden;
   border-bottom:1px solid rgba(255,34,68,0.18);
@@ -1009,7 +1021,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <div class="ach-grid" id="ach-grid"></div>
 </div>
 <div class="wiki-panel" id="panel-soundtrack">
-  <p class="ost-head">Every zone in Empire 2 has its own original score — generated live in pure Web Audio, no audio files. 29 tracks in all.</p>
+  <div class="ost-bar"><p class="ost-head">Every zone in Empire 2 has its own original score — generated live in pure Web Audio, no audio files. Click a track to play it in your browser; click again to stop.</p><label class="ost-vol">VOL<input id="ost-volume" type="range" min="0" max="100" value="80"></label></div>
   <div class="filter-bar"><input class="filter-search" id="ost-search" type="text" placeholder="Search the soundtrack by zone, title, or style..."></div>
   <div class="ost-list" id="ost-list"></div>
 </div></main>
@@ -1025,7 +1037,2104 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// ── embedded game MUSIC engine (verbatim from the game source) so the
+// Soundtrack tab can play each zone score live in the browser ──
+const MUSIC = (()=>{
+  let ctx = null, masterGain = null, reverbNode = null, longReverbNode = null;
+  let playing = false, currentTrack = null, scheduleTimer = null, loopCount = 0;
+
+  function ac(){ if(!ctx) ctx = new(window.AudioContext||window.webkitAudioContext)(); return ctx; }
+
+  function mg(){
+    if(!masterGain){ masterGain = ac().createGain(); masterGain.gain.value = 0; masterGain.connect(ac().destination); }
+    return masterGain;
+  }
+
+  function hardSilence(){
+    // Disconnect and discard master gain + reverbs so all orphaned scheduled nodes go silent immediately
+    if(masterGain){ try{masterGain.disconnect();}catch(e){} masterGain=null; }
+    if(reverbNode){ try{reverbNode.disconnect();}catch(e){} reverbNode=null; }
+    if(longReverbNode){ try{longReverbNode.disconnect();}catch(e){} longReverbNode=null; }
+  }
+
+  // ── REVERBS ──
+  function mkReverb(secs, decay){
+    const c = ac(), len = c.sampleRate * secs;
+    const buf = c.createBuffer(2, len, c.sampleRate);
+    for(let ch = 0; ch < 2; ch++){
+      const d = buf.getChannelData(ch);
+      for(let i = 0; i < len; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/len, decay||2.2);
+    }
+    const node = c.createConvolver(); node.buffer = buf;
+    node.connect(mg()); return node;
+  }
+  function getRev(){ if(!reverbNode) reverbNode = mkReverb(3.5, 2.0); return reverbNode; }
+  function getLongRev(){ if(!longReverbNode) longReverbNode = mkReverb(6.0, 1.4); return longReverbNode; }
+
+  // ── FADE ──
+  function fadeIn(dur, vol){ mg().gain.cancelScheduledValues(ac().currentTime); mg().gain.setValueAtTime(mg().gain.value, ac().currentTime); mg().gain.linearRampToValueAtTime(vol||0.22, ac().currentTime+dur); }
+  function fadeOut(dur){ mg().gain.cancelScheduledValues(ac().currentTime); mg().gain.setValueAtTime(mg().gain.value, ac().currentTime); mg().gain.linearRampToValueAtTime(0, ac().currentTime+dur); }
+
+  // ── FREQUENCY HELPER ──
+  function freq(note, oct){ const N={C:0,Cs:1,'C#':1,D:2,Ds:3,'D#':3,E:4,F:5,Fs:6,'F#':6,G:7,Gs:8,'G#':8,A:9,As:10,'A#':10,B:11}; const s=N[note]; return isFinite(s) ? 440*Math.pow(2,(s+(oct-4)*12-9)/12) : 440; }
+
+  // ── INSTRUMENT PRIMITIVES ──
+
+  // Lush detuned pad — Enya-width choir/synth feel
+  function pad(f, dur, vol, when, detune){
+    if(!isFinite(f) || !isFinite(dur) || !isFinite(vol)) return;
+    const c = ac(), t = when||c.currentTime;
+    [0, detune||7, -(detune||7)].forEach((det, i)=>{
+      const o = c.createOscillator(); o.type = i===0?'sine':'triangle';
+      o.frequency.value = f; o.detune.value = det;
+      const lfo = c.createOscillator(); lfo.frequency.value = 4.2+i*0.4;
+      const lfoG = c.createGain(); lfoG.gain.value = f*0.003;
+      lfo.connect(lfoG); lfoG.connect(o.frequency);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol*(i===0?1:0.4), t+dur*0.2);
+      g.gain.setValueAtTime(vol*(i===0?0.8:0.32), t+dur*0.65);
+      g.gain.linearRampToValueAtTime(0, t+dur);
+      o.connect(g); lfo.start(t); lfo.stop(t+dur+0.2);
+      const d = c.createGain(); d.gain.value=0.3; g.connect(d); d.connect(mg());
+      const w = c.createGain(); w.gain.value=0.7; g.connect(w); w.connect(getRev());
+      o.start(t); o.stop(t+dur+0.2);
+    });
+  }
+
+  // Ethereal shimmer — very high, very soft
+  function shimmer(f, dur, vol, when){
+    if(!isFinite(f) || !isFinite(dur) || !isFinite(vol)) return;
+    const c = ac(), t = when||c.currentTime;
+    const o = c.createOscillator(); o.type='sine'; o.frequency.value=f*2;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+dur*0.4); g.gain.linearRampToValueAtTime(0,t+dur);
+    o.connect(g); g.connect(getLongRev()); o.start(t); o.stop(t+dur+0.2);
+  }
+
+  // Deep sub bass — sine, filtered
+  function bass(f, dur, vol, when){
+    if(!isFinite(f) || !isFinite(dur) || !isFinite(vol)) return; // guard NaN/Infinity
+    const c = ac(), t = when||c.currentTime;
+    const o = c.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const lp = c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=300;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+dur*0.15); g.gain.setValueAtTime(vol*0.7,t+dur*0.7); g.gain.linearRampToValueAtTime(0,t+dur);
+    o.connect(lp); lp.connect(g); g.connect(mg()); o.start(t); o.stop(t+dur+0.1);
+  }
+
+  // Melodic lead — softened square with reverb
+  function lead(f, dur, vol, when){
+    if(!isFinite(f) || !isFinite(dur) || !isFinite(vol)) return;
+    const c = ac(), t = when||c.currentTime;
+    const o = c.createOscillator(); o.type='square'; o.frequency.value=f;
+    const lp = c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=f*3;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+0.08); g.gain.setValueAtTime(vol*0.75,t+dur*0.5); g.gain.linearRampToValueAtTime(0,t+dur*0.9);
+    o.connect(lp); lp.connect(g);
+    const d=c.createGain();d.gain.value=0.45;g.connect(d);d.connect(mg());
+    const w=c.createGain();w.gain.value=0.55;g.connect(w);w.connect(getRev());
+    o.start(t); o.stop(t+dur+0.1);
+  }
+
+  // Percussive hit — noise burst, short
+  function perc(freq2, dur, vol, when){
+    if(!isFinite(freq2) || !isFinite(dur) || !isFinite(vol) || dur<=0) return;
+    const c = ac(), t = when||c.currentTime;
+    const buf = c.createBuffer(1, Math.max(1, c.sampleRate*dur), c.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1)*Math.pow(1-i/d.length, 3);
+    const src = c.createBufferSource(); src.buffer=buf;
+    const bp = c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq2; bp.Q.value=1.2;
+    const g = c.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.connect(bp); bp.connect(g); g.connect(mg()); src.start(t); src.stop(t+dur+0.05);
+  }
+
+  // Arpeggio sweep — fast ascending notes
+  function arp(baseF, intervals, stepDur, vol, when){
+    const c = ac(), t = when||c.currentTime;
+    intervals.forEach((semi,i)=>{
+      const f = baseF*Math.pow(2,semi/12);
+      pad(f, stepDur*1.4, vol, t+i*stepDur, 4);
+    });
+  }
+
+  // ══════════════════════════════════════════════════════
+  // TRACK DEFINITIONS
+  // ══════════════════════════════════════════════════════
+
+  // ── LOBBY / MENU — A Dorian, 58bpm, dreamy Enya floating ──
+  // ── LOBBY / LOGIN — A Dorian, 58bpm, dreamy Enya floating ──
+  // Login screen, character select, race select
+  function scheduleLobby(startT){
+    const BPM=58, S=60/BPM/2;
+    [[['A',3],['E',4],['A',4]], [['G',3],['D',4],['G',4]], [['D',3],['A',3],['Fs',4]], [['E',3],['B',3],['G',4]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*20*S;
+      [a,b,cc].forEach(([n,o],j)=>pad(freq(n,o),20*S*1.1,0.05-j*0.008,t,j*5));
+    });
+    [[['A',2],20],[['G',2],20],[['D',2],20],[['E',2],20]].forEach(([n,s],i)=>bass(freq(n[0],n[1]),s*S*0.9,0.25,startT+i*s*S));
+    [[0,'A',5,4],[5,'G',5,3],[9,'E',5,5],[15,'A',4,6],[22,'D',5,4],[27,'E',5,3],[31,'Fs',5,8],
+     [40,'Fs',5,3],[44,'E',5,2],[47,'D',5,4],[52,'A',4,3],[56,'B',4,3],[60,'A',4,6],[67,'E',5,5],[77,'G',5,6]
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.88,0.10,startT+t*S));
+    [[0,'E',4,4],[5,'D',4,3],[9,'A',3,5],[15,'E',3,6],[22,'A',3,4],[31,'D',4,8],[40,'D',4,3],[60,'E',3,6],[73,'D',4,9]
+    ].forEach(([t,n,o,s])=>pad(freq(n,o),s*S*0.88,0.032,startT+t*S,8));
+    [[0,'A',5,8],[40,'Fs',5,8],[67,'E',5,8]].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.02,startT+t*S));
+    return 84*S;
+  }
+
+  // ── SERVER LOBBY — Am, 128 BPM, 2000s high-tech techno ──
+  // Battle network screen — high-tech, driving, year 2000 club energy
+  function scheduleServerLobby(startT){
+    const BPM=128, S=60/BPM/2;
+
+    // ── TECHNO KICK — sub thump with pitch drop ──
+    function tkick(t,g){
+      const c=ac(), vol=g||0.40;
+      const o=c.createOscillator(); o.type='sine';
+      o.frequency.setValueAtTime(160,t);
+      o.frequency.exponentialRampToValueAtTime(40,t+0.06);
+      const gn=c.createGain();
+      gn.gain.setValueAtTime(vol,t);
+      gn.gain.exponentialRampToValueAtTime(0.001,t+0.28);
+      o.connect(gn); gn.connect(mg()); o.start(t); o.stop(t+0.30);
+      perc(3000,0.012,vol*0.25,t);
+    }
+
+    function that(t,g){ perc(9000+Math.random()*3000,0.018,g||0.055,t); }
+    function ohat(t,g){ perc(8000,0.08,g||0.07,t); }
+    function clap(t,g){ perc(1800,0.06,g||0.18,t); perc(4000,0.04,0.10,t+0.006); perc(900,0.08,0.08,t+0.003); }
+
+    // ── ACID BASS — 303-style resonant sawtooth ──
+    function acid(f, dur, vol, when, cutoff, res){
+      const c=ac(), t=when||c.currentTime;
+      const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+      const lp=c.createBiquadFilter(); lp.type='lowpass';
+      lp.frequency.setValueAtTime(cutoff||200,t);
+      lp.frequency.exponentialRampToValueAtTime((cutoff||200)*3,t+dur*0.3);
+      lp.frequency.exponentialRampToValueAtTime(cutoff||200,t+dur*0.9);
+      lp.Q.value=res||14;
+      const gn=c.createGain();
+      gn.gain.setValueAtTime(0,t); gn.gain.linearRampToValueAtTime(vol,t+0.008);
+      gn.gain.setValueAtTime(vol*0.7,t+dur*0.6); gn.gain.linearRampToValueAtTime(0,t+dur*0.9);
+      o.connect(lp); lp.connect(gn); gn.connect(mg());
+      o.start(t); o.stop(t+dur+0.05);
+    }
+
+    // ── SUPERSAW STAB — detuned chord ──
+    function stab(f, dur, vol, when){
+      const c=ac(), t=when||c.currentTime;
+      [-14,-7,0,7,14].forEach(det=>{
+        const o=c.createOscillator(); o.type='sawtooth';
+        o.frequency.value=f; o.detune.value=det;
+        const lp=c.createBiquadFilter(); lp.type='lowpass';
+        lp.frequency.setValueAtTime(f*8,t);
+        lp.frequency.exponentialRampToValueAtTime(f*1.5,t+dur*0.4);
+        lp.Q.value=2;
+        const gn=c.createGain();
+        gn.gain.setValueAtTime(0,t); gn.gain.linearRampToValueAtTime(vol/5,t+0.01);
+        gn.gain.exponentialRampToValueAtTime(0.001,t+dur);
+        o.connect(lp); lp.connect(gn);
+        const w=c.createGain(); w.gain.value=0.35; gn.connect(w); w.connect(getRev());
+        const d=c.createGain(); d.gain.value=0.65; gn.connect(d); d.connect(mg());
+        o.start(t); o.stop(t+dur+0.05);
+      });
+    }
+
+    // ── SQUARE LEAD ──
+    function sqLead(f, dur, vol, when){
+      const c=ac(), t=when||c.currentTime;
+      const o=c.createOscillator(); o.type='square'; o.frequency.value=f;
+      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=f*4; lp.Q.value=3;
+      const gn=c.createGain();
+      gn.gain.setValueAtTime(0,t); gn.gain.linearRampToValueAtTime(vol,t+0.015);
+      gn.gain.setValueAtTime(vol*0.65,t+dur*0.4); gn.gain.linearRampToValueAtTime(0,t+dur*0.85);
+      o.connect(lp); lp.connect(gn);
+      const w=c.createGain(); w.gain.value=0.3; gn.connect(w); w.connect(getRev());
+      const d=c.createGain(); d.gain.value=0.7; gn.connect(d); d.connect(mg());
+      o.start(t); o.stop(t+dur+0.05);
+    }
+
+    // ── DRUMS — 8-bar loop ──
+    for(let bar=0; bar<8; bar++){
+      const b=startT+bar*16*S;
+      [0,4,8,12].forEach(s=>tkick(b+s*S));
+      clap(b+4*S); clap(b+12*S);
+      for(let h=0;h<16;h++) that(b+h*S, h%4===0?0.07:h%2===0?0.05:0.03);
+      ohat(b+2*S); ohat(b+10*S);
+      if(bar===3||bar===7){
+        [13,14,15].forEach(s=>clap(b+s*S,0.12));
+        tkick(b+14*S,0.28); tkick(b+15*S,0.22);
+      }
+    }
+
+    // ── ACID BASSLINE — Am, 303-style 16th pattern ──
+    const bassNotes=[
+      [0,'A',1,1,280,16],[1,'A',1,0.5,180,12],[2,'C',2,1,320,18],[3,'A',1,0.5,180,12],
+      [4,'E',2,1,300,16],[5,'E',2,0.5,180,12],[6,'G',2,1,260,14],[7,'E',2,0.5,160,10],
+      [8,'A',1,1,280,16],[9,'D',2,1,240,14],[10,'C',2,0.5,200,12],[11,'A',1,0.5,180,10],
+      [12,'G',1,1,260,16],[13,'A',1,0.5,180,12],[14,'C',2,1,300,18],[15,'E',2,1,320,16],
+    ];
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      bassNotes.forEach(([step,n,o,len,cut,res])=>{
+        const noteFreq = bar<4 ? freq(n,o) : freq(n,o)*1.5;
+        acid(noteFreq, len*S*0.75, 0.28, b+step*S, cut+(bar*8), res);
+      });
+    }
+
+    // ── SUPERSAW STABS — chord hits ──
+    [['A',4],['C',5],['E',5],['G',4],['A',4],['E',5],['C',5],['A',4]].forEach((note,i)=>{
+      const bar=Math.floor(i/2)*2, beat=(i%2)*8+4;
+      stab(freq(note[0],note[1]), 3*S, 0.22, startT+bar*16*S+beat*S);
+      stab(freq(note[0],note[1])*0.75, 3*S, 0.12, startT+bar*16*S+beat*S);
+    });
+
+    // ── ARP LEAD — 4 patterns, Am pentatonic ──
+    [[0,3,5,7,10,12,10,7,5,3,0,3,5,7,10,12],
+     [12,10,7,5,3,0,3,5,7,10,12,10,7,5,3,0],
+     [0,5,7,12,7,5,0,5,10,12,10,5,0,7,10,12],
+     [7,10,12,15,12,10,7,5,3,5,7,10,12,10,7,5],
+    ].forEach((pat,pi)=>{
+      pat.forEach((semi,i)=>sqLead(freq('A',4)*Math.pow(2,semi/12), S*0.75, 0.075, startT+(pi*32+i*2)*S));
+    });
+
+    // ── PADS — wide atmospheric backing ──
+    [[0,['A',3],['E',4]],[32,['C',3],['G',3]],
+     [64,['E',3],['B',3]],[96,['G',3],['D',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),32*S*1.05,0.022,startT+t*S,j*8));
+    });
+
+    // ── RISER SHIMMER ──
+    [[0,'A',6,16],[32,'E',6,16],[64,'A',6,16],[96,'E',7,16],
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.014,startT+t*S));
+
+    return 128*S;
+  }
+
+  // ── XU OUTPOST — D minor, 120bpm, industrial technological
+  //    Heavy kick drum, synth stabs, mechanical arps, factory energy ──
+  function scheduleOutpost(startT){
+    const BPM=120, S=60/BPM/2; // 16th note steps at 120bpm
+
+    // ── KICK DRUM — four-on-the-floor with extra hits ──
+    // Kick = low perc burst (50hz, long decay)
+    function kick(t){ perc(55, 0.18, 0.28, t); perc(80, 0.05, 0.18, t); }
+    // Snare = mid noise burst
+    function snare(t){ perc(220, 0.09, 0.16, t); perc(800, 0.06, 0.10, t+0.01); }
+    // Hi-hat = short high burst
+    function hat(t,g){ perc(6000+Math.random()*2000, 0.03, g||0.06, t); }
+    // 2-bar drum loop × 4 = 8 bars
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      // Kick on 1, 3, 5(+), 9, 11, 13
+      [0,8,10,12].forEach(s=>kick(b+s*S));
+      // Snare on 4, 12
+      [4,12].forEach(s=>snare(b+s*S));
+      // Offbeat snare ghost notes
+      [6,14].forEach(s=>perc(300,0.05,0.05,b+s*S));
+      // 16th hat pattern with accent on 8ths
+      for(let h=0;h<16;h++) hat(b+h*S, h%2===0?0.07:0.04);
+      // Industrial clang accent every 2 bars
+      if(bar%2===0) perc(400+bar*30, 0.12, 0.08, b+2*S);
+    }
+
+    // ── SYNTH BASS — punchy, rhythmic ──
+    // Power riff: D–D–F–G pattern
+    [[0,'D',2,1.8],[2,'D',2,0.8],[4,'F',2,1.8],[6,'G',2,1.8],
+     [8,'D',2,1.8],[10,'As',2,0.8],[12,'C',3,1.8],[14,'D',3,0.8],
+     [16,'D',2,1.8],[18,'D',2,0.8],[20,'F',2,1.8],[22,'A',2,1.8],
+     [24,'G',2,1.8],[26,'F',2,0.8],[28,'D',2,3.5],
+     [32,'As',1,1.8],[34,'As',1,0.8],[36,'C',2,1.8],[38,'D',2,1.8],
+     [40,'As',1,1.8],[42,'G',1,0.8],[44,'As',1,3.5],
+     [48,'F',1,1.8],[50,'G',1,0.8],[52,'As',1,1.8],[54,'C',2,1.8],
+     [56,'D',2,1.8],[58,'F',2,0.8],[60,'G',2,1.8],[62,'As',2,1.8],
+     [64,'D',2,1.8],[66,'D',2,0.8],[68,'F',2,1.8],[70,'G',2,1.8],
+     [72,'D',2,1.8],[74,'As',2,0.8],[76,'C',3,1.8],[78,'D',3,0.8],
+     [80,'D',2,1.8],[82,'F',2,0.8],[84,'A',2,1.8],[86,'G',2,0.8],
+     [88,'D',2,1.8],[90,'C',2,0.8],[92,'As',1,1.8],[94,'D',2,2.0],
+     [96,'As',1,1.8],[98,'G',1,0.8],[100,'F',1,1.8],[102,'G',1,0.8],
+     [104,'As',1,1.8],[106,'C',2,0.8],[108,'D',2,1.8],[110,'F',2,0.8],
+     [112,'G',2,1.8],[114,'As',2,0.8],[116,'D',2,1.8],[118,'D',2,0.8],
+     [120,'D',2,1.8],[122,'F',2,0.8],[124,'G',2,1.8],[126,'D',2,2.5],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.85,0.30,startT+t*S));
+
+    // ── SYNTH STAB CHORDS — sharp, electronic, industrial ──
+    // Stabs hit on beat with short decay
+    [[0,['D',3],['F',3],['A',3]],[8,['D',3],['F',3],['A',3]],
+     [16,['F',3],['As',3],['C',4]],[24,['G',3],['As',3],['D',4]],
+     [32,['As',2],['D',3],['F',3]],[40,['As',2],['D',3],['F',3]],
+     [48,['F',3],['A',3],['C',4]],[56,['G',3],['C',4],['E',4]],
+     [64,['D',3],['F',3],['A',3]],[72,['D',3],['G',3],['As',3]],
+     [80,['F',3],['As',3],['D',4]],[88,['G',3],['C',4],['G',4]],
+     [96,['As',2],['F',3],['As',3]],[104,['C',3],['G',3],['C',4]],
+     [112,['D',3],['A',3],['D',4]],[120,['F',3],['A',3],['C',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o])=>pad(freq(n,o),3*S,0.055,startT+t*S,1));
+      // Echo stab 1 step later, quieter
+      notes.forEach(([n,o])=>pad(freq(n,o),2*S,0.022,startT+(t+2)*S,2));
+    });
+
+    // ── MECHANICAL ARP — fast, digital, relentless ──
+    arp(freq('D',4), [0,3,7,12,7,3], S*0.8, 0.028, startT);
+    arp(freq('F',4), [0,3,7,10,7,3], S*0.8, 0.028, startT+32*S);
+    arp(freq('As',3),[0,4,7,12,7,4], S*0.8, 0.028, startT+64*S);
+    arp(freq('G',3), [0,3,7,10,7,3], S*0.8, 0.028, startT+96*S);
+
+    // ── LEAD SYNTH — sharp sawtooth melody, sci-fi feel ──
+    [[0,'A',5,2],[3,'D',5,1],[4,'F',5,3],[8,'G',5,2],[11,'A',5,2],[14,'F',5,3],
+     [18,'D',5,2],[20,'C',5,2],[23,'D',5,2],[26,'F',5,2],[30,'G',5,4],
+     [36,'A',5,2],[38,'C',6,2],[40,'D',6,4],[46,'C',6,2],[50,'A',5,2],[54,'G',5,4],
+     [60,'F',5,2],[62,'G',5,1],[64,'A',5,3],[68,'As',5,2],[70,'A',5,1.5],[72,'G',5,4],
+     [78,'F',5,2],[80,'D',5,2],[83,'F',5,2],[86,'G',5,2],[90,'A',5,2],[94,'D',6,6],
+     [102,'C',6,2],[104,'As',5,2],[106,'A',5,2],[108,'G',5,2],[110,'F',5,2],[114,'D',5,6],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.78,0.11,startT+t*S));
+
+    // ── SUB BASS PULSE — adds low-end weight ──
+    for(let i=0;i<16;i++) bass(freq('D',1),2*S,0.15,startT+i*8*S);
+
+    return 128*S; // 8 bars of 16 steps
+  }
+
+  // ── VOID WASTES — Eb minor, 52bpm, dark ambient dread
+  //    Unsettling, dissonant drones, ghost whispers, Enya in shadow ──
+  function scheduleVoid(startT){
+    const BPM=52, S=60/BPM/2;
+    // Slow menacing drone chords — Ebm, Cb, Gb, Bb (diminished feel)
+    [[['Ds',2],['As',2],['Ds',3]], [['Cs',2],['Gs',2],['Cs',3]], [['Fs',2],['Cs',3],['Fs',3]], [['As',2],['F',3],['As',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*22*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        // Use slightly detuned/clashing intervals for dread
+        pad(freq(n,o),22*S*1.2, 0.048-j*0.008, t, j*12+6);
+        if(j===0) shimmer(freq(n,o+1),22*S,0.015,t); // ghostly octave shimmer
+      });
+    });
+    // Sub bass — very slow, deep rumble
+    [['Ds',1],['Cs',1],['Fs',1],['As',1]].forEach(([n,o],i)=>bass(freq(n,o),22*S*0.95,0.35,startT+i*22*S));
+    // Whisper melody — very sparse, high register, unsettling intervals
+    [[0,'Ds',6,5],[10,'F',6,4],[18,'Cs',6,6],[28,'As',5,5],[38,'Gs',5,4],[46,'Ds',6,7],
+     [55,'Cs',6,4],[62,'F',6,5],[70,'Gs',5,8]
+    ].forEach(([t,n,o,s])=>{
+      shimmer(freq(n,o),s*S,0.018,startT+t*S);
+      if(t%20===0) lead(freq(n,o-1),s*S*0.7,0.055,startT+t*S);
+    });
+    // Occasional low perc hit — distant, muffled
+    [8,30,52,72].forEach(t=>perc(60,0.4,0.12,startT+t*S));
+    // Unsettling arp — minor second cluster
+    arp(freq('Ds',4),[0,1,6,13,6,1],S*3,0.018,startT+20*S);
+    arp(freq('Cs',4),[0,1,6,13,6,1],S*3,0.018,startT+60*S);
+    return 88*S;
+  }
+
+  // ── XU CITADEL — F# minor, 88bpm, epic war march
+  //    Thunderous, driving, heroic-dark — Utopia final battle energy ──
+  function scheduleCitadel(startT){
+    // ══ XU CITADEL — Em, 145 BPM, industrial military high-tech ══
+    // Hard kick/snare, metallic hats, driving synth bass, aggressive arp
+    const BPM=145, S=60/BPM/2;
+
+    function kick(t){ perc(52,0.22,0.38,t); perc(85,0.06,0.22,t+0.008); }
+    function snare(t,g){ perc(180,0.10,g||0.22,t); perc(3500,0.04,0.12,t+0.008); perc(900,0.03,0.08,t+0.005); }
+    function hat(t,g){ perc(9000+Math.random()*3000,0.018,g||0.06,t); }
+    function openHat(t){ perc(8500,0.08,0.10,t); perc(11000,0.05,0.07,t+0.01); }
+    function clap(t){ perc(1200,0.06,0.14,t); perc(2400,0.04,0.10,t+0.008); }
+
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,4,8,12].forEach(s=>kick(b+s*S));
+      [4,12].forEach(s=>{ snare(b+s*S,0.26); clap(b+s*S+0.01); });
+      for(let h=0;h<16;h++) hat(b+h*S,h%4===0?0.09:h%2===0?0.06:0.04);
+      if(bar%2===1) [2,6,10,14].forEach(s=>openHat(b+s*S));
+      if(bar>=4){ kick(b+2*S); kick(b+14*S); }
+      if(bar===7){ [0,1,2,3].forEach(s=>snare(b+(12+s)*S,0.10)); }
+    }
+
+    [[0,'E',1,1.8],[2,'E',1,0.8],[3,'G',2,1.5],[4,'A',2,1.8],[6,'G',2,1.0],
+     [8,'E',1,1.8],[10,'E',1,0.8],[11,'B',1,1.5],[12,'D',2,1.8],[14,'A',1,1.0],
+     [16,'G',1,1.8],[18,'G',1,0.8],[19,'B',1,1.5],[20,'D',2,1.8],[22,'E',2,1.0],
+     [24,'A',1,1.8],[26,'A',1,0.8],[28,'G',1,1.8],[30,'E',1,1.0],
+     [32,'E',1,1.8],[34,'E',1,0.8],[35,'G',2,1.5],[36,'B',2,1.8],[38,'A',2,1.0],
+     [40,'D',2,1.8],[42,'D',2,0.8],[43,'F',2,1.5],[44,'E',2,1.8],[46,'D',2,1.0],
+     [48,'C',2,1.8],[50,'B',1,0.8],[52,'G',1,1.8],[54,'E',1,1.0],
+     [56,'A',1,1.8],[58,'G',1,0.8],[60,'E',1,1.8],[62,'D',2,1.0],
+     [64,'E',1,1.8],[66,'E',1,0.8],[68,'G',2,1.5],[70,'A',2,1.8],[72,'B',2,1.0],
+     [74,'G',2,1.8],[76,'D',2,0.8],[78,'E',2,1.8],[80,'G',2,1.8],
+     [82,'A',2,0.8],[84,'B',2,1.8],[86,'G',2,1.0],[88,'E',2,1.8],[90,'D',2,1.0],
+     [92,'C',2,1.8],[94,'B',1,0.8],[96,'E',1,1.8],[98,'E',1,0.8],
+     [100,'G',2,1.5],[102,'A',2,1.8],[104,'B',2,1.8],[106,'A',2,0.8],
+     [108,'G',2,1.8],[110,'E',2,0.8],[112,'D',2,1.8],[114,'B',1,1.0],
+     [116,'A',1,1.8],[118,'G',1,0.8],[120,'E',1,1.8],[122,'Fs',2,1.0],
+     [124,'G',2,1.8],[126,'B',2,0.8],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.75,0.40,startT+t*S));
+
+    [[0,['E',3],['B',3],['E',4]],[16,['G',3],['D',4],['G',4]],
+     [32,['A',3],['E',4],['A',4]],[48,['D',3],['A',3],['D',4]],
+     [64,['E',3],['B',3],['E',4]],[80,['C',3],['G',3],['C',4]],
+     [96,['B',2],['Fs',3],['B',3]],[112,['E',3],['B',3],['E',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),8*S*0.9,0.038-j*0.005,startT+t*S,j*2));
+    });
+
+    arp(freq('E',4),[0,3,7,12,15,19,24],S*0.5,0.028,startT);
+    arp(freq('B',3),[0,4,7,12,16,19,24],S*0.5,0.026,startT+32*S);
+    arp(freq('A',3),[0,3,7,12,14,19,21],S*0.5,0.026,startT+64*S);
+    arp(freq('G',3),[0,4,7,12,16,19,24],S*0.5,0.024,startT+96*S);
+    arp(freq('E',5),[0,2,5,7,9,12],S*0.38,0.018,startT+16*S);
+    arp(freq('D',5),[0,2,5,7,9,12],S*0.38,0.016,startT+80*S);
+
+    [[0,'E',5,1.5],[2,'G',5,1.5],[4,'A',5,2],[6,'B',5,1],[7,'A',5,1],
+     [8,'E',6,3],[11,'D',6,1],[12,'B',5,2],[14,'A',5,2],
+     [16,'G',5,1.5],[18,'A',5,1.5],[20,'B',5,3],[23,'A',5,1],
+     [24,'E',6,4],[28,'D',6,2],[30,'B',5,2],
+     [32,'E',5,1],[33,'Fs',5,1],[34,'G',5,2],[36,'A',5,2],[38,'B',5,1],[39,'Cs',6,1],
+     [40,'D',6,3],[43,'B',5,1],[44,'A',5,2],[46,'G',5,2],
+     [48,'E',6,2],[50,'D',6,1.5],[52,'B',5,1.5],[54,'A',5,2],[56,'G',5,4],
+     [60,'A',5,2],[62,'B',5,2],
+     [64,'E',5,1.5],[66,'G',5,1.5],[68,'A',5,2],[70,'B',5,2],
+     [72,'Cs',6,3],[75,'B',5,1],[76,'A',5,2],[78,'G',5,2],
+     [80,'E',6,4],[84,'D',6,2],[86,'Cs',6,2],
+     [88,'B',5,1.5],[90,'A',5,1.5],[92,'G',5,2],[94,'E',5,2],
+     [96,'Fs',5,1],[97,'G',5,1],[98,'A',5,2],[100,'B',5,2],[102,'Cs',6,2],
+     [104,'E',6,3],[107,'D',6,1],[108,'B',5,2],[110,'A',5,2],
+     [112,'G',5,2],[114,'A',5,2],[116,'B',5,2],[118,'Cs',6,2],
+     [120,'E',6,6],[126,'D',6,2],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.78,0.16,startT+t*S));
+
+    shimmer(freq('E',6),6*S,0.018,startT+24*S);
+    shimmer(freq('B',6),5*S,0.015,startT+56*S);
+    shimmer(freq('E',7),8*S,0.020,startT+80*S);
+    shimmer(freq('Cs',7),6*S,0.016,startT+120*S);
+
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // PATROL ZONE — Am, 110 BPM, tense military march
+  // Urgent snare rolls, driving bass, radio-chatter arps
+  // ══════════════════════════════════════════════════
+  function schedulePatrol(startT){
+    const BPM=110, S=60/BPM/2;
+    function kick(t){ perc(52,0.20,0.30,t); perc(75,0.06,0.18,t+0.01); }
+    function snare(t,g){ perc(200,0.10,g||0.18,t); perc(1200,0.05,0.10,t+0.01); }
+    function hat(t,g){ perc(7000+Math.random()*2000,0.025,g||0.06,t); }
+    function rimshot(t){ perc(900,0.03,0.09,t); perc(300,0.02,0.05,t); }
+    // Military snare roll pattern — urgent, forward-driving
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,8].forEach(s=>kick(b+s*S));
+      [4,12].forEach(s=>snare(b+s*S,0.22));
+      // Snare ghost rolls on bars 3,7
+      if(bar%4===2||bar%4===3){
+        [2,3,6,7,10,11,14,15].forEach(s=>snare(b+s*S,0.06));
+      }
+      for(let h=0;h<16;h++) hat(b+h*S,h%4===0?0.08:0.04);
+      // Rimshots for tension
+      [1,5,9,13].forEach(s=>rimshot(b+s*S));
+    }
+    // Driving bass — Am power groove
+    [[0,'A',1,2],[2,'A',1,0.8],[3,'C',2,1.5],[4,'E',2,2],[6,'G',2,1.5],
+     [8,'A',1,2],[10,'A',1,0.8],[11,'C',2,1.5],[12,'D',2,2],[14,'F',2,1.5],
+     [16,'E',2,2],[18,'E',2,0.8],[19,'G',2,1.5],[20,'A',2,2],[22,'C',3,1.5],
+     [24,'D',2,2],[26,'F',2,0.8],[28,'E',2,2],[30,'A',1,2],
+     [32,'A',1,2],[34,'C',2,0.8],[36,'E',2,2],[38,'G',2,1.5],
+     [40,'F',2,2],[42,'E',2,0.8],[44,'D',2,2],[46,'A',1,2],
+     [48,'C',2,2],[50,'E',2,1.5],[52,'G',2,2],[54,'A',2,1.5],
+     [56,'F',2,2],[58,'G',2,0.8],[60,'A',2,2],[62,'E',2,2],
+     [64,'A',1,2],[66,'A',1,0.8],[68,'C',2,2],[70,'E',2,1.5],
+     [72,'G',2,2],[74,'A',2,0.8],[76,'C',3,2],[78,'A',1,2],
+     [80,'D',2,2],[82,'F',2,1.5],[84,'E',2,2],[86,'D',2,1.5],
+     [88,'C',2,2],[90,'E',2,1.5],[92,'A',1,4],[94,'A',1,2],
+     [96,'G',2,2],[98,'F',2,0.8],[100,'E',2,2],[102,'D',2,1.5],
+     [104,'C',2,2],[106,'A',1,0.8],[108,'E',2,2],[110,'A',1,2],
+     [112,'A',1,2],[114,'C',2,0.8],[116,'E',2,2],[118,'A',2,2],
+     [120,'G',2,2],[122,'F',2,0.8],[124,'E',2,2],[126,'A',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.82,0.32,startT+t*S));
+    // Tense pad chords — Am, G, F, E
+    [[0,['A',3],['C',4],['E',4]],[16,['G',3],['B',3],['D',4]],
+     [32,['F',3],['A',3],['C',4]],[48,['E',3],['Gs',3],['B',3]],
+     [64,['A',3],['E',4],['A',4]],[80,['G',3],['D',4],['G',4]],
+     [96,['F',3],['C',4],['F',4]],[112,['E',3],['B',3],['E',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.05,0.04-j*0.005,startT+t*S,j*4));
+    });
+    // Radio-chatter digital arp — rapid, military signal
+    arp(freq('A',4),[0,3,7,10,12,10,7,3],S*0.65,0.022,startT);
+    arp(freq('E',4),[0,3,7,12,15,12,7,3],S*0.65,0.022,startT+32*S);
+    arp(freq('C',4),[0,4,7,12,14,12,7,4],S*0.65,0.022,startT+64*S);
+    arp(freq('G',3),[0,3,7,10,12,10,7,3],S*0.65,0.022,startT+96*S);
+    // Urgent lead melody — tense, forward-moving
+    [[0,'A',5,1.5],[2,'C',6,2],[4,'E',6,3],[8,'D',6,2],[10,'C',6,1.5],[12,'A',5,4],
+     [18,'G',5,2],[20,'A',5,2],[22,'C',6,3],[26,'B',5,2],[28,'A',5,4],
+     [34,'E',6,2],[36,'D',6,2],[38,'C',6,1.5],[40,'A',5,3],[44,'G',5,4],
+     [50,'A',5,2],[52,'E',6,3],[56,'D',6,2],[58,'C',6,2],[60,'A',5,4],
+     [66,'C',6,2],[68,'D',6,2],[70,'E',6,2],[72,'G',6,4],[78,'E',6,6],
+     [86,'D',6,2],[88,'C',6,2],[90,'A',5,2],[92,'G',5,2],[94,'E',5,4],
+     [100,'A',5,2],[102,'C',6,2],[104,'E',6,3],[108,'D',6,2],[110,'C',6,2],[112,'A',5,4],
+     [118,'G',5,2],[120,'E',6,3],[124,'A',6,4],[126,'E',6,4],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.78,0.12,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // ASHLANDS — Dm, 130 BPM, volcanic industrial rage
+  // Thunderous low drums, distorted bass, fire-breathing lead
+  // ══════════════════════════════════════════════════
+  function scheduleAshlands(startT){
+    const BPM=130, S=60/BPM/2;
+    function kick(t){ perc(40,0.22,0.35,t); perc(65,0.08,0.22,t+0.008); }
+    function stomp(t){ perc(45,0.28,0.40,t); perc(90,0.12,0.25,t+0.01); perc(200,0.06,0.12,t+0.015); }
+    function hat(t,g){ perc(5000+Math.random()*3000,0.02,g||0.05,t); }
+    // Punishing stomp pattern — volcanic tremors
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,4,8,12].forEach(s=>kick(b+s*S));        // 4 on floor
+      [2,6,10,14].forEach(s=>stomp(b+s*S));       // offbeat stomp
+      for(let h=0;h<16;h++) hat(b+h*S,h%2===0?0.07:0.03);
+      // Extra kick bursts on bars 4,8
+      if(bar%4===3)[1,3,5,7].forEach(s=>kick(b+s*S));
+    }
+    // Distorted sub bass — Dm rage
+    [[0,'D',1,2],[1,'D',1,0.8],[2,'F',1,1.5],[3,'A',1,1.5],
+     [4,'C',2,2],[5,'As',1,0.8],[6,'G',1,1.5],[7,'F',1,2],
+     [8,'D',1,2],[9,'D',1,0.8],[10,'E',1,1.5],[11,'F',1,2],
+     [12,'G',1,2],[13,'A',1,0.8],[14,'As',1,1.5],[15,'A',1,1.5],
+     [16,'D',1,2],[17,'F',1,0.8],[18,'A',1,2],[19,'C',2,1.5],
+     [20,'As',1,2],[21,'G',1,0.8],[22,'F',1,2],[23,'D',1,2],
+     [24,'G',1,2],[25,'A',1,0.8],[26,'As',1,2],[27,'G',1,1.5],
+     [28,'F',1,2],[29,'E',1,0.8],[30,'D',1,4],[31,'D',1,0.8],
+     [32,'D',1,2],[33,'C',2,0.8],[34,'As',1,2],[35,'G',1,1.5],
+     [36,'F',1,2],[37,'D',1,0.8],[38,'C',2,2],[39,'D',1,2],
+     [40,'G',1,2],[41,'A',1,0.8],[42,'As',1,2],[43,'C',2,1.5],
+     [44,'D',2,2],[45,'C',2,0.8],[46,'As',1,2],[47,'A',1,2],
+     [48,'F',1,2],[49,'G',1,0.8],[50,'A',1,2],[51,'As',1,1.5],
+     [52,'C',2,2],[53,'D',2,0.8],[54,'F',2,2],[55,'D',2,2],
+     [56,'G',2,2],[57,'F',2,0.8],[58,'D',2,2],[59,'C',2,2],
+     [60,'As',1,2],[61,'G',1,0.8],[62,'F',1,2],[63,'D',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.80,0.38,startT+t*S));
+    // Scorched pads — Dm, Bb, F, C
+    [[0,['D',3],['F',3],['A',3]],[16,['As',2],['D',3],['F',3]],
+     [32,['F',2],['A',2],['C',3]],[48,['C',3],['E',3],['G',3]],
+     [64,['D',3],['A',3],['D',4]],[80,['G',2],['As',2],['D',3]],
+     [96,['As',2],['F',3],['As',3]],[112,['A',2],['E',3],['A',3]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.0,0.05,startT+t*S,j*2));
+    });
+    // Fire arp — rapid rising triplets
+    arp(freq('D',4),[0,3,5,7,10,12,15,12,10,7,5,3],S*0.55,0.025,startT);
+    arp(freq('F',4),[0,3,5,7,10,12,15,12,10,7,5,3],S*0.55,0.025,startT+32*S);
+    arp(freq('As',3),[0,4,7,10,12,15,17,15,12,10,7,4],S*0.55,0.025,startT+64*S);
+    arp(freq('G',3),[0,3,7,10,14,17,14,10,7,3],S*0.55,0.025,startT+96*S);
+    // Molten lead — aggressive, fire-breathing
+    [[0,'F',5,2],[2,'A',5,1.5],[3,'C',6,2],[6,'D',6,3],[10,'C',6,1.5],[12,'As',5,4],
+     [18,'F',5,2],[20,'G',5,2],[22,'A',5,2],[24,'C',6,3],[28,'As',5,4],
+     [34,'D',6,2],[36,'F',6,3],[40,'E',6,2],[42,'D',6,2],[44,'C',6,2],[46,'A',5,2],
+     [50,'F',5,2],[52,'A',5,2],[54,'C',6,3],[58,'D',6,2],[60,'F',6,6],
+     [68,'D',6,2],[70,'C',6,2],[72,'As',5,2],[74,'A',5,2],[76,'G',5,2],[78,'F',5,4],
+     [84,'A',5,2],[86,'C',6,2],[88,'D',6,2],[90,'F',6,3],[94,'E',6,2],
+     [96,'D',6,2],[98,'C',6,2],[100,'As',5,2],[102,'A',5,2],[104,'G',5,2],[106,'F',5,4],
+     [112,'D',6,2],[114,'F',6,3],[118,'G',6,2],[120,'F',6,2],[122,'D',6,2],[124,'A',5,4],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.72,0.14,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // FUNGAL DEPTHS — Cm, 90 BPM, bioluminescent dream
+  // Pulsing organic bass, glitching arps, eerie shimmer melody
+  // ══════════════════════════════════════════════════
+  // SUNKEN SANDS — D Phrygian Dominant, 95 BPM
+  // Arabian desert — tabla, sitar melody, modal bass
+  // Lean build: ~200 nodes to avoid audio thread lag
+  // ══════════════════════════════════════════════════
+  function scheduleDesert(startT){
+    const BPM=95, S=60/BPM/2;
+
+    // Lightweight sitar voice — single osc + lowpass, no LFO
+    function sitar(f, dur, vol, when){
+      const c=ac(), t=when||c.currentTime;
+      const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=f*3.5;
+      const g=c.createGain();
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol,t+0.025);
+      g.gain.setValueAtTime(vol*0.55,t+dur*0.45);
+      g.gain.linearRampToValueAtTime(0,t+dur*0.85);
+      o.connect(lp); lp.connect(g);
+      const w=c.createGain(); w.gain.value=0.45; g.connect(w); w.connect(getRev());
+      const d=c.createGain(); d.gain.value=0.55; g.connect(d); d.connect(mg());
+      o.start(t); o.stop(t+dur+0.05);
+    }
+
+    // ── TABLA — one perc() call per hit, 4-bar loop ──
+    function dha(t,g){  perc(80,0.18,g||0.26,t); }
+    function tin(t,g){  perc(2200,0.04,g||0.09,t); }
+    function na(t,g){   perc(900,0.06,g||0.07,t); }
+
+    for(let rep=0; rep<2; rep++){
+      for(let bar=0; bar<4; bar++){
+        const b = startT + (rep*4+bar)*16*S;
+        dha(b+0*S,0.28); tin(b+2*S,0.08); na(b+3*S,0.06);
+        dha(b+4*S,0.20); tin(b+6*S,0.08); na(b+7*S,0.06);
+        dha(b+8*S,0.25); tin(b+10*S,0.09);na(b+11*S,0.06);
+        dha(b+12*S,0.18);tin(b+14*S,0.09);na(b+15*S,0.07);
+        if(bar===1){ na(b+0*S,0.10); tin(b+4*S,0.07); na(b+8*S,0.09); tin(b+12*S,0.08); }
+        if(bar===3){ dha(b+2*S,0.22); dha(b+6*S,0.20); dha(b+10*S,0.22); }
+      }
+    }
+
+    // ── BASS — ~30 notes, D Phrygian Dom ──
+    [[0,'D',1,4],[4,'C',2,2],[6,'As',1,2],[8,'G',1,2],
+     [10,'A',1,2],[12,'G',1,2],[14,'D',1,2],
+     [16,'Ds',2,4],[20,'C',2,2],[22,'As',1,2],[24,'G',1,2],
+     [26,'A',1,2],[28,'D',1,4],
+     [32,'G',1,4],[36,'A',1,2],[38,'G',1,2],[40,'F',1,2],
+     [42,'As',1,2],[44,'D',2,4],
+     [48,'D',1,4],[52,'C',2,2],[54,'As',1,2],[56,'G',1,2],
+     [58,'A',1,2],[60,'D',1,4],
+     [64,'D',1,4],[68,'Ds',2,2],[70,'C',2,2],[72,'As',1,2],
+     [74,'A',1,2],[76,'G',1,2],[78,'D',1,2],
+     [80,'D',1,4],[84,'G',1,2],[86,'A',1,2],[88,'As',1,2],
+     [90,'G',1,2],[92,'D',1,4],
+     [96,'G',1,4],[100,'A',1,2],[102,'D',2,4],[106,'C',2,2],
+     [108,'As',1,2],[110,'D',1,4],
+     [112,'D',1,4],[116,'Ds',2,2],[118,'C',2,2],[120,'As',1,2],
+     [122,'A',1,2],[124,'D',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.80,0.26,startT+t*S));
+
+    // ── PADS — 8 chords, one per 16 steps ──
+    [[0, ['D',3],['A',3],['D',4]],
+     [16,['Ds',3],['G',3],['As',3]],
+     [32,['G',3],['As',3],['D',4]],
+     [48,['A',3],['D',4],['A',4]],
+     [64,['D',3],['Fs',3],['A',3]],
+     [80,['Ds',3],['G',3],['C',4]],
+     [96,['G',3],['D',4],['G',4]],
+     [112,['A',3],['Ds',4],['A',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.05,0.036-j*0.005,startT+t*S,j*5));
+    });
+
+    // ── SITAR PHRASES — 4 short phrases, lightweight single osc ──
+    // D Phrygian Dom: D Eb F# G A Bb C
+    [[0,1,4,5,7,10,11,12],     // phrase 1 ascending
+     [12,11,10,7,5,4,1,0],     // phrase 2 descending
+     [0,4,7,10,12,10,7,4],     // phrase 3 pentatonic
+     [0,1,5,7,11,12,11,7],     // phrase 4 ornamental
+    ].forEach((ph, pi)=>{
+      const baseF = freq('D', pi<2 ? 4 : 3);
+      ph.forEach((semi,i)=>{
+        sitar(baseF*Math.pow(2,semi/12), S*1.4, 0.028, startT+(pi*32+i*2)*S);
+      });
+    });
+
+    // ── LEAD MELODY — ~24 notes, sinuous Phrygian Dom ──
+    [[0,'D',5,2],[2,'Ds',5,1],[3,'D',5,1],[4,'C',5,2],
+     [6,'As',4,2],[8,'G',4,3],[12,'A',4,2],[14,'C',5,2],
+     [16,'D',5,3],[20,'Ds',5,1.5],[22,'D',5,1],[24,'C',5,2],
+     [26,'As',4,2],[28,'G',4,2],[30,'A',4,2],
+     [32,'D',5,2],[34,'F',5,2],[36,'G',5,3],[40,'A',5,2],
+     [42,'G',5,2],[44,'F',5,2],[46,'D',5,2],
+     [48,'Ds',5,1.5],[50,'D',5,1],[52,'C',5,2],[54,'As',4,2],
+     [56,'G',4,2],[58,'A',4,1.5],[60,'C',5,2],[62,'D',5,2],
+     [64,'F',5,2],[66,'G',5,2],[68,'A',5,3],[72,'G',5,2],
+     [74,'F',5,2],[76,'D',5,2],
+     [80,'As',4,2],[82,'A',4,2],[84,'G',4,2],[86,'A',4,1.5],[88,'C',5,2],
+     [90,'D',5,2],[92,'F',5,2],[94,'G',5,2],
+     [96,'A',5,2],[98,'C',6,2],[100,'D',6,3],[104,'C',6,2],[106,'As',5,2],
+     [108,'A',5,2],[110,'G',5,2],[112,'F',5,2],[114,'D',5,2],
+     [116,'Ds',5,1.5],[118,'D',5,1],[120,'C',5,2],[122,'As',4,2],[124,'A',4,2],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.78,0.09,startT+t*S));
+
+    // ── SHIMMER — 4 sparse hits only ──
+    [[16,'D',6,8],[48,'A',5,8],[80,'G',6,6],[112,'D',6,8],
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.014,startT+t*S));
+
+    return 128*S;
+  }
+  function scheduleFungal(startT){
+    const BPM=90, S=60/BPM/2;
+    function kick(t){ perc(50,0.18,0.28,t); perc(80,0.05,0.16,t+0.01); }
+    function pulse(t,g){ perc(120,0.12,g||0.14,t); perc(300,0.04,0.07,t+0.02); }
+    function hat(t,g){ perc(4000+Math.random()*1500,0.03,g||0.05,t); }
+    // Organic, breathing drum pattern
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,6,10].forEach(s=>kick(b+s*S));
+      [4,12].forEach(s=>pulse(b+s*S,0.18));
+      [2,8,14].forEach(s=>pulse(b+s*S,0.07));
+      for(let h=0;h<16;h++) if(h%3!==2) hat(b+h*S,h%6===0?0.07:0.03);
+    }
+    // Bioluminescent bass — Cm, slow pulse
+    [[0,'C',2,4],[4,'C',2,1.5],[6,'Ds',2,2],[8,'G',2,4],[12,'As',2,2],[14,'G',2,2],
+     [16,'F',2,4],[20,'G',2,1.5],[22,'As',2,2],[24,'C',3,4],[28,'As',2,2],[30,'G',2,2],
+     [32,'Ds',2,4],[36,'F',2,1.5],[38,'G',2,2],[40,'As',2,4],[44,'C',3,2],[46,'As',2,2],
+     [48,'G',2,4],[52,'F',2,1.5],[54,'Ds',2,2],[56,'C',2,4],[60,'G',2,2],[62,'F',2,2],
+     [64,'C',2,4],[66,'Ds',2,1.5],[68,'G',2,2],[70,'As',2,2],[72,'C',3,4],[74,'As',2,2],
+     [76,'G',2,3],[79,'F',2,1],[80,'Ds',2,4],[84,'C',2,1.5],[86,'Ds',2,2],[88,'F',2,4],
+     [92,'G',2,2],[94,'As',2,2],[96,'C',3,4],[100,'As',2,1.5],[102,'G',2,2],[104,'F',2,4],
+     [108,'G',2,2],[110,'As',2,2],[112,'C',3,4],[116,'G',2,2],[118,'Ds',2,2],[120,'C',2,8],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.88,0.28,startT+t*S));
+    // Glowing pad chords — Cm, Ab, Eb, Bb
+    [[0,['C',3],['Ds',3],['G',3]],[16,['As',2],['D',3],['F',3]],
+     [32,['Gs',2],['C',3],['Ds',3]],[48,['As',2],['F',3],['As',3]],
+     [64,['C',3],['G',3],['C',4]],[80,['Gs',2],['Ds',3],['Gs',3]],
+     [96,['F',2],['C',3],['F',3]],[112,['G',2],['D',3],['G',3]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.1,0.055-j*0.006,startT+t*S,j*5));
+    });
+    // Glitching bio arp — irregular, organic
+    arp(freq('C',4),[0,3,7,10,15,10,7,3,0,3,5,7],S*0.9,0.020,startT);
+    arp(freq('Gs',3),[0,4,7,11,15,11,7,4,0,4,7,11],S*0.9,0.020,startT+32*S);
+    arp(freq('As',3),[0,3,7,10,14,10,7,3],S*0.9,0.020,startT+64*S);
+    arp(freq('F',3),[0,4,7,12,16,12,7,4],S*0.9,0.020,startT+96*S);
+    // Eerie bioluminescent melody — floaty, alien, beautiful
+    [[0,'C',5,3],[4,'Ds',5,2],[6,'G',5,4],[11,'As',5,2],[14,'G',5,4],
+     [20,'F',5,2],[22,'Ds',5,2],[24,'C',5,4],[28,'G',4,4],
+     [34,'As',4,2],[36,'C',5,2],[38,'Ds',5,2],[40,'G',5,4],[46,'F',5,2],
+     [50,'Ds',5,4],[56,'C',5,3],[60,'As',4,5],
+     [68,'G',5,3],[72,'As',5,2],[74,'C',6,3],[78,'As',5,5],
+     [86,'G',5,2],[88,'F',5,2],[90,'Ds',5,2],[92,'C',5,4],[96,'G',4,4],
+     [102,'C',5,2],[104,'Ds',5,2],[106,'G',5,3],[110,'As',5,2],[114,'G',5,2],[118,'F',5,4],
+     [124,'Ds',5,2],[126,'C',5,6],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.82,0.10,startT+t*S));
+    // Shimmer layer — bioluminescent sparkle
+    [[8,'C',6,6],[24,'G',5,8],[48,'Ds',5,6],[72,'As',5,8],[96,'G',6,6],[120,'C',6,8]
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.018,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // FROSTVEIL TUNDRA — Bm, 75 BPM, frozen desolation
+  // Slow ethereal pads, crystal arps, haunting high melody
+  // ══════════════════════════════════════════════════
+  function scheduleFrostveil(startT){
+    const BPM=75, S=60/BPM/2;
+    function kick(t){ perc(48,0.20,0.30,t); }
+    function snowcrunch(t){ perc(2000+Math.random()*1000,0.04,0.06,t); }
+    function hat(t,g){ perc(9000+Math.random()*2000,0.02,g||0.04,t); }
+    // Sparse, icy drum pattern — long spaces, cold
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,12].forEach(s=>kick(b+s*S));
+      [4,8].forEach(s=>perc(150,0.08,0.10,b+s*S));
+      for(let h=0;h<16;h+=2) hat(b+h*S,h%8===0?0.06:0.03);
+      // Snow crunch textures
+      [1,5,9,13].forEach(s=>snowcrunch(b+s*S));
+    }
+    // Glacial bass — Bm, slow movement
+    [[0,'B',1,8],[8,'A',1,6],[14,'G',1,2],
+     [16,'Fs',1,8],[24,'E',1,6],[30,'D',2,2],
+     [32,'B',1,8],[40,'Cs',2,6],[46,'D',2,2],
+     [48,'E',2,8],[56,'Fs',2,6],[62,'A',2,2],
+     [64,'B',1,8],[72,'G',1,6],[78,'A',1,2],
+     [80,'Fs',1,8],[88,'E',1,6],[94,'D',1,2],
+     [96,'B',1,8],[104,'A',1,4],[108,'Fs',1,4],
+     [112,'G',1,8],[120,'A',1,4],[124,'B',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.92,0.25,startT+t*S));
+    // Frozen pad chords — Bm, G, D, A
+    [[0,['B',2],['D',3],['Fs',3]],[16,['G',2],['B',2],['D',3]],
+     [32,['D',3],['Fs',3],['A',3]],[48,['A',2],['Cs',3],['E',3]],
+     [64,['B',2],['Fs',3],['B',3]],[80,['G',2],['D',3],['G',3]],
+     [96,['E',2],['B',2],['E',3]],[112,['Fs',2],['A',2],['Cs',3]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.15,0.06-j*0.007,startT+t*S,j*6));
+    });
+    // Crystal arp — high, glassy, sparse
+    arp(freq('B',5),[0,3,7,11,14,11,7,3],S*1.1,0.018,startT);
+    arp(freq('D',5),[0,4,7,12,16,12,7,4],S*1.1,0.018,startT+32*S);
+    arp(freq('Fs',5),[0,3,7,10,14,10,7,3],S*1.1,0.018,startT+64*S);
+    arp(freq('A',4),[0,4,7,11,14,11,7,4],S*1.1,0.018,startT+96*S);
+    // Haunting frozen melody — sparse, echoing in the cold
+    [[0,'Fs',5,4],[6,'B',5,4],[12,'A',5,4],[18,'Fs',5,4],
+     [24,'D',5,4],[30,'E',5,4],[36,'Fs',5,8],
+     [46,'G',5,4],[52,'A',5,4],[56,'B',5,4],[62,'Cs',6,4],
+     [68,'D',6,6],[76,'B',5,4],[82,'A',5,4],[88,'Fs',5,8],
+     [98,'E',5,4],[104,'D',5,4],[108,'E',5,4],[112,'Fs',5,4],
+     [118,'A',5,4],[122,'B',5,4],[126,'Fs',5,4],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.85,0.11,startT+t*S));
+    // Shimmer crown — frozen light refracting
+    [[0,'B',6,12],[32,'Fs',6,12],[64,'D',6,12],[96,'A',6,12]
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.022,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // WYVERN WASTES — Bm, 138 BPM, primal hunting ground
+  // Heavy tribal war drums, bone-deep bass, savage hunting horn lead
+  // Low growling drones, savage rhythmic intensity
+  // ══════════════════════════════════════════════════
+  function scheduleWyvernWastes(startT){
+    const BPM=138, S=60/BPM/2;
+
+    // Heavy primal drums
+    function boom(t){ perc(36,0.30,0.50,t); perc(65,0.14,0.28,t+0.009); }
+    function thud(t,g){ perc(52,0.22,g||0.40,t); perc(95,0.10,0.20,t+0.010); }
+    function crack(t,g){ perc(250,0.14,g||0.28,t); perc(1800,0.06,0.14,t+0.008); perc(3200,0.03,0.08,t+0.012); }
+    function hat(t,g){ perc(7000+Math.random()*3000,0.016,g||0.050,t); }
+    function roar(t){ perc(28,0.35,0.60,t); perc(55,0.18,0.35,t+0.015); perc(90,0.08,0.18,t+0.025); }
+
+    // Tribal pattern — boom every 2 beats, heavy thud offbeats, crack backbeat
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      // Boom on 1 and 3
+      [0,8].forEach(s=>boom(b+s*S));
+      // Thud on every beat
+      [2,4,6,10,12,14].forEach(s=>thud(b+s*S,0.25));
+      // Crack on 2 and 4 (heavy backbeat)
+      [4,12].forEach(s=>crack(b+s*S,0.32));
+      // Fast 16th hat
+      for(let h=0;h<16;h++) hat(b+h*S, h%4===0?0.08:0.03);
+      // Roar hit on bar 4 and 8 — deep earth shake
+      if(bar%4===3) roar(b+14*S);
+      // Syncopated extra thud fills in bars 2,4,6,8
+      if(bar%2===1) [1,3,5,7,9,11,13,15].forEach(s=>thud(b+s*S,0.08));
+    }
+
+    // Bone-deep growling bass — Bm hunting riff
+    [[0,'B',1,4],[2,'B',1,0.8],[3,'D',2,1.2],[4,'F#',2,2],[6,'A',2,1.2],[7,'G',2,1.0],
+     [8,'B',1,2],[10,'D',2,0.8],[11,'F#',2,1.5],[12,'E',2,2],[14,'A',1,1.2],
+     [16,'G',2,2],[18,'F#',2,0.8],[20,'D',2,1.5],[22,'B',1,2],
+     [24,'A',1,2],[26,'A',1,0.8],[28,'G',2,1.5],[30,'B',1,2],
+     [32,'B',1,4],[34,'D',2,1.5],[36,'F#',2,2],[38,'B',2,1.5],
+     [40,'A',2,2],[42,'G',2,1.2],[44,'F#',2,2],[46,'E',2,1.5],
+     [48,'D',2,2],[50,'B',1,0.8],[52,'A',1,1.5],[54,'G',2,2],
+     [56,'F#',2,2],[58,'E',2,1.2],[60,'D',2,2],[62,'B',1,3],
+     [64,'B',1,4],[66,'D',2,1.5],[68,'F#',2,2],[70,'A',2,1.5],
+     [72,'G',2,2],[74,'F#',2,1.2],[76,'E',2,2],[78,'D',2,1.5],
+     [80,'B',1,2],[82,'A',1,0.8],[84,'G',2,1.5],[86,'B',1,2],
+     [88,'F#',2,2],[90,'E',2,1.2],[92,'D',2,2],[94,'B',1,2],
+     [96,'A',1,2],[98,'G',2,1.5],[100,'F#',2,2],[102,'D',2,1.5],
+     [104,'B',1,4],[106,'D',2,1.5],[108,'F#',2,2],[110,'A',2,1.5],
+     [112,'G',2,2],[114,'F#',2,1.2],[116,'E',2,2],[118,'D',2,1.5],
+     [120,'B',1,4],[122,'A',1,1.2],[124,'G',2,2],[126,'B',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.85,0.38,startT+t*S));
+
+    // Dark Bm power pads — ancient hunting ground atmosphere
+    [[0,['B',1],['D',2],['F#',2]],[16,['A',1],['E',2],['A',2]],
+     [32,['G',1],['D',2],['G',2]],[48,['F#',1],['A',1],['C#',2]],
+     [64,['B',1],['F#',2],['B',2]],[80,['A',1],['E',2],['A',2]],
+     [96,['G',1],['B',1],['D',2]],[112,['F#',1],['A',1],['D',2]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.02,0.045-j*0.008,startT+t*S,j*5));
+    });
+
+    // Hunting horn arp — rapid Bm predator pattern
+    arp(freq('B',3), [0,3,7,5,3,0,3,7], S*0.50, 0.028, startT);
+    arp(freq('A',3), [0,3,5,7,5,3,0,3], S*0.50, 0.028, startT+32*S);
+    arp(freq('G',3), [0,2,5,7,5,2,0,2], S*0.50, 0.028, startT+64*S);
+    arp(freq('F#',3),[0,3,7,10,7,3,0,3],S*0.50, 0.028, startT+96*S);
+
+    // Savage hunting horn lead — primal, aggressive melody
+    [[0,'B',4,2],[2,'D',5,1],[3,'F#',5,2],[5,'B',5,1],[6,'A',5,2],[8,'G',5,3],
+     [11,'F#',5,1],[12,'E',5,2],[14,'D',5,2],
+     [16,'B',4,2],[18,'D',5,1],[19,'F#',5,1],[20,'A',5,2],[22,'G',5,2],
+     [24,'F#',5,1],[25,'E',5,1],[26,'D',5,2],[28,'B',4,4],
+     [32,'B',4,2],[34,'F#',5,1],[35,'A',5,1],[36,'B',5,2],[38,'D',6,2],
+     [40,'C#',6,1],[41,'B',5,1],[42,'A',5,2],[44,'G',5,4],
+     [48,'F#',5,2],[50,'E',5,1],[51,'D',5,1],[52,'B',4,2],[54,'A',4,2],
+     [56,'G',4,2],[58,'F#',4,2],[60,'B',4,4],
+     [64,'B',4,3],[67,'D',5,1],[68,'F#',5,2],[70,'B',5,2],
+     [72,'A',5,3],[75,'G',5,1],[76,'F#',5,2],[78,'E',5,2],
+     [80,'D',5,2],[82,'B',4,1],[83,'A',4,1],[84,'G',4,2],[86,'F#',4,2],
+     [88,'B',4,4],[92,'D',5,2],[94,'F#',5,2],
+     [96,'B',5,2],[98,'A',5,1],[99,'G',5,1],[100,'F#',5,2],[102,'E',5,2],
+     [104,'D',5,2],[106,'B',4,1],[107,'A',4,1],[108,'G',4,2],[110,'F#',4,2],
+     [112,'B',4,3],[115,'D',5,1],[116,'F#',5,2],[118,'B',5,2],
+     [120,'A',5,2],[122,'G',5,2],[124,'F#',5,2],[126,'B',4,4],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.75,0.14,startT+t*S));
+
+    // Bone-rattle shimmer on key hits
+    [[0,'B',3,4],[16,'A',3,4],[32,'G',3,4],[48,'F#',3,4],
+     [64,'B',3,4],[80,'A',3,4],[96,'G',3,4],[112,'F#',3,4],
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.018,startT+t*S));
+
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════
+  // ANCIENT REALM — Em, 95 BPM, lost civilization wonder
+  // Orchestral pads, ancient drums, mystical lead
+  // ══════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════
+  // SANCTUARY — Dm, 140 BPM, militant war drums + ancient power
+  // Heavy kick pattern, snare rolls, driving bass, triumphant lead
+  // ══════════════════════════════════════════════════
+  function scheduleSanctuary(startT){
+    const BPM=140, S=60/BPM/2;
+    function kick(t){ perc(42,0.24,0.38,t); perc(70,0.10,0.22,t+0.008); perc(120,0.05,0.12,t+0.012); }
+    function stomp(t){ perc(48,0.30,0.42,t); perc(90,0.12,0.24,t+0.01); }
+    function snare(t,g){ perc(220,0.12,g||0.22,t); perc(1400,0.06,0.12,t+0.008); perc(2800,0.03,0.06,t+0.012); }
+    function hat(t,g){ perc(8000+Math.random()*2000,0.018,g||0.055,t); }
+    function rimshot(t){ perc(1000,0.04,0.10,t); perc(350,0.03,0.07,t); }
+    // Militant drum pattern — 4 on floor + heavy snare backbeat + rolling fills
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      // Kick on every beat (4-on-floor)
+      [0,4,8,12].forEach(s=>kick(b+s*S));
+      // Heavy stomp offbeats
+      [2,6,10,14].forEach(s=>stomp(b+s*S));
+      // Snare backbeat (2 and 4)
+      [4,12].forEach(s=>snare(b+s*S,0.28));
+      // Snare ghost rolls on last 2 bars
+      if(bar%4>=2) [1,2,3,5,6,7,9,10,11,13,14,15].forEach(s=>snare(b+s*S,0.06));
+      // Fast 16th hat pattern
+      for(let h=0;h<16;h++) hat(b+h*S,h%2===0?0.09:0.04);
+      // Rimshots for urgency
+      [1,3,9,11].forEach(s=>rimshot(b+s*S));
+    }
+    // Driving bass — Dm power riff
+    [[0,'D',1,2],[2,'D',1,0.8],[3,'F',1,1.5],[4,'A',1,2],[6,'C',2,1.5],
+     [8,'D',1,2],[10,'A',1,0.8],[11,'C',2,1.5],[12,'D',2,2],[14,'F',2,1.5],
+     [16,'C',1,2],[18,'C',1,0.8],[20,'Ds',1,2],[22,'G',1,1.5],
+     [24,'As',1,2],[26,'F',1,0.8],[28,'G',1,2],[30,'D',1,2],
+     [32,'D',1,2],[34,'F',1,1.5],[36,'A',1,2],[38,'D',2,1.5],
+     [40,'C',1,2],[42,'Ds',1,1.5],[44,'G',1,2],[46,'A',1,2],
+     [48,'As',1,2],[50,'A',1,0.8],[52,'G',1,2],[54,'F',1,1.5],
+     [56,'E',1,2],[58,'G',1,1.5],[60,'A',1,2],[62,'D',1,2],
+     [64,'D',1,2],[66,'D',1,0.8],[68,'F',1,2],[70,'A',1,1.5],
+     [72,'C',2,2],[74,'As',1,1.5],[76,'A',1,2],[78,'G',1,2],
+     [80,'F',1,2],[82,'A',1,1.5],[84,'D',2,2],[86,'C',2,1.5],
+     [88,'As',1,2],[90,'G',1,0.8],[92,'A',1,2],[94,'D',1,2],
+     [96,'D',1,2],[98,'F',1,1.5],[100,'A',1,2],[102,'D',2,1.5],
+     [104,'C',2,2],[106,'A',1,1.5],[108,'G',1,2],[110,'F',1,2],
+     [112,'E',1,2],[114,'G',1,1.5],[116,'A',1,2],[118,'D',1,4],
+     [120,'D',1,2],[122,'F',1,1.5],[124,'A',1,2],[126,'D',2,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.80,0.36,startT+t*S));
+    // Power chord pads — Dm, Bb, C, A
+    [[0,['D',3],['F',3],['A',3]],[16,['As',2],['D',3],['F',3]],
+     [32,['C',3],['E',3],['G',3]],[48,['A',2],['Cs',3],['E',3]],
+     [64,['D',3],['A',3],['D',4]],[80,['As',2],['F',3],['As',3]],
+     [96,['C',3],['G',3],['C',4]],[112,['A',2],['E',3],['A',3]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.02,0.05-j*0.006,startT+t*S,j*3));
+    });
+    // Fast militant arp
+    arp(freq('D',4),[0,3,7,12,14,12,7,3],S*0.55,0.025,startT);
+    arp(freq('A',3),[0,3,7,10,12,10,7,3],S*0.55,0.025,startT+32*S);
+    arp(freq('F',4),[0,4,7,12,15,12,7,4],S*0.55,0.025,startT+64*S);
+    arp(freq('C',4),[0,3,7,10,14,10,7,3],S*0.55,0.025,startT+96*S);
+    // Triumphant lead melody
+    [[0,'D',6,2],[2,'F',6,2],[4,'A',6,3],[8,'D',7,4],
+     [14,'C',6,2],[16,'D',6,2],[18,'F',6,2],[20,'A',6,4],
+     [26,'G',6,2],[28,'A',6,4],[32,'F',6,2],[34,'E',6,2],[36,'D',6,4],
+     [40,'C',6,2],[42,'D',6,2],[44,'F',6,4],[48,'A',6,4],[54,'D',7,8],
+     [64,'D',6,2],[66,'A',6,2],[68,'D',7,3],[72,'C',7,4],
+     [78,'As',6,2],[80,'A',6,2],[82,'G',6,2],[84,'F',6,4],
+     [88,'E',6,2],[90,'D',6,2],[92,'C',6,2],[94,'D',6,4],
+     [96,'F',6,2],[98,'A',6,2],[100,'D',7,3],[104,'C',7,2],[106,'A',6,2],[108,'G',6,4],
+     [112,'F',6,2],[114,'A',6,2],[116,'D',7,3],[120,'A',6,2],[122,'F',6,2],[124,'D',6,8],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.75,0.14,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════════
+  // DRAGON LAIR — Em, 160 BPM, relentless dragon battle
+  // Thunderous war drums, blazing bass, screaming lead melody
+  // ══════════════════════════════════════════════════════
+  function scheduleDragonLair(startT){
+    const BPM=160, S=60/BPM/2;
+    function kick(t){ perc(38,0.28,0.45,t); perc(65,0.14,0.28,t+0.006); perc(100,0.08,0.15,t+0.01); }
+    function boom(t){ perc(35,0.35,0.55,t); perc(55,0.18,0.35,t+0.008); perc(90,0.10,0.20,t+0.012); }
+    function snare(t,g){ perc(250,0.14,g||0.28,t); perc(1600,0.07,0.14,t+0.006); perc(3200,0.04,0.08,t+0.01); }
+    function hat(t,g){ perc(9000+Math.random()*2000,0.015,g||0.06,t); }
+    function crash(t){ perc(6000,0.04,0.18,t); perc(4000,0.03,0.14,t+0.02); }
+    // Relentless 160BPM war drums — kick every beat, brutal snare backbeat
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      // Kick on every beat (4-on-floor) + extra on offbeats in later bars
+      [0,4,8,12].forEach(s=>kick(b+s*S));
+      // Boom on every offbeat
+      [2,6,10,14].forEach(s=>boom(b+s*S));
+      // Heavy snare 2 and 4
+      [4,12].forEach(s=>snare(b+s*S,0.35));
+      // Snare ghost rolls — constant rolling fills
+      for(let s=0;s<16;s++) if(s%2!==0) snare(b+s*S,0.05+Math.random()*0.04);
+      // Fast 32nd hat pattern
+      for(let h=0;h<16;h++) hat(b+h*S,h%4===0?0.10:h%2===0?0.06:0.03);
+      // Crash on bar starts
+      if(bar%2===0) crash(b);
+      // Extra kick bursts on bars 4 and 8 for intensity
+      if(bar%4===3)[1,3,5,7,9,11].forEach(s=>kick(b+s*S));
+    }
+    // BLAZING bass — Em power riff, relentless drive
+    [[0,'E',1,1],[1,'E',1,0.5],[2,'G',1,1],[3,'As',1,0.8],
+     [4,'B',1,1],[5,'B',1,0.5],[6,'As',1,0.8],[7,'G',1,0.5],
+     [8,'E',1,1],[9,'E',1,0.5],[10,'Ds',1,0.8],[11,'E',1,1],
+     [12,'Fs',1,0.8],[13,'G',1,0.5],[14,'As',1,1],[15,'B',1,0.8],
+     [16,'E',1,1],[17,'E',1,0.5],[18,'G',1,1],[19,'As',1,0.8],
+     [20,'B',1,1],[21,'Cs',2,0.8],[22,'D',2,1],[23,'E',2,0.8],
+     [24,'Ds',2,1],[25,'D',2,0.5],[26,'Cs',2,0.8],[27,'B',1,1],
+     [28,'As',1,0.8],[29,'G',1,0.5],[30,'Fs',1,0.8],[31,'E',1,1],
+     [32,'E',1,1],[33,'E',1,0.5],[34,'G',1,1],[35,'B',1,0.8],
+     [36,'E',2,1],[37,'D',2,0.8],[38,'Cs',2,1],[39,'B',1,0.8],
+     [40,'As',1,1],[41,'G',1,0.5],[42,'Fs',1,0.8],[43,'E',1,1],
+     [44,'Ds',1,0.8],[45,'E',1,0.5],[46,'Fs',1,0.8],[47,'G',1,1],
+     [48,'As',1,1],[49,'B',1,0.5],[50,'Cs',2,0.8],[51,'D',2,1],
+     [52,'E',2,1],[53,'D',2,0.5],[54,'Cs',2,0.8],[55,'B',1,1],
+     [56,'As',1,0.8],[57,'G',1,0.5],[58,'Fs',1,0.8],[59,'E',1,1],
+     [60,'E',1,1],[61,'Ds',1,0.5],[62,'E',1,0.8],[63,'G',1,1],
+     [64,'As',1,1],[65,'B',1,0.5],[66,'Cs',2,0.8],[67,'E',2,1],
+     [68,'D',2,0.8],[69,'Cs',2,0.5],[70,'B',1,0.8],[71,'As',1,1],
+     [72,'G',1,1],[73,'Fs',1,0.5],[74,'E',1,0.8],[75,'Ds',1,1],
+     [76,'E',1,1],[77,'E',1,0.5],[78,'Fs',1,0.8],[79,'G',1,1],
+     [80,'As',1,1],[81,'B',1,0.5],[82,'As',1,0.8],[83,'G',1,1],
+     [84,'Fs',1,0.8],[85,'E',1,0.5],[86,'Ds',1,0.8],[87,'E',1,1],
+     [88,'G',1,1],[89,'As',1,0.5],[90,'B',1,0.8],[91,'Cs',2,1],
+     [92,'E',2,1],[93,'D',2,0.8],[94,'Cs',2,0.8],[95,'B',1,1],
+     [96,'As',1,1],[97,'G',1,0.5],[98,'E',1,1],[99,'Ds',1,0.8],
+     [100,'E',1,1],[101,'E',1,0.5],[102,'Fs',1,0.8],[103,'G',1,1],
+     [104,'As',1,1],[105,'B',1,0.5],[106,'E',2,1],[107,'D',2,0.8],
+     [108,'Cs',2,1],[109,'B',1,0.8],[110,'As',1,0.8],[111,'G',1,1],
+     [112,'Fs',1,1],[113,'E',1,0.5],[114,'Ds',1,0.8],[115,'E',1,1],
+     [116,'G',1,0.8],[117,'As',1,0.5],[118,'B',1,0.8],[119,'E',2,2],
+     [120,'Ds',2,1],[121,'E',2,0.5],[122,'Fs',2,0.8],[123,'G',2,1],
+     [124,'As',1,1],[125,'G',1,0.5],[126,'Fs',1,0.8],[127,'E',1,2],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.75,0.40,startT+t*S));
+    // Power chord pads — Em, C, G, D, Am — massive wall of sound
+    [[0,['E',3],['G',3],['B',3]],[16,['C',3],['E',3],['G',3]],
+     [32,['G',2],['D',3],['G',3]],[48,['D',3],['Fs',3],['A',3]],
+     [64,['E',3],['B',3],['E',4]],[80,['C',3],['G',3],['C',4]],
+     [96,['As',2],['F',3],['As',3]],[112,['G',2],['B',2],['D',3]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.02,0.06-j*0.008,startT+t*S,j*2));
+    });
+    // Blazing fast arp — 160BPM sixteenth notes, dragon scale run
+    arp(freq('E',4),[0,3,7,10,12,15,12,10],S*0.45,0.030,startT);
+    arp(freq('B',3),[0,3,7,12,15,12,7,3],S*0.45,0.030,startT+32*S);
+    arp(freq('G',3),[0,4,7,12,16,12,7,4],S*0.45,0.030,startT+64*S);
+    arp(freq('As',3),[0,3,7,10,14,10,7,3],S*0.45,0.030,startT+96*S);
+    // SCREAMING lead melody — heroic battle theme, high register
+    [[0,'E',6,1],[1,'Fs',6,0.5],[2,'G',6,1],[3,'As',6,0.5],
+     [4,'B',6,2],[6,'E',7,3],[10,'D',7,1],[11,'Cs',7,0.5],
+     [12,'B',6,2],[14,'As',6,1],[15,'G',6,0.5],
+     [16,'Fs',6,1],[17,'G',6,0.5],[18,'As',6,1],[19,'B',6,0.5],
+     [20,'E',7,2],[22,'D',7,1],[23,'Cs',7,0.5],
+     [24,'B',6,2],[26,'As',6,1],[27,'G',6,0.5],[28,'Fs',6,4],
+     [34,'E',6,1],[35,'Fs',6,0.5],[36,'G',6,1],[37,'As',6,0.5],
+     [38,'B',6,1],[39,'Cs',7,0.5],[40,'E',7,3],[44,'D',7,2],
+     [46,'Cs',7,1],[47,'B',6,0.5],[48,'As',6,2],[50,'G',6,1],
+     [51,'Fs',6,0.5],[52,'E',6,4],[56,'B',5,2],[58,'E',6,2],
+     [60,'G',6,2],[62,'B',6,2],
+     [64,'E',7,2],[66,'D',7,1],[67,'B',6,1],[68,'As',6,2],
+     [70,'G',6,1],[71,'Fs',6,0.5],[72,'E',6,2],[74,'Ds',6,1],
+     [75,'E',6,0.5],[76,'Fs',6,0.5],[77,'G',6,0.5],[78,'As',6,0.5],[79,'B',6,1],
+     [80,'Cs',7,1],[81,'D',7,0.5],[82,'E',7,2],[84,'Fs',7,2],
+     [86,'E',7,1],[87,'D',7,0.5],[88,'Cs',7,2],[90,'B',6,2],
+     [92,'As',6,1],[93,'G',6,0.5],[94,'Fs',6,0.5],[95,'E',6,1],
+     [96,'E',6,1],[97,'Fs',6,0.5],[98,'G',6,1],[99,'As',6,0.5],
+     [100,'B',6,1],[101,'E',7,0.5],[102,'Fs',7,0.5],[103,'G',7,0.5],
+     [104,'As',7,2],[106,'G',7,1],[107,'Fs',7,0.5],[108,'E',7,2],
+     [110,'D',7,1],[111,'Cs',7,0.5],[112,'B',6,2],[114,'As',6,1],
+     [115,'G',6,0.5],[116,'Fs',6,0.5],[117,'E',6,0.5],[118,'Ds',6,0.5],[119,'E',6,1],
+     [120,'G',6,1],[121,'As',6,0.5],[122,'B',6,1],[123,'Cs',7,0.5],
+     [124,'E',7,2],[126,'B',6,2],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.72,0.16,startT+t*S));
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════════
+  // RIFT VALE — Dm, 135 BPM, alien psychedelic horror
+  // Warped bass, dissonant pads, stuttering alien percussion
+  // ══════════════════════════════════════════════════════
+  function scheduleRiftVale(startT){
+    const BPM=135, S=60/BPM/2;
+    function kick(t){ perc(38,0.24,0.40,t); perc(60,0.12,0.25,t+0.007); }
+    function alien(t){ perc(200+Math.random()*100,0.08,0.16,t); perc(800+Math.random()*400,0.04,0.08,t+0.01); }
+    function warp(t){ perc(80,0.10,0.22,t); perc(160,0.05,0.12,t+0.015); }
+    // Alien percussion — off-kilter, unsettling
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      [0,5,8,13].forEach(s=>kick(b+s*S));
+      [2,4,7,10,12,14].forEach(s=>alien(b+s*S));
+      [3,6,9,11].forEach(s=>warp(b+s*S));
+      for(let h=0;h<16;h++) if(Math.random()<0.6) perc(4000+Math.random()*3000,0.01,0.04,b+h*S);
+    }
+    // Deep warped bass — Dm alien riff
+    [[0,'D',2,1],[2,'A',1,0.7],[4,'F',2,0.9],[6,'C',2,0.8],
+     [8,'Ds',2,1],[10,'As',1,0.7],[12,'G',2,0.9],[14,'D',2,0.6],
+     [16,'D',2,1],[18,'Cs',2,0.8],[20,'A',1,0.9],[22,'F',2,0.7],
+     [24,'E',2,1],[26,'Ds',2,0.8],[28,'D',2,0.9],[30,'C',2,0.6],
+     [32,'D',2,1],[34,'F',2,0.8],[36,'As',1,0.9],[38,'C',2,0.7],
+     [40,'Ds',2,1],[42,'D',2,0.8],[44,'Cs',2,0.9],[46,'A',1,0.6],
+     [48,'D',2,1],[50,'G',2,0.8],[52,'F',2,0.9],[54,'E',2,0.7],
+     [56,'Ds',2,1],[58,'D',2,0.8],[60,'C',2,0.9],[62,'As',1,0.6],
+     [64,'D',2,1],[66,'A',1,0.8],[68,'F',2,0.9],[70,'Ds',2,0.7],
+     [72,'D',2,1],[74,'C',2,0.8],[76,'As',1,0.9],[78,'G',2,0.6],
+     [80,'F',2,1],[82,'E',2,0.8],[84,'Ds',2,0.9],[86,'D',2,0.7],
+     [88,'Cs',2,1],[90,'D',2,0.8],[92,'F',2,0.9],[94,'A',1,0.6],
+     [96,'D',2,1],[98,'As',1,0.8],[100,'G',2,0.9],[102,'F',2,0.7],
+     [104,'E',2,1],[106,'Ds',2,0.8],[108,'D',2,0.9],[110,'C',2,0.6],
+     [112,'As',1,1],[114,'A',1,0.8],[116,'G',2,0.9],[118,'F',2,0.7],
+     [120,'E',2,1],[122,'Ds',2,0.8],[124,'D',2,1],[126,'D',2,0.5],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.82,0.35,startT+t*S));
+    // Dissonant pads — tritone stacking for alien feel
+    [[0,['D',3],['As',3],['E',4]],[32,['F',3],['C',4],['Fs',4]],
+     [64,['Ds',3],['A',3],['D',4]],[96,['G',3],['Cs',4],['G',4]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),32*S*1.02,0.04-j*0.006,startT+t*S,j*3));
+    });
+    // Warped arp — stuttering alien pattern
+    arp(freq('D',4),[0,3,6,10,13,10,6,3],S*0.48,0.025,startT);
+    arp(freq('F',4),[0,4,7,11,14,11,7,4],S*0.48,0.025,startT+32*S);
+    arp(freq('Ds',4),[0,3,6,9,13,9,6,3],S*0.48,0.025,startT+64*S);
+    arp(freq('C',4),[0,4,7,10,14,10,7,4],S*0.48,0.025,startT+96*S);
+    // Screaming alien lead melody
+    [[0,'D',6,1],[2,'F',6,0.8],[4,'A',5,1],[6,'Ds',6,0.7],
+     [8,'D',6,2],[12,'C',6,1],[14,'As',5,0.8],
+     [16,'D',6,1],[18,'E',6,0.8],[20,'G',6,1],[22,'Ds',6,0.7],
+     [24,'D',6,2],[28,'F',6,1],[30,'A',5,0.8],
+     [32,'As',5,1],[34,'C',6,0.8],[36,'D',6,1],[38,'F',6,0.7],
+     [40,'As',5,2],[44,'A',5,1],[46,'G',5,0.8],
+     [48,'F',5,1],[50,'Ds',6,0.8],[52,'D',6,1],[54,'C',6,0.7],
+     [56,'As',5,2],[60,'A',5,1],[62,'G',5,0.8],
+     [64,'D',6,2],[68,'F',6,1],[70,'A',5,0.8],
+     [72,'Ds',6,1],[74,'D',6,0.8],[76,'C',6,1],[78,'As',5,0.7],
+     [80,'G',5,2],[84,'F',5,1],[86,'E',5,0.8],
+     [88,'D',6,1],[90,'F',6,0.8],[92,'A',5,1],[94,'C',6,0.7],
+     [96,'D',6,2],[100,'Ds',6,1],[102,'F',6,0.8],
+     [104,'A',5,1],[106,'G',5,0.8],[108,'F',5,1],[110,'E',5,0.7],
+     [112,'D',5,2],[116,'F',5,1],[118,'A',5,0.8],
+     [120,'D',6,2],[124,'C',6,1],[126,'D',6,2],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.70,0.14,startT+t*S));
+    return 128*S;
+  }
+
+  function scheduleAncient(startT){
+    // E Phrygian, 72 BPM — Lost Civilisation
+    // Sparse frame drums on beats 1+3 only, slow drone bass, ney flute melody
+    const BPM=72, S=60/BPM/2;
+
+    // Frame drum — warm skin thud, no click or hi-hat
+    function frameDrum(t,vol){ perc(90,0.28,vol||0.20,t); perc(160,0.12,(vol||0.20)*0.4,t+0.01); }
+    // Deep gong — marks phrase starts
+    function gong(t,vol){ perc(48,0.70,vol||0.26,t); perc(95,0.40,(vol||0.26)*0.5,t+0.02); perc(220,0.20,(vol||0.26)*0.18,t+0.04); }
+    // Sparse wood block
+    function woodBlock(t){ perc(1100,0.06,0.06,t); }
+
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      frameDrum(b, bar%4===0?0.24:0.16);
+      frameDrum(b+8*S, 0.13);
+      if(bar===0) gong(b,0.30);
+      if(bar===4) gong(b,0.24);
+      if(bar%2===0) woodBlock(b+5*S);
+      if(bar%2===1) woodBlock(b+11*S);
+    }
+
+    // Drone bass — E Phrygian, barely moves
+    [[0,'E',2,32],[32,'F',2,16],[48,'E',2,16],[64,'A',2,24],[88,'B',2,8],[96,'E',2,32]
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.95,0.30,startT+t*S));
+
+    // Phrygian pads — Em, F major, Dm, Am (32 steps each)
+    [[0,[['E',3],['G',3],['B',3]]],[32,[['F',3],['A',3],['C',4]]],
+     [64,[['D',3],['F',3],['A',3]]],[96,[['A',2],['C',3],['E',3]]]
+    ].forEach(([t,notes])=>{
+      notes.forEach(([n,o],j)=>{
+        pad(freq(n,o),32*S*1.05,0.050-j*0.010,startT+t*S,j*9+5);
+        if(j===0) pad(freq(n,o+1),32*S*0.88,0.016,startT+t*S,14);
+      });
+    });
+
+    // Ney flute — sine oscillator, long notes, wide silences
+    function ney(f,dur,vol,when){
+      const ct=ac(),t=when||ct.currentTime;
+      const o=ct.createOscillator(); o.type='sine'; o.frequency.value=f;
+      const vib=ct.createOscillator(); vib.frequency.value=5.2;
+      const vibG=ct.createGain(); vibG.gain.value=f*0.004;
+      vib.connect(vibG); vibG.connect(o.frequency);
+      const g=ct.createGain();
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+dur*0.18);
+      g.gain.setValueAtTime(vol*0.82,t+dur*0.55); g.gain.linearRampToValueAtTime(0,t+dur*0.96);
+      const dry=ct.createGain(); dry.gain.value=0.22; g.connect(dry); dry.connect(mg());
+      const wet=ct.createGain(); wet.gain.value=0.78; g.connect(wet); wet.connect(getLongRev());
+      o.connect(g); vib.start(t); vib.stop(t+dur+0.2); o.start(t); o.stop(t+dur+0.3);
+    }
+
+    // Phrase 1 — B→A→F→E descent
+    [[0,'B',5,8],[10,'A',5,6],[18,'F',5,8],[28,'E',5,10]
+    ].forEach(([t,n,o,s])=>ney(freq(n,o),s*S,0.090,startT+t*S));
+
+    // Phrase 2 — E→A→B→D ascent (starts bar 3)
+    [[48,'E',5,6],[56,'A',5,8],[66,'B',5,6],[74,'D',6,10]
+    ].forEach(([t,n,o,s])=>ney(freq(n,o),s*S,0.082,startT+t*S));
+
+    // Phrase 3 — resolves to root (bar 6)
+    [[96,'D',6,5],[103,'B',5,6],[111,'A',5,5],[118,'F',5,4],[124,'E',5,8]
+    ].forEach(([t,n,o,s])=>ney(freq(n,o),s*S,0.075,startT+t*S));
+
+    // Overtone shimmers — singing bowl harmonics
+    [[0,'E',7,32],[24,'B',6,20],[56,'F',7,16],[88,'A',6,24],[112,'E',7,20]
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.015,startT+t*S));
+
+    // Sub drone — E1, felt more than heard
+    [[0,'E',1,64],[64,'E',1,64]].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.011,startT+t*S));
+
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════════
+  // XUMEN — Dm, 155 BPM, relentless military siege
+  // Machine-gun snare, driving industrial bass, cold synth lead
+  // ══════════════════════════════════════════════════════
+  function scheduleXumen(startT){
+    const BPM=155, S=60/BPM/2;
+    // Drum builders — cold mechanical precision
+    function kick(t){ perc(40,0.22,0.38,t); perc(72,0.10,0.20,t+0.007); }
+    function mech(t){ perc(55,0.28,0.44,t); perc(95,0.12,0.24,t+0.009); }
+    function snare(t,g){ perc(200,0.14,g||0.26,t); perc(1200,0.08,0.14,t+0.007); perc(2600,0.04,0.08,t+0.011); }
+    function hat(t,g){ perc(10000+Math.random()*2000,0.016,g||0.06,t); }
+    function cannon(t){ perc(32,0.30,0.55,t); perc(64,0.15,0.30,t+0.01); perc(110,0.08,0.18,t+0.015); }
+    function clank(t){ perc(800,0.06,0.14,t); perc(400,0.04,0.10,t+0.006); }
+
+    // Military march pattern — kick every beat, machine-gun snare fills
+    for(let bar=0;bar<8;bar++){
+      const b=startT+bar*16*S;
+      // 4-on-floor kick + mech offbeats
+      [0,4,8,12].forEach(s=>kick(b+s*S));
+      [2,6,10,14].forEach(s=>mech(b+s*S));
+      // Heavy snare backbeat 2 and 4
+      [4,12].forEach(s=>snare(b+s*S,0.30));
+      // Machine-gun ghost snares on last 2 bars of every 4
+      if(bar%4>=2) [1,2,3,5,6,7,9,10,11,13,14,15].forEach(s=>snare(b+s*S,0.05));
+      // Rapid hi-hat — mechanical 16ths
+      for(let h=0;h<16;h++) hat(b+h*S,h%4===0?0.10:0.04);
+      // Cannon fire — thunderous hits on bar 4 and 8
+      if(bar%4===3) cannon(b+12*S);
+      // Metal clank texture
+      [1,5,9,13].forEach(s=>clank(b+s*S));
+    }
+
+    // Grinding industrial bass — Dm riff, aggressive
+    [[0,'D',1,2],[2,'D',1,0.8],[3,'F',1,1.2],[4,'A',1,2],[6,'G',1,1.2],
+     [8,'D',1,2],[10,'F',1,0.8],[11,'A',1,1.2],[12,'C',2,2],[14,'As',1,1.2],
+     [16,'C',1,2],[18,'C',1,0.8],[20,'Ds',1,1.5],[22,'F',1,1.2],
+     [24,'G',1,2],[26,'A',1,0.8],[28,'As',1,1.5],[30,'D',1,2],
+     [32,'D',1,2],[34,'F',1,1.5],[36,'A',1,2],[38,'D',2,1.5],
+     [40,'C',1,2],[42,'Ds',1,1.2],[44,'G',1,2],[46,'F',1,2],
+     [48,'D',1,2],[50,'D',1,0.8],[52,'F',1,1.5],[54,'A',1,2],
+     [56,'C',2,2],[58,'As',1,1.2],[60,'G',1,2],[62,'D',1,2],
+     [64,'D',1,2],[66,'F',1,1.5],[68,'A',1,2],[70,'D',2,1.5],
+     [72,'C',1,2],[74,'As',1,1.2],[76,'G',1,2],[78,'F',1,2],
+     [80,'Ds',1,2],[82,'D',1,0.8],[84,'F',1,1.5],[86,'A',1,2],
+     [88,'C',2,2],[90,'As',1,1.2],[92,'G',1,2],[94,'D',1,2],
+     [96,'D',1,2],[98,'F',1,1.5],[100,'A',1,2],[102,'C',2,1.5],
+     [104,'As',1,2],[106,'G',1,1.2],[108,'F',1,2],[110,'Ds',1,2],
+     [112,'D',1,2],[114,'D',1,0.8],[116,'F',1,1.5],[118,'A',1,2],
+     [120,'D',2,2],[122,'C',2,1.2],[124,'As',1,2],[126,'D',1,4],
+    ].forEach(([t,n,o,s])=>bass(freq(n,o),s*S*0.82,0.34,startT+t*S));
+
+    // Cold machine synth pad — tense Dm power chords
+    [[0,['D',2],['F',2],['A',2]],[16,['C',2],['Ds',2],['G',2]],
+     [32,['As',1],['D',2],['F',2]],[48,['A',1],['C',2],['E',2]],
+     [64,['D',2],['A',2],['D',3]],[80,['C',2],['G',2],['C',3]],
+     [96,['As',1],['F',2],['As',2]],[112,['A',1],['E',2],['A',2]],
+    ].forEach(([t,...notes])=>{
+      notes.forEach(([n,o],j)=>pad(freq(n,o),16*S*1.02,0.04-j*0.005,startT+t*S,j*4));
+    });
+
+    // Fast aggressive arp — Dm military signal
+    arp(freq('D',3),[0,3,7,10,14,10,7,3],S*0.50,0.022,startT);
+    arp(freq('A',3),[0,3,7,10,12,10,7,3],S*0.50,0.022,startT+32*S);
+    arp(freq('F',3),[0,4,7,10,14,10,7,4],S*0.50,0.022,startT+64*S);
+    arp(freq('C',3),[0,3,7,10,12,10,7,3],S*0.50,0.022,startT+96*S);
+
+    // Cold command lead — staccato military signal melody
+    [[0,'D',6,1],[1,'F',6,1],[2,'A',6,2],[4,'D',7,2],[7,'C',6,1],
+     [8,'D',6,1],[9,'F',6,1],[10,'A',6,2],[12,'C',7,3],
+     [16,'As',5,1],[17,'C',6,1],[18,'D',6,2],[20,'F',6,2],[23,'E',6,1],
+     [24,'D',6,1],[25,'F',6,1],[26,'A',6,2],[28,'D',7,4],
+     [32,'D',6,1],[33,'A',6,1],[34,'D',7,2],[36,'C',7,2],[39,'As',6,1],
+     [40,'A',6,1],[41,'G',6,1],[42,'F',6,2],[44,'Ds',6,2],[47,'D',6,1],
+     [48,'D',6,2],[50,'F',6,2],[52,'A',6,2],[54,'D',7,4],
+     [58,'C',7,2],[60,'As',6,2],[62,'A',6,2],[64,'D',7,4],
+     [68,'C',7,2],[70,'As',6,2],[72,'G',6,2],[74,'F',6,4],
+     [78,'Ds',6,2],[80,'D',6,2],[82,'F',6,2],[84,'A',6,4],
+     [88,'D',7,2],[90,'C',7,2],[92,'A',6,2],[94,'D',6,4],
+     [96,'D',6,1],[97,'F',6,1],[98,'A',6,2],[100,'D',7,2],[103,'C',7,1],
+     [104,'A',6,1],[105,'G',6,1],[106,'F',6,2],[108,'Ds',6,2],[111,'D',6,1],
+     [112,'D',6,2],[114,'F',6,2],[116,'A',6,2],[118,'D',7,2],
+     [120,'C',7,2],[122,'As',6,2],[124,'A',6,2],[126,'D',7,4],
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.72,0.12,startT+t*S));
+
+    // Power strike accents — metallic shimmer on downbeats
+    [[0,'D',5,4],[16,'F',5,4],[32,'A',5,4],[48,'C',5,4],
+     [64,'D',5,4],[80,'As',4,4],[96,'G',4,4],[112,'D',5,4],
+    ].forEach(([t,n,o,s])=>shimmer(freq(n,o),s*S,0.016,startT+t*S));
+
+    return 128*S;
+  }
+
+  // ══════════════════════════════════════════════════════
+  // v92.31 — SIX NEW DEDICATED ZONE TRACKS
+  // Previously these zones reused other tracks. Each gets its own identity now.
+  // ══════════════════════════════════════════════════════
+
+  // ── XU CEMETERY — Bm, 48bpm, mournful chimes + tolling bell ──
+  function scheduleCemetery(startT){
+    const BPM=48, S=60/BPM/2;
+    // Slow chord progression — Bm, Em, F#m, Bm
+    [[['B',2],['Fs',2],['B',3]], [['E',2],['B',2],['E',3]], [['Fs',2],['Cs',3],['Fs',3]], [['B',2],['D',3],['Fs',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*24*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o),24*S*1.15, 0.052-j*0.010, t, j*8+5);
+      });
+    });
+    // Distant tolling bell — once per phrase
+    [0,24,48,72].forEach((b,i)=>{
+      perc(110, 0.85, 0.20-i*0.01, startT+b*S);   // low fundamental
+      shimmer(freq('B',5), 3.0, 0.022, startT+b*S);  // overtone halo
+      shimmer(freq('Fs',5), 2.6, 0.018, startT+b*S+0.1);
+    });
+    // Subterranean bass — slow heart-beat doubles
+    [['B',1],['E',1],['Fs',1],['B',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o), 22*S, 0.32, startT+i*24*S);
+    });
+    // Mournful melody — sparse high notes, like distant choir
+    [[2,'D',6,4],[8,'B',5,5],[15,'Fs',5,4],[22,'B',5,6],
+     [28,'E',6,4],[34,'D',6,5],[40,'B',5,6],
+     [50,'Fs',6,4],[56,'D',6,4],[62,'Cs',6,5],[68,'B',5,8],
+     [78,'D',6,4],[84,'B',5,5],[90,'A',5,6]
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.65, 0.058, startT+t*S);
+      shimmer(freq(n,o+1), s*S*0.5, 0.012, startT+t*S);
+    });
+    return 96*S;
+  }
+
+  // ── THE NECROPOLIS — Cm, 56bpm, ancient + heavier than cemetery ──
+  function scheduleNecropolis(startT){
+    const BPM=56, S=60/BPM/2;
+    // Ancient processional — Cm, Gm, Fm, Cm
+    [[['C',2],['G',2],['Ds',3]], [['G',2],['D',3],['As',3]], [['F',2],['C',3],['As',3]], [['C',2],['Gs',2],['Ds',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*24*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o), 24*S*1.2, 0.055-j*0.010, t, j*10+8);
+      });
+    });
+    // Deep ancient bass — funeral march heartbeat
+    [['C',1],['G',1],['F',1],['C',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o),22*S,0.38,startT+i*24*S);
+      bass(freq(n,o),3*S,0.30,startT+i*24*S+12*S);  // half-bar punch
+    });
+    // Distant low percussion — like a stone struck in a tomb
+    [4,12,28,36,52,60,76,84].forEach(t=>perc(80,0.5,0.12,startT+t*S));
+    // Whispered choir — minor key, sparse, ghostly
+    [[3,'Ds',5,5],[10,'C',5,6],[18,'G',5,4],
+     [26,'Ds',5,5],[34,'F',5,5],[42,'D',5,7],
+     [50,'C',6,4],[56,'As',5,5],[62,'G',5,8],
+     [74,'Gs',5,5],[82,'F',5,5],[88,'Ds',5,7]
+    ].forEach(([t,n,o,s])=>{
+      shimmer(freq(n,o), s*S*0.8, 0.020, startT+t*S);
+      lead(freq(n,o-1), s*S*0.55, 0.045, startT+t*S);
+    });
+    // Brief unsettling arpeggio — like a forgotten requiem
+    arp(freq('C',4),[0,3,7,10,7,3],S*2.5,0.020,startT+44*S);
+    return 96*S;
+  }
+
+  // ── VOID CITADEL — Bbm, 64bpm, dimensional fortress, dread + grandeur ──
+  function scheduleVoidCitadel(startT){
+    const BPM=64, S=60/BPM/2;
+    // Stacked dissonant chords — Bbm with ringing semitones
+    [[['As',2],['F',3],['As',3]], [['Gs',2],['Ds',3],['Gs',3]], [['Cs',2],['Gs',2],['Cs',3]], [['As',2],['Ds',3],['F',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*22*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o), 22*S*1.18, 0.058-j*0.012, t, j*14+10);
+        if(j===0) shimmer(freq(n,o+2), 22*S, 0.018, t);  // dimensional shimmer
+      });
+    });
+    // Massive sub bass — fortress weight
+    [['As',1],['Gs',1],['Cs',1],['As',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o), 22*S*0.9, 0.42, startT+i*22*S);
+    });
+    // Steel impacts — military fortress
+    [0,11,22,33,44,55,66,77].forEach(t=>perc(130,0.4,0.16,startT+t*S));
+    // Imperial lead — slow, grand, threatening
+    [[3,'F',5,5],[10,'As',5,4],[16,'Cs',6,6],
+     [25,'Ds',6,5],[33,'F',6,4],[40,'Cs',6,7],
+     [50,'As',5,5],[58,'Gs',5,4],[64,'F',5,8],
+     [74,'Cs',6,5],[81,'F',6,8]
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.7, 0.075, startT+t*S);
+    });
+    // Dimensional rip arp — high frequency cluster
+    arp(freq('As',5),[0,1,7,8,7,1],S*2,0.022,startT+33*S);
+    arp(freq('F',5), [0,1,7,8,7,1],S*2,0.022,startT+77*S);
+    return 88*S;
+  }
+
+  // ── CAVES OF DESPAIR — Em, 50bpm, water drip + cavern echo + distant moans ──
+  function scheduleCavesOfDespair(startT){
+    const BPM=50, S=60/BPM/2;
+    // Hollow chord drone — Em, Am, Bm, Em (cavernous)
+    [[['E',2],['B',2],['E',3]], [['A',2],['E',3],['A',3]], [['B',2],['Fs',3],['B',3]], [['E',2],['G',2],['B',2]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*24*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o), 24*S*1.25, 0.045-j*0.008, t, j*6+4);
+      });
+    });
+    // Water drips — random high pings
+    for(let i=0;i<20;i++){
+      const t = startT + i*4*S + Math.random()*3*S;
+      perc(2200+Math.random()*800, 0.08, 0.04, t);
+    }
+    // Cavernous bass — sustained drone
+    [['E',1],['A',1],['B',1],['E',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o), 24*S, 0.30, startT+i*24*S);
+    });
+    // Distant moans — long shimmer notes that echo
+    [[5,'B',4,8],[20,'E',5,7],[36,'D',5,9],[55,'B',4,8],[70,'A',4,9],[85,'E',5,7]].forEach(([t,n,o,s])=>{
+      shimmer(freq(n,o), s*S, 0.018, startT+t*S);
+    });
+    // Sparse low scrape — geological
+    perc(60, 1.5, 0.08, startT+10*S);
+    perc(60, 1.5, 0.08, startT+58*S);
+    return 96*S;
+  }
+
+  // ── NEON HOLLOW — Am pentatonic, 84bpm, cyberpunk synth grid ──
+  function scheduleNeonHollow(startT){
+    const BPM=84, S=60/BPM/2;
+    // Pulsing synth chords — Am, F, C, G (uplifting cyberpunk)
+    [[['A',2],['E',3],['A',3]], [['F',2],['C',3],['F',3]], [['C',2],['G',2],['C',3]], [['G',2],['D',3],['G',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*16*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o), 16*S*1.1, 0.048-j*0.010, t, j*15+12);
+      });
+    });
+    // Driving sub bass — pulse on every beat
+    for(let i=0;i<32;i++){
+      const chord = [['A',1],['F',1],['C',1],['G',1]][Math.floor(i/8)];
+      bass(freq(chord[0],chord[1]), 1.8*S, 0.22, startT+i*2*S);
+    }
+    // Synth arp — fast 16th notes, classic cyberpunk
+    [0,16,32,48].forEach(off=>{
+      const root = [['A',4],['F',4],['C',5],['G',4]][off/16];
+      arp(freq(root[0],root[1]),[0,3,7,12,7,3],S*0.5,0.025,startT+off*S);
+    });
+    // Lead synth — bright melodic line
+    [[2,'A',5,2],[4,'E',5,2],[6,'C',6,3],[10,'A',5,3],[14,'G',5,2],
+     [18,'F',5,2],[20,'A',5,2],[22,'C',6,3],[26,'F',6,4],
+     [34,'C',6,2],[36,'E',6,2],[38,'G',6,3],[42,'C',6,3],[46,'A',5,2],
+     [50,'G',5,2],[52,'B',5,2],[54,'D',6,3],[58,'G',5,4]
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.7,0.08,startT+t*S));
+    // High shimmer — neon glow effect
+    [4,20,36,52].forEach(t=>shimmer(freq('A',6),3*S,0.015,startT+t*S));
+    return 64*S;
+  }
+
+  // ── XU FORTRESS — Dm, 96bpm, militant march, harder than xumen city ──
+  function scheduleXumenFortress(startT){
+    const BPM=96, S=60/BPM/2;
+    // March chord progression — Dm, Bb, Gm, A (war anthem)
+    [[['D',2],['A',2],['D',3]], [['As',2],['F',3],['As',3]], [['G',2],['D',3],['G',3]], [['A',2],['E',3],['A',3]]].forEach(([a,b,cc],i)=>{
+      const t=startT+i*16*S;
+      [a,b,cc].forEach(([n,o],j)=>{
+        pad(freq(n,o), 16*S*1.1, 0.052-j*0.010, t, j*9+7);
+      });
+    });
+    // Heavy military bass — booted march on quarter notes
+    for(let i=0;i<32;i++){
+      const chord = [['D',1],['As',1],['G',1],['A',1]][Math.floor(i/8)];
+      bass(freq(chord[0],chord[1]), 1.6*S, 0.30, startT+i*2*S);
+    }
+    // Snare hits — military drumming pattern
+    for(let bar=0;bar<8;bar++){
+      const tBar = startT+bar*8*S;
+      perc(180,0.2,0.12,tBar+2*S);   // beat 2
+      perc(180,0.2,0.12,tBar+6*S);   // beat 4
+      perc(150,0.15,0.08,tBar+3*S);  // ghost note
+      perc(150,0.15,0.08,tBar+7*S);
+    }
+    // Brass-like lead — heroic but threatening
+    [[0,'D',5,3],[3,'F',5,2],[5,'A',5,3],[8,'D',6,4],[12,'C',6,2],[14,'A',5,2],
+     [16,'As',5,3],[19,'F',5,2],[21,'A',5,3],[24,'D',6,4],[28,'F',6,4],
+     [32,'G',5,3],[35,'As',5,2],[37,'D',6,3],[40,'G',6,4],[44,'F',6,2],[46,'D',6,2],
+     [48,'A',5,3],[51,'Cs',6,2],[53,'E',6,3],[56,'A',6,4],[60,'D',6,4]
+    ].forEach(([t,n,o,s])=>lead(freq(n,o),s*S*0.75,0.090,startT+t*S));
+    // Power accents
+    [0,16,32,48].forEach(t=>perc(60,0.8,0.18,startT+t*S));
+    return 64*S;
+  }
+
+  // v92.37 — VEILED SANCTUARY — Am, 44bpm, sacred + ethereal + void-touched
+  // Holy choir + tolling temple bell + ascending arp like a prayer ascending
+  function scheduleVeiledSanctuary(startT){
+    const BPM=44, S=60/BPM/2;
+    // Slow sacred chord progression — Am, F, Dm, Em (modal mixolydian-ish)
+    [[['A',2],['E',3],['A',3],['Cs',4]], [['F',2],['C',3],['F',3],['A',3]], [['D',2],['A',2],['D',3],['F',3]], [['E',2],['B',2],['E',3],['G',3]]].forEach(([a,b,cc,d],i)=>{
+      const t=startT+i*24*S;
+      [a,b,cc,d].forEach(([n,o],j)=>{
+        pad(freq(n,o), 24*S*1.20, 0.048-j*0.008, t, j*7+4);
+      });
+    });
+    // Distant temple bell — large and reverent, once per phrase
+    [0,24,48,72].forEach((b,i)=>{
+      perc(95, 1.10, 0.24-i*0.01, startT+b*S);    // low fundamental
+      shimmer(freq('A',5), 3.5, 0.024, startT+b*S);  // overtone halo
+      shimmer(freq('E',5), 3.0, 0.020, startT+b*S+0.12);
+      shimmer(freq('Cs',6), 2.6, 0.014, startT+b*S+0.22);
+    });
+    // Sub bass — slow sacred heartbeat
+    [['A',1],['F',1],['D',1],['E',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o), 24*S, 0.30, startT+i*24*S);
+    });
+    // Ascending choir melody — 3-note prayer phrases that climb
+    [[3,'E',5,4],[7,'A',5,4],[11,'C',6,5],
+     [16,'A',5,4],[20,'C',6,4],[24,'F',6,5],
+     [30,'D',5,4],[34,'F',5,4],[38,'A',5,5],
+     [44,'B',5,4],[48,'D',6,4],[52,'E',6,7],
+     [62,'A',5,3],[66,'C',6,3],[70,'E',6,3],[74,'A',6,8],
+     [86,'C',6,3],[88,'A',5,3],[90,'E',5,4]
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.7, 0.052, startT+t*S);
+      shimmer(freq(n,o+1), s*S*0.55, 0.014, startT+t*S);
+    });
+    // Sparse high prayer-bell — top of each phrase
+    [11,35,59,83].forEach(t=>{
+      shimmer(freq('A',6), 1.8, 0.020, startT+t*S);
+      shimmer(freq('E',6), 1.4, 0.016, startT+t*S+0.05);
+    });
+    // Void-undertone — single low pulsing note that hints at the failed seal
+    [16,40,64,88].forEach(t=>{
+      pad(freq('Cs',2), 6*S, 0.022, startT+t*S, 12);
+    });
+    return 96*S;
+  }
+
+  // ── v92.49 — THE BLOOMING WILDS — playful, magical, slightly off-kilter ──
+  function scheduleBloomingWilds(startT){
+    const BPM=92, S=60/BPM/2;
+    // D major progression — D, G, A, Bm, with playful jazzy 9ths
+    [[['D',2],['A',2],['Fs',3],['E',4]], [['G',2],['D',3],['A',3],['B',4]], [['A',2],['E',3],['Cs',4],['G',4]], [['B',2],['Fs',3],['D',4],['A',4]]].forEach(([a,b,cc,d],i)=>{
+      const t=startT+i*16*S;
+      [a,b,cc,d].forEach(([n,o],j)=>{
+        pad(freq(n,o), 16*S*1.10, 0.044-j*0.006, t, j*5+3);
+      });
+    });
+    // Plucked harp — playful arpeggios that climb up and tumble down
+    [
+      [0,'D',4,1.5],[2,'Fs',4,1.5],[4,'A',4,1.5],[6,'D',5,1.5],
+      [8,'Cs',5,1.5],[10,'A',4,1.5],[12,'Fs',4,1.5],[14,'D',4,1.5],
+      [16,'G',3,1.5],[18,'B',3,1.5],[20,'D',4,1.5],[22,'G',4,1.5],
+      [24,'B',4,1.5],[26,'G',4,1.5],[28,'D',4,1.5],[30,'B',3,1.5],
+      [32,'A',3,1.5],[34,'Cs',4,1.5],[36,'E',4,1.5],[38,'A',4,1.5],
+      [40,'G',4,1.5],[42,'E',4,1.5],[44,'Cs',4,1.5],[46,'A',3,1.5],
+      [48,'B',3,1.5],[50,'D',4,1.5],[52,'Fs',4,1.5],[54,'B',4,1.5],
+      [56,'A',4,1.5],[58,'Fs',4,1.5],[60,'D',4,1.5],[62,'B',3,1.5],
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.45, 0.034, startT+t*S);  // short = plucked harp feel
+    });
+    // Fairy bells — high shimmery sparkles, random twinkles
+    for(let b=0; b<32; b++){
+      const t = b*2 + Math.random()*1.5;
+      const notes = ['D','E','Fs','A','B'];
+      const n = notes[Math.floor(Math.random()*notes.length)];
+      const o = 5 + Math.floor(Math.random()*2);
+      shimmer(freq(n,o), 1.2, 0.018, startT+t*S);
+    }
+    // Soft woodwind melody — flute-like, dreamy
+    [[2,'Fs',5,4],[8,'A',5,4],[14,'D',5,3],[18,'B',4,4],
+     [24,'D',5,3],[28,'G',5,5],[36,'E',5,4],[42,'Cs',5,4],
+     [48,'D',5,5],[56,'Fs',5,4],[60,'A',5,4]
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.65, 0.040, startT+t*S);
+    });
+    // Soft heartbeat bass — gentle, like the garden breathing
+    [['D',1],['G',1],['A',1],['B',1]].forEach(([n,o],i)=>{
+      bass(freq(n,o), 16*S, 0.18, startT+i*16*S);
+    });
+    return 64*S;
+  }
+
+  // ── v92.55 — XERON — industrial cyber, deep bass, glitch synth, cold and final ──
+  function scheduleXeron(startT){
+    const BPM=110, S=60/BPM/2;
+    // E minor — dark electronic key. 4 chords cycling: Em, C, G, D
+    [[['E',2],['B',2],['G',3],['Fs',4]],
+     [['C',2],['G',2],['E',3],['D',4]],
+     [['G',2],['D',3],['B',3],['A',4]],
+     [['D',2],['A',2],['Fs',3],['E',4]]].forEach(([a,b,cc,d],i)=>{
+      const t=startT+i*16*S;
+      [a,b,cc,d].forEach(([n,o],j)=>{
+        pad(freq(n,o), 16*S*1.10, 0.050-j*0.006, t, j*8+5);
+      });
+    });
+    // Heavy industrial bass — rolling pattern, 8 hits per chord
+    for(let chord=0; chord<4; chord++){
+      const baseN = ['E','C','G','D'][chord];
+      for(let h=0; h<8; h++){
+        const t = startT + chord*16*S + h*2*S;
+        bass(freq(baseN, 1), 1.8*S, 0.22, t);
+      }
+    }
+    // Dark synth lead — descending phrases, glitch-like timing
+    [
+      [4,'B',4,3],[8,'E',5,2],[10,'D',5,2],[12,'G',5,3],
+      [18,'A',4,3],[22,'E',5,3],[26,'B',4,2],[30,'G',4,3],
+      [36,'D',5,3],[40,'B',4,3],[44,'A',4,2],[48,'Fs',4,2],
+      [54,'E',5,4],[60,'D',5,4],
+    ].forEach(([t,n,o,s])=>{
+      lead(freq(n,o), s*S*0.55, 0.038, startT+t*S);
+    });
+    // High-frequency glitch pings — random, sharp, irregular
+    for(let p=0; p<48; p++){
+      const t = p*1.3 + Math.random()*0.7;
+      const notes = ['B','D','E','G','A'];
+      const n = notes[Math.floor(Math.random()*notes.length)];
+      const o = 5 + Math.floor(Math.random()*2);
+      shimmer(freq(n,o), 0.5, 0.010, startT+t*S);
+    }
+    // Industrial percussion — punchy, metallic
+    for(let p=0; p<32; p++){
+      perc(freq('E',2)*(1+Math.random()*0.5), 0.20, 0.085, startT+p*2*S);
+    }
+    return 64*S;
+  }
+  // ══════════════════════════════════════════════════════════════════
+  // v93.0 Phase 3 — scheduleConvergence — "Apocalyptic Tech"
+  // The Convergence theme. Slower than Xeron (95 BPM vs 110). D minor,
+  // dropped to subterranean territory. Layered: sub-drone (never stops),
+  // industrial 16th-pulses, glitch-perc noise bursts, detuned saw stabs
+  // on heavy beats, high atmospheric pad. Occasional metallic impact.
+  // Cycle: 64 beats * (60/95)/2 = ~20.2 seconds, then loops.
+  // ══════════════════════════════════════════════════════════════════
+  function scheduleConvergence(startT){
+    const BPM = 95;
+    const S = 60/BPM/2;          // S = half-beat in seconds
+    const CYCLE = 64;            // 64 half-beats per loop = 32 beats = ~20.2s
+
+    // ── LAYER 1: SUB-DRONE (continuous, never stops, very low) ──
+    // Sustained D1 (~36.7Hz) for the whole cycle with slow LFO-like modulation
+    // via repeated layered bass calls.
+    for(let i=0; i<4; i++){
+      bass(freq('D', 1), 16*S*1.05, 0.16, startT + i*16*S);
+    }
+    // A0 root-octave drone for even deeper sub
+    for(let i=0; i<2; i++){
+      bass(freq('A', 0)*2, 32*S*1.05, 0.085, startT + i*32*S);
+    }
+
+    // ── LAYER 2: INDUSTRIAL 16th-NOTE PULSES (square-wave, panned feel) ──
+    // Tick on every half-beat — feels like distant machinery
+    for(let p=0; p<CYCLE; p++){
+      const t = startT + p*S;
+      const pitch = (p % 8 === 0) ? freq('D', 2) : (p % 4 === 0 ? freq('A', 1) : freq('D', 1));
+      perc(pitch, 0.06, 0.040 + (p%4===0?0.02:0), t);
+    }
+
+    // ── LAYER 3: DETUNED SAW STABS (the "tech" element) ──
+    // Short chord stabs on beats 1 and 9 of each 16-beat phrase
+    // Chord progression: Dm, Bbm, Gm, A — bleak descending minor
+    const stabChords = [
+      [['D', 3], ['F', 3], ['A', 3]],     // Dm
+      [['As', 2], ['D', 3], ['F', 3]],    // Bbm-ish
+      [['G', 2], ['As', 2], ['D', 3]],    // Gm
+      [['A', 2], ['Cs', 3], ['E', 3]],    // A (major — tense lift)
+    ];
+    for(let phrase=0; phrase<4; phrase++){
+      const chord = stabChords[phrase];
+      // Stab on beat 1 of phrase
+      const stab1 = startT + phrase*16*S;
+      chord.forEach(([n, o]) => {
+        lead(freq(n, o), 1.2*S, 0.038, stab1);
+      });
+      // Stab on beat 9 (half-bar later)
+      const stab2 = startT + phrase*16*S + 8*S;
+      chord.forEach(([n, o]) => {
+        lead(freq(n, o), 1.2*S, 0.030, stab2);
+      });
+    }
+
+    // ── LAYER 4: HIGH ATMOSPHERIC PAD (very quiet, drifting) ──
+    // Detuned triangle pad over each chord — creates the apocalyptic vacuum
+    for(let phrase=0; phrase<4; phrase++){
+      const chord = stabChords[phrase];
+      const t = startT + phrase*16*S;
+      chord.forEach(([n, o], idx) => {
+        pad(freq(n, o+1), 16*S*1.10, 0.025-idx*0.004, t, 12 + idx*4);
+      });
+    }
+
+    // ── LAYER 5: GLITCH NOISE BURSTS (irregular, "reality breaking") ──
+    // Sparse, random-pitched percussive noise — feels organic, not robotic
+    for(let i=0; i<14; i++){
+      const t = startT + (Math.random()*CYCLE)*S;
+      const f = 400 + Math.random()*2400; // bandpass noise
+      perc(f, 0.04 + Math.random()*0.06, 0.022 + Math.random()*0.014, t);
+    }
+
+    // ── LAYER 6: METALLIC IMPACTS (rare, ominous) ──
+    // ~3-4 hits per cycle, random timing
+    for(let i=0; i<4; i++){
+      const t = startT + (4 + Math.random()*56)*S;
+      // Metal hit = perc with two layered freqs (low + high resonance)
+      perc(80 + Math.random()*40, 0.18, 0.075, t);
+      perc(2200 + Math.random()*800, 0.12, 0.045, t + 0.005);
+    }
+
+    // ── LAYER 7: SHIMMER PINGS (the violet glow audible) ──
+    // Quiet, high, sparse — match the visual aesthetic
+    for(let i=0; i<8; i++){
+      const t = startT + (2 + i*7.5)*S;
+      const notes = ['D', 'F', 'A', 'C'];
+      const n = notes[i % notes.length];
+      shimmer(freq(n, 6), 0.8, 0.012, t);
+    }
+
+    return CYCLE*S;
+  }
+
+
+  // ── XULCAN PRIME — "Forge of the Golden Harmonic" (a353) ──
+  // High-tech industrial / cyberpunk-NIN. 100 BPM, half-time, A phrygian.
+  // Schedules one bar per call; advances sections across a 24-bar cycle:
+  // INITIATE(drone+clank) -> PULSE(+kick/bass) -> ASSAULT(full) -> FRACTURE(breakdown).
+  function scheduleXulcan(startT){
+    const c = ac(), SIX = 60/100/4;                 // 16th = 0.15s
+    const mf = m => 440*Math.pow(2,(m-69)/12);      // midi -> Hz
+    if(!scheduleXulcan._curves){                    // cache waveshaper curves once
+      const mk = k => { const n=2048, a=new Float32Array(n); for(let i=0;i<n;i++){ const x=i*2/n-1; a[i]=(3+k)*x*20*Math.PI/180/(Math.PI+k*Math.abs(x)); } return a; };
+      scheduleXulcan._dH = mk(32); scheduleXulcan._curves = true;
+    }
+    const DH = scheduleXulcan._dH;
+    const bar = (scheduleXulcan._bar = (scheduleXulcan._bar||0)+1) % 24;
+
+    let sec;
+    if(bar<4)        sec={kick:0,snare:0,hats:0,clank:1,bass:0,arp:0,intro:1,pad:[33,40,45]};
+    else if(bar<8)   sec={kick:1,snare:0,hats:1,clank:1,bass:1,arp:0,pad:[33,40,45]};
+    else if(bar<16)  sec={kick:1,snare:1,hats:1,clank:1,bass:1,arp:1,pad:[33,40,45]};
+    else if(bar<20)  sec={kick:0,snare:0,hats:1,clank:1,bass:1,arp:1,frac:1,pad:[33,34,40]};
+    else             sec={kick:1,snare:1,hats:1,clank:1,bass:1,arp:1,pad:[33,40,45]};
+
+    function xnoise(dur,shape){ const len=Math.max(1,(c.sampleRate*dur)|0), b=c.createBuffer(1,len,c.sampleRate), d=b.getChannelData(0);
+      for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(shape===0?1:Math.pow(1-i/len,shape||2));
+      const s=c.createBufferSource(); s.buffer=b; return s; }
+    function xkick(t,acc){ const o=c.createOscillator(),g=c.createGain(),ws=c.createWaveShaper(); ws.curve=DH;
+      o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(38,t+0.1);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(acc,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);
+      o.connect(g); g.connect(ws); ws.connect(mg()); o.start(t); o.stop(t+0.4);
+      const ns=xnoise(0.04,3),hp=c.createBiquadFilter(),ng=c.createGain(); hp.type='highpass'; hp.frequency.value=1600;
+      ng.gain.setValueAtTime(acc*0.4,t); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.03); ns.connect(hp); hp.connect(ng); ng.connect(mg()); ns.start(t); ns.stop(t+0.05); }
+    function xsnare(t){ const s=xnoise(0.2,2),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.frequency.value=1850; bp.Q.value=0.9;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.5,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+0.18);
+      s.connect(bp); bp.connect(g); g.connect(mg()); const rs=c.createGain(); rs.gain.value=0.2; g.connect(rs); rs.connect(getRev()); s.start(t); s.stop(t+0.22);
+      const o=c.createOscillator(),og=c.createGain(); o.type='triangle'; o.frequency.setValueAtTime(190,t);
+      og.gain.setValueAtTime(0.0001,t); og.gain.linearRampToValueAtTime(0.28,t+0.002); og.gain.exponentialRampToValueAtTime(0.0001,t+0.09); o.connect(og); og.connect(mg()); o.start(t); o.stop(t+0.11); }
+    function xhat(t){ const s=xnoise(0.05,2),hp=c.createBiquadFilter(),g=c.createGain(); hp.type='highpass'; hp.frequency.value=4800;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.1,t+0.001); g.gain.exponentialRampToValueAtTime(0.0001,t+0.03); s.connect(hp); hp.connect(g); g.connect(mg()); s.start(t); s.stop(t+0.05); }
+    function xclank(t,f){ const bp=c.createBiquadFilter(),ws=c.createWaveShaper(),g=c.createGain(); bp.type='bandpass'; bp.frequency.value=f*1.2; bp.Q.value=4; ws.curve=DH;
+      [1,1.41,1.98].forEach(r=>{ const o=c.createOscillator(); o.type='square'; o.frequency.value=f*r; o.connect(bp); o.start(t); o.stop(t+0.16); });
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.3,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+0.26);
+      bp.connect(ws); ws.connect(g); g.connect(mg()); const rs=c.createGain(); rs.gain.value=0.42; g.connect(rs); rs.connect(getRev()); }
+    function xbass(t,m,steps){ const dur=steps*SIX, mix=c.createGain(),ws=c.createWaveShaper(),lp=c.createBiquadFilter(),g=c.createGain(); ws.curve=DH; lp.type='lowpass'; lp.Q.value=5;
+      lp.frequency.setValueAtTime(900,t); lp.frequency.exponentialRampToValueAtTime(240,t+dur*0.9);
+      [0,8,-8].forEach(det=>{ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=mf(m); o.detune.value=det; o.connect(mix); o.start(t); o.stop(t+dur+0.02); });
+      const sub=c.createOscillator(),sg=c.createGain(); sub.type='sine'; sub.frequency.value=mf(m-12);
+      sg.gain.setValueAtTime(0.0001,t); sg.gain.linearRampToValueAtTime(0.55,t+0.01); sg.gain.setValueAtTime(0.55,t+dur*0.8); sg.gain.exponentialRampToValueAtTime(0.0001,t+dur); sub.connect(sg); sg.connect(mg()); sub.start(t); sub.stop(t+dur+0.02);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.5,t+0.006); g.gain.setValueAtTime(0.5,t+dur*0.85); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      mix.connect(ws); ws.connect(lp); lp.connect(g); g.connect(mg()); }
+    function xarp(t,m,vol){ const dur=SIX*1.6, lp=c.createBiquadFilter(),g=c.createGain(); lp.type='lowpass'; lp.Q.value=8; lp.frequency.setValueAtTime(380,t); lp.frequency.exponentialRampToValueAtTime(1800,t+0.12);
+      [7,-7].forEach(det=>{ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=mf(m); o.detune.value=det; o.connect(lp); o.start(t); o.stop(t+dur); });
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      lp.connect(g); g.connect(mg()); const rs=c.createGain(); rs.gain.value=0.25; g.connect(rs); rs.connect(getRev()); }
+    function xpad(chord){ const t=startT, dur=SIX*16+0.25; chord.forEach(m=>{ const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=620; lp.Q.value=4;
+      const g=c.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.1,t+0.25); g.gain.setValueAtTime(0.1,t+dur-0.25); g.gain.linearRampToValueAtTime(0.0001,t+dur);
+      [6,-6].forEach(det=>{ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=mf(m); o.detune.value=det; o.connect(lp); o.start(t); o.stop(t+dur+0.05); });
+      lp.connect(g); g.connect(mg()); const rs=c.createGain(); rs.gain.value=0.4; g.connect(rs); rs.connect(getRev()); }); }
+    function xriser(t,len){ const s=xnoise(len+0.1,0),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.Q.value=1.6; bp.frequency.setValueAtTime(220,t); bp.frequency.exponentialRampToValueAtTime(4500,t+len);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.28,t+len*0.95); g.gain.exponentialRampToValueAtTime(0.0001,t+len+0.05); s.connect(bp); bp.connect(g); g.connect(mg()); const rs=c.createGain(); rs.gain.value=0.3; g.connect(rs); rs.connect(getRev()); s.start(t); s.stop(t+len+0.1); }
+
+    const kickSteps=[0,7,10], clankPat=[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0], arpGate=[1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0];
+    const arpNote=[45,48,52,55,52,48,53,52,45,48,52,57,55,53,52,48];
+    const bassRiff=[{s:0,m:33,d:6},{s:6,m:34,d:2},{s:10,m:33,d:4},{s:14,m:36,d:2}];
+    const clankFreqs=[140,190,240,320,200,260];
+
+    if(sec.pad) xpad(sec.pad);
+    for(let s=0;s<16;s++){ const t=startT+s*SIX;
+      if(sec.kick && kickSteps.indexOf(s)>=0) xkick(t, s===0?0.95:0.6);
+      if(sec.snare && s===8) xsnare(t);
+      if(sec.hats) xhat(t);
+      if(sec.clank){ const go = sec.intro ? (s===4||s===12) : clankPat[s]; if(go) xclank(t, clankFreqs[(bar*5+s)%clankFreqs.length]); }
+      if(sec.bass){ const playStep = sec.frac ? (s===0||s===8) : true; if(playStep) bassRiff.forEach(b=>{ if(b.s===s){ let m=b.m; if((bar%4)===3 && s===14) m+=12; xbass(t,m,sec.frac?6:b.d); } }); }
+      if(sec.arp && arpGate[s]){ const m=arpNote[s], v=0.16; xarp(t,m,v); xarp(t+SIX*3,m,v*(sec.frac?0.6:0.45)); xarp(t+SIX*6,m,v*(sec.frac?0.35:0.22)); }
+    }
+    if(bar===7||bar===19||bar===23) xriser(startT, SIX*16);
+    return SIX*16;
+  }
+
+  // ── LUCIDWILDE — "The Dreaming Canopy" (a356) ──
+  // Psybient. D Dorian, 80 BPM. Lush evolving pads, rolling glide-sub, FM bell
+  // arps with ping-pong echoes, a floating lead and a gentle psy groove. One bar
+  // per call; 32-bar evolving cycle: DRIFT -> PULSE -> BLOOM -> VEIL.
+  function scheduleLucidwilde(startT){
+    const c = ac(), SIX = 60/80/4;                 // 16th = 0.1875s, bar = 3.0s
+    const mf = m => 440*Math.pow(2,(m-69)/12);
+    const PROG = [
+      {root:50, notes:[50,53,57,64]},  // Dm9
+      {root:55, notes:[55,59,62,69]},  // Gadd9 (bright Dorian IV)
+      {root:57, notes:[57,60,64,67]},  // Am7
+      {root:53, notes:[53,57,60,64]},  // Fmaj7
+    ];
+    const rimPat=[0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0];
+    const bellGate=[1,0,1,0,0,1,0,1,1,0,0,1,0,1,0,0];
+    const bassPat=[{s:0,o:0,d:6},{s:6,o:7,d:2},{s:10,o:0,d:4},{s:14,o:5,d:2}];
+    const melody=[69,72,71,74,67,69,65,67];
+    const bar = (scheduleLucidwilde._bar = (scheduleLucidwilde._bar||0)+1) % 32;
+    const chord = PROG[Math.floor(bar/4)%4];
+    let sec;
+    if(bar<4)        sec={pad:1,shimmer:1};
+    else if(bar<8)   sec={pad:1,shimmer:1,beat:1,bass:1};
+    else if(bar<20)  sec={pad:1,shimmer:1,beat:1,bass:1,bells:1,lead:1};
+    else if(bar<24)  sec={pad:1,shimmer:1,bells:1,lead:1};
+    else             sec={pad:1,shimmer:1,beat:1,bass:1,bells:1,lead:1};
+
+    function P(node,p){ if(c.createStereoPanner){ const pn=c.createStereoPanner(); pn.pan.value=p; node.connect(pn); return pn; } return node; }
+    function snd(node,bus,amt){ const g=c.createGain(); g.gain.value=amt; node.connect(g); g.connect(bus); }
+    function nz(dur){ const len=Math.max(1,(c.sampleRate*dur)|0), b=c.createBuffer(1,len,c.sampleRate), d=b.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1; const s=c.createBufferSource(); s.buffer=b; return s; }
+
+    function skick(t){ const o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=200;
+      o.frequency.setValueAtTime(95,t); o.frequency.exponentialRampToValueAtTime(42,t+0.12);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.5,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.42);
+      o.connect(lp); lp.connect(g); g.connect(mg()); o.start(t); o.stop(t+0.45); }
+    function shaker(t,acc){ const s=nz(0.05),hp=c.createBiquadFilter(),g=c.createGain(); hp.type='highpass'; hp.frequency.value=6500;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(acc?0.06:0.03,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+(acc?0.05:0.03));
+      s.connect(hp); hp.connect(g); P(g,Math.random()*0.5-0.25).connect(mg()); s.start(t); s.stop(t+0.07); }
+    function rim(t){ const s=nz(0.05),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.frequency.value=2200; bp.Q.value=2;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.08,t+0.001); g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
+      s.connect(bp); bp.connect(g); P(g,-0.2).connect(mg()); snd(g,getRev(),0.15); s.start(t); s.stop(t+0.07); }
+    function sub(t,midi,steps){ const dur=steps*SIX, o=c.createOscillator(),o2=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain(),o2g=c.createGain();
+      o.type='sine'; o2.type='triangle'; lp.type='lowpass'; lp.frequency.value=220; lp.Q.value=0.7; o2g.gain.value=0.3;
+      const f=mf(midi), pb=scheduleLucidwilde._pb;
+      if(pb!=null){ o.frequency.setValueAtTime(mf(pb),t); o.frequency.exponentialRampToValueAtTime(f,t+0.08); } else o.frequency.setValueAtTime(f,t);
+      o2.frequency.setValueAtTime(f,t); scheduleLucidwilde._pb=midi;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.42,t+0.03); g.gain.setValueAtTime(0.42,t+dur*0.7); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(lp); o2.connect(o2g); o2g.connect(lp); lp.connect(g); g.connect(mg()); o.start(t); o.stop(t+dur+0.05); o2.start(t); o2.stop(t+dur+0.05); }
+    function bell(t,midi,vol,panv){ const f=mf(midi), car=c.createOscillator(),mod=c.createOscillator(),mgn=c.createGain(),g=c.createGain();
+      car.type='sine'; mod.type='sine'; mod.frequency.value=f*3.01; mgn.gain.setValueAtTime(f*2.2,t); mgn.gain.exponentialRampToValueAtTime(f*0.2,t+0.5);
+      mod.connect(mgn); mgn.connect(car.frequency); car.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+0.7);
+      car.connect(g); P(g,panv).connect(mg()); snd(g,getRev(),0.4); car.start(t); car.stop(t+0.8); mod.start(t); mod.stop(t+0.8); }
+    function lead(t,midi,steps,panv){ const dur=steps*SIX, o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain(),vib=c.createOscillator(),vg=c.createGain();
+      o.type='triangle'; const f=mf(midi); o.frequency.value=f; lp.type='lowpass'; lp.frequency.value=f*3.5; lp.Q.value=1.2;
+      vib.frequency.value=5.2; vg.gain.value=f*0.012; vib.connect(vg); vg.connect(o.frequency); vib.start(t); vib.stop(t+dur+0.1);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.16,t+0.06); g.gain.setValueAtTime(0.14,t+dur*0.6); g.gain.linearRampToValueAtTime(0.0001,t+dur);
+      o.connect(lp); lp.connect(g); P(g,panv||0).connect(mg()); snd(g,getLongRev(),0.35); o.start(t); o.stop(t+dur+0.1); }
+    function shimmer(t,midi){ const o=c.createOscillator(),g=c.createGain(); o.type='sine'; o.frequency.value=mf(midi);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.05,t+1.0); g.gain.linearRampToValueAtTime(0.0001,t+SIX*16);
+      o.connect(g); snd(g,getLongRev(),0.9); o.start(t); o.stop(t+SIX*16+0.2); }
+    function swell(t,len){ const s=nz(len+0.1),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.Q.value=1.4;
+      bp.frequency.setValueAtTime(300,t); bp.frequency.exponentialRampToValueAtTime(3800,t+len);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.12,t+len*0.92); g.gain.exponentialRampToValueAtTime(0.0001,t+len+0.1);
+      s.connect(bp); bp.connect(g); snd(g,getLongRev(),0.5); s.start(t); s.stop(t+len+0.15); }
+    function padStop(t){ const arr=scheduleLucidwilde._pad||[]; arr.forEach(p=>{ try{ p.g.gain.cancelScheduledValues(t); p.g.gain.setValueAtTime(p.g.gain.value,t); p.g.gain.linearRampToValueAtTime(0.0001,t+0.6); p.oscs.forEach(o=>o.stop(t+0.65)); p.lfo.stop(t+0.65); }catch(e){} }); scheduleLucidwilde._pad=[]; }
+    function pad(notes,t){ padStop(t); const dur=SIX*16+0.4, arr=[];
+      notes.forEach((m,idx)=>{ const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=700; lp.Q.value=3;
+        const lfo=c.createOscillator(),lg=c.createGain(); lfo.frequency.value=0.05+idx*0.012; lg.gain.value=260; lfo.connect(lg); lg.connect(lp.frequency); lfo.start(t);
+        const g=c.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.05,t+0.5); g.gain.setValueAtTime(0.05,t+dur-0.5); g.gain.linearRampToValueAtTime(0.0001,t+dur);
+        const oscs=[]; [0,7,-7].forEach(det=>{ const o=c.createOscillator(); o.type=det===0?'sawtooth':'triangle'; o.frequency.value=mf(m); o.detune.value=det; o.connect(lp); o.start(t); oscs.push(o); });
+        lp.connect(g); P(g,(idx/Math.max(1,notes.length-1))*1.2-0.6).connect(mg()); snd(g,getLongRev(),0.7); arr.push({g,oscs,lfo});
+      }); scheduleLucidwilde._pad=arr; }
+
+    if(sec.pad) pad(chord.notes, startT);
+    if(sec.shimmer && bar%2===0) shimmer(chord.notes[chord.notes.length-1]+12, startT);
+    if(sec.lead && bar%2===0){ const ln=melody[bar%melody.length]; lead(startT, ln, 6, -0.15); lead(startT+SIX*3, ln, 4, 0.4); }
+    if([3,7,19,23,31].indexOf(bar)>=0) swell(startT, SIX*16);
+    for(let s=0;s<16;s++){ const t=startT+s*SIX, abs=bar*16+s;
+      if(sec.beat){ if(s===0||s===4||s===8||s===12) skick(t); shaker(t, s%4===2); if(rimPat[s]) rim(t); }
+      if(sec.bass) bassPat.forEach(b=>{ if(b.s===s) sub(t, chord.root-12+b.o, b.d); });
+      if(sec.bells && bellGate[s]){ const ct=chord.notes, oct=(s%4===0)?24:12, nt=ct[abs%ct.length]+oct;
+        bell(t, nt, 0.16, -0.5); bell(t+SIX*3, nt, 0.08, 0.5); bell(t+SIX*6, nt, 0.04, -0.5); }   // ping-pong echo taps
+    }
+    return SIX*16;
+  }
+
+  // ── AVIA CANYON — "Flight of the Stormpinion" (a357) ──
+  // Majestic anthem. D major, 128 BPM, I–V–vi–IV. Four-on-floor drive, wide
+  // supersaw chords, rolling bass, a soaring gliding lead, canyon wind. One bar
+  // per call; 32-bar arc HORIZON -> UPDRAFT -> SOAR -> GLIDE -> SOAR(climax).
+  function scheduleAviacanyon(startT){
+    const c = ac(), SIX = 60/128/4;
+    const mf = m => 440*Math.pow(2,(m-69)/12);
+    const PROG=[ {n:[62,66,69],r:38}, {n:[61,64,69],r:45}, {n:[62,66,71],r:47}, {n:[62,67,71],r:43} ]; // D A Bm G
+    const leadSeq=[ {s:0,m:69,d:6},{s:6,m:74,d:6},{s:12,m:73,d:4},{s:16,m:71,d:10},{s:28,m:69,d:4},{s:32,m:74,d:6},{s:38,m:78,d:6},{s:44,m:76,d:4},{s:48,m:74,d:8},{s:56,m:71,d:6} ];
+    const bar = (scheduleAviacanyon._bar = (scheduleAviacanyon._bar||0)+1) % 32;
+    const chord = PROG[bar%4];
+    let sec;
+    if(bar<4)        sec={pad:1,wind:1,leadhint:1};
+    else if(bar<8)   sec={pad:1,bass:1,build:1,wind:1};
+    else if(bar<16)  sec={pad:1,bass:1,beat:1,chords:1,lead:1};
+    else if(bar<20)  sec={pad:1,lead:1,wind:1,glide:1};
+    else             sec={pad:1,bass:1,beat:1,chords:1,lead:1,climax:(bar>=24)};
+
+    function P(node,p){ if(c.createStereoPanner){ const pn=c.createStereoPanner(); pn.pan.value=p; node.connect(pn); return pn; } return node; }
+    function snd(node,bus,amt){ const g=c.createGain(); g.gain.value=amt; node.connect(g); g.connect(bus); }
+    function nz(dur){ const len=Math.max(1,(c.sampleRate*dur)|0), b=c.createBuffer(1,len,c.sampleRate), d=b.getChannelData(0); for(let i=0;i<len;i++) d[i]=Math.random()*2-1; const s=c.createBufferSource(); s.buffer=b; return s; }
+
+    function kick(t,vol){ const o=c.createOscillator(),g=c.createGain(); o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(48,t+0.07);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol||0.9,t+0.004); g.gain.exponentialRampToValueAtTime(0.0001,t+0.3); o.connect(g); g.connect(mg()); o.start(t); o.stop(t+0.32);
+      const ns=nz(0.03),hp=c.createBiquadFilter(),ng=c.createGain(); hp.type='highpass'; hp.frequency.value=1800; ng.gain.setValueAtTime((vol||0.9)*0.35,t); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.02); ns.connect(hp); hp.connect(ng); ng.connect(mg()); ns.start(t); ns.stop(t+0.03); }
+    function clap(t){ [0,0.008,0.018].forEach(off=>{ const ns=nz(0.14),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.frequency.value=1600; bp.Q.value=1.1;
+      g.gain.setValueAtTime(0.0001,t+off); g.gain.linearRampToValueAtTime(0.36,t+off+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+off+0.12); ns.connect(bp); bp.connect(g); g.connect(mg()); snd(g,getRev(),0.25); ns.start(t+off); ns.stop(t+off+0.14); }); }
+    function ohat(t){ const ns=nz(0.15),hp=c.createBiquadFilter(),g=c.createGain(); hp.type='highpass'; hp.frequency.value=8200; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.15,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+0.13); ns.connect(hp); hp.connect(g); P(g,0.15).connect(mg()); ns.start(t); ns.stop(t+0.15); }
+    function chat(t,vol){ const ns=nz(0.04),hp=c.createBiquadFilter(),g=c.createGain(); hp.type='highpass'; hp.frequency.value=9500; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol||0.09,t+0.001); g.gain.exponentialRampToValueAtTime(0.0001,t+0.03); ns.connect(hp); hp.connect(g); P(g,-0.15).connect(mg()); ns.start(t); ns.stop(t+0.04); }
+    function crash(t){ const ns=nz(1.4),hp=c.createBiquadFilter(),g=c.createGain(); hp.type='highpass'; hp.frequency.value=5000; g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.18,t+0.005); g.gain.exponentialRampToValueAtTime(0.0001,t+1.3); ns.connect(hp); hp.connect(g); g.connect(mg()); snd(g,getLongRev(),0.5); ns.start(t); ns.stop(t+1.4); }
+    function bass(t,midi,steps){ const dur=steps*SIX, o=c.createOscillator(),o2=c.createOscillator(),sub=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain(),sg=c.createGain();
+      o.type='sawtooth'; o2.type='sawtooth'; o2.detune.value=10; sub.type='sine'; lp.type='lowpass'; lp.Q.value=3;
+      o.frequency.value=mf(midi); o2.frequency.value=mf(midi); sub.frequency.value=mf(midi-12);
+      lp.frequency.setValueAtTime(1300,t); lp.frequency.exponentialRampToValueAtTime(420,t+dur*0.8);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.32,t+0.006); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      sg.gain.setValueAtTime(0.0001,t); sg.gain.linearRampToValueAtTime(0.38,t+0.01); sg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(mg()); sub.connect(sg); sg.connect(mg());
+      o.start(t); o.stop(t+dur+0.02); o2.start(t); o2.stop(t+dur+0.02); sub.start(t); sub.stop(t+dur+0.02); }
+    function ssaw(notes,t,dur,vol){ notes.forEach((m,idx)=>{ const lp=c.createBiquadFilter(),g=c.createGain(); lp.type='lowpass'; lp.frequency.value=2600; lp.Q.value=0.8;
+      for(let k=0;k<7;k++){ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=mf(m); o.detune.value=(k-3)*8; o.connect(lp); o.start(t); o.stop(t+dur+0.05); }
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+0.006); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      lp.connect(g); P(g,(idx/Math.max(1,notes.length-1))*0.9-0.45).connect(mg()); snd(g,getRev(),0.35); }); }
+    function padStop(t){ const arr=scheduleAviacanyon._pad||[]; arr.forEach(p=>{ try{ p.g.gain.cancelScheduledValues(t); p.g.gain.setValueAtTime(p.g.gain.value,t); p.g.gain.linearRampToValueAtTime(0.0001,t+0.5); p.oscs.forEach(o=>o.stop(t+0.55)); p.lfo.stop(t+0.55); }catch(e){} }); scheduleAviacanyon._pad=[]; }
+    function pad(notes,t){ padStop(t); const dur=SIX*16+0.3, arr=[];
+      notes.forEach((m,idx)=>{ const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1100; lp.Q.value=2;
+        const lfo=c.createOscillator(),lg=c.createGain(); lfo.frequency.value=0.06+idx*0.01; lg.gain.value=320; lfo.connect(lg); lg.connect(lp.frequency); lfo.start(t);
+        const g=c.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.06,t+0.4); g.gain.setValueAtTime(0.06,t+dur-0.4); g.gain.linearRampToValueAtTime(0.0001,t+dur);
+        const oscs=[]; [0,9,-9].forEach(det=>{ const o=c.createOscillator(); o.type=det===0?'sawtooth':'triangle'; o.frequency.value=mf(m+12); o.detune.value=det; o.connect(lp); o.start(t); oscs.push(o); });
+        lp.connect(g); P(g,(idx/Math.max(1,notes.length-1))*1.0-0.5).connect(mg()); snd(g,getLongRev(),0.6); arr.push({g,oscs,lfo}); });
+      scheduleAviacanyon._pad=arr; }
+    function lead(t,midi,steps,vol,noGlide){ const dur=steps*SIX, lp=c.createBiquadFilter(),g=c.createGain(),vib=c.createOscillator(),vg=c.createGain();
+      lp.type='lowpass'; lp.frequency.value=mf(midi)*4; lp.Q.value=1.0; const f=mf(midi);
+      vib.frequency.value=5.4; vg.gain.value=f*0.01; vib.connect(vg); vib.start(t); vib.stop(t+dur+0.1);
+      const pl=scheduleAviacanyon._pl;
+      [0,7,-7].forEach(det=>{ const o=c.createOscillator(); o.type='sawtooth'; o.detune.value=det;
+        if(!noGlide && pl!=null){ o.frequency.setValueAtTime(mf(pl),t); o.frequency.exponentialRampToValueAtTime(f,t+0.08); } else o.frequency.setValueAtTime(f,t);
+        vg.connect(o.frequency); o.connect(lp); o.start(t); o.stop(t+dur+0.1); });
+      if(!noGlide) scheduleAviacanyon._pl=midi;
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+0.03); g.gain.setValueAtTime(vol*0.85,t+dur*0.6); g.gain.linearRampToValueAtTime(0.0001,t+dur);
+      lp.connect(g); g.connect(mg()); snd(g,getRev(),0.4); }
+    function wind(t,len){ const ns=nz(len+0.1),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.Q.value=1.0;
+      bp.frequency.setValueAtTime(500,t); bp.frequency.linearRampToValueAtTime(500+Math.random()*1400,t+len);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.06,t+len*0.4); g.gain.linearRampToValueAtTime(0.0001,t+len); ns.connect(bp); bp.connect(g); P(g,Math.random()*1.2-0.6).connect(mg()); snd(g,getLongRev(),0.4); ns.start(t); ns.stop(t+len+0.1); }
+    function riser(t,len){ const ns=nz(len+0.1),bp=c.createBiquadFilter(),g=c.createGain(); bp.type='bandpass'; bp.Q.value=1.4; bp.frequency.setValueAtTime(300,t); bp.frequency.exponentialRampToValueAtTime(6500,t+len);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.2,t+len*0.94); g.gain.exponentialRampToValueAtTime(0.0001,t+len+0.05); ns.connect(bp); bp.connect(g); g.connect(mg()); snd(g,getRev(),0.4); ns.start(t); ns.stop(t+len+0.1);
+      const o=c.createOscillator(),og=c.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(110,t); o.frequency.exponentialRampToValueAtTime(880,t+len); og.gain.setValueAtTime(0.0001,t); og.gain.linearRampToValueAtTime(0.05,t+len*0.9); og.gain.exponentialRampToValueAtTime(0.0001,t+len); o.connect(og); og.connect(mg()); o.start(t); o.stop(t+len+0.05); }
+    function swoop(t){ const o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain(); o.type='sawtooth'; lp.type='lowpass'; lp.frequency.value=3000;
+      o.frequency.setValueAtTime(mf(69),t); o.frequency.exponentialRampToValueAtTime(mf(81),t+0.4); g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.1,t+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+      o.connect(lp); lp.connect(g); P(g,Math.random()*1.0-0.5).connect(mg()); snd(g,getRev(),0.45); o.start(t); o.stop(t+0.55); }
+
+    if(sec.pad) pad(chord.n, startT);
+    if(sec.wind) wind(startT, SIX*16);
+    if(bar===7||bar===19) riser(startT, SIX*16);
+    if(bar===8||bar===20) crash(startT);
+    if(sec.glide && bar%2===1) swoop(startT+SIX*8);
+    for(let s=0;s<16;s++){ const t=startT+s*SIX;
+      if(sec.lead || sec.leadhint){ const pstep=(bar%4)*16+s;
+        leadSeq.forEach(ev=>{ if(ev.s===pstep){ if(sec.leadhint && pstep>12) return; const m=ev.m+(sec.climax?12:0), vol=sec.leadhint?0.08:0.2;
+          lead(t,m,ev.d,vol,false); lead(t+SIX*4,m,Math.min(ev.d,3),vol*0.32,true); } }); }
+      if(sec.beat){ if(s%4===0) kick(t); if(s===4||s===12) clap(t); if(s%4===2) ohat(t); chat(t,0.05); }
+      if(sec.build){ if(s===0||s===8) kick(t,0.6); if(s%2===0) chat(t,0.04+(bar-4)*0.02); }
+      if(sec.chords && (s===2||s===6||s===10||s===14)) ssaw(chord.n,t,SIX*2.4,0.09);
+      if(sec.bass){ if(s%4===0) bass(t,chord.r,2); if(s%4===2) bass(t,chord.r+12,1); }
+    }
+    return SIX*16;
+  }
+
+  const TRACKS = {
+    lobby:     { fn: scheduleLobby,       dur: null, vol: 0.22 },
+    server_lobby:{ fn: scheduleServerLobby, dur: null, vol: 0.26 },
+    outpost:   { fn: scheduleOutpost,  dur: null, vol: 0.20 },
+    patrol:    { fn: schedulePatrol,   dur: null, vol: 0.20 },
+    void:      { fn: scheduleVoid,     dur: null, vol: 0.18 },
+    citadel:   { fn: scheduleCitadel,  dur: null, vol: 0.20 },
+    ashlands:  { fn: scheduleAshlands, dur: null, vol: 0.21 },
+    sunken_sands:{ fn: scheduleDesert,  dur: null, vol: 0.21 },
+    fungal:    { fn: scheduleFungal,   dur: null, vol: 0.19 },
+    frostveil: { fn: scheduleFrostveil,dur: null, vol: 0.18 },
+    ancient:   { fn: scheduleAncient,  dur: null, vol: 0.20 },
+    sanctuary:  { fn: scheduleSanctuary,  dur: null, vol: 0.22 },
+    dragonlair: { fn: scheduleDragonLair, dur: null, vol: 0.25 },
+    riftvale:   { fn: scheduleRiftVale,   dur: null, vol: 0.20 },
+    void_citadel:{ fn: scheduleVoidCitadel, dur: null, vol: 0.22 },  // v92.31 — was: scheduleRiftVale
+    xumen:      { fn: scheduleXumen,      dur: null, vol: 0.24 },
+    caves_of_despair:{ fn: scheduleCavesOfDespair, dur: null, vol: 0.20 },  // v92.31 — was: scheduleAshlands
+    cemetery:       { fn: scheduleCemetery, dur: null, vol: 0.22 },         // v92.31 — was: scheduleVoid
+    necropolis:     { fn: scheduleNecropolis, dur: null, vol: 0.22 },       // v92.31 — was: scheduleVoid
+    wyvernwastes:    { fn: scheduleWyvernWastes, dur: null, vol: 0.24 },
+    xumen_fortress: { fn: scheduleXumenFortress, dur: null, vol: 0.26 },    // v92.31 — was: scheduleXumen
+    neon_hollow:    { fn: scheduleNeonHollow, dur: null, vol: 0.22 },       // v92.31 — was: scheduleRiftVale
+    veiled_sanctuary:{ fn: scheduleVeiledSanctuary, dur: null, vol: 0.20 }, // v92.37
+    blooming_wilds:  { fn: scheduleBloomingWilds, dur: null, vol: 0.22 },   // v92.49
+    lucidwilde:      { fn: scheduleLucidwilde,    dur: null, vol: 0.26 },   // a356 - "The Dreaming Canopy" psybient, D Dorian, 80 BPM
+    aviacanyon:      { fn: scheduleAviacanyon,    dur: null, vol: 0.20 },   // a357 - "Flight of the Stormpinion" anthem, D major, 128 BPM
+    xeron:           { fn: scheduleXeron,         dur: null, vol: 0.26 },   // v92.55 — final zone
+    convergence:     { fn: scheduleConvergence,   dur: null, vol: 0.24 },   // v93.0 Phase 3 — "Apocalyptic Tech" — D minor, 95 BPM, layered sub-drone + glitch perc
+    xulcan:          { fn: scheduleXulcan,        dur: null, vol: 0.20 },   // a353 - "Forge of the Golden Harmonic" - industrial, A phrygian, 100 BPM, half-time
+  };
+
+  let tickGen = 0;
+
+  function tick(gen){
+    if(!playing || gen !== tickGen) return;
+    const trackDef = TRACKS[currentTrack];
+    // v93.0 — Defensive: if a zone has no track entry, fail gracefully instead of crashing.
+    // Without this, any new zone without TRACKS[currentTrack] entry throws
+    // "can't access property 'fn', trackDef is undefined" every tick.
+    if(!trackDef || typeof trackDef.fn !== 'function'){
+      console.warn('[MUSIC] No track definition for zone "' + currentTrack + '" — silencing.');
+      playing = false;
+      return;
+    }
+    const dur = trackDef.fn(ac().currentTime);
+    scheduleTimer = setTimeout(()=>tick(gen), (dur - 0.15) * 1000);
+  }
+
+  // v92.31 — Music user-volume multiplier (0-1). Multiplied with track-specific vol.
+  let _musicUserVolume = 1.0;
+  function _musicTargetForCurrentTrack(){
+    const trackVol = (currentTrack && TRACKS[currentTrack]?.vol) || 0.20;
+    return trackVol * _musicUserVolume;
+  }
+
+  const api = {
+    start(zone){
+      const track=zone||'lobby';
+      if(playing&&currentTrack===track) return;
+      tickGen++; clearTimeout(scheduleTimer); playing=false; currentTrack=null; hardSilence();
+      const gen=tickGen;
+      setTimeout(()=>{
+        if(gen!==tickGen) return;
+        currentTrack=track; playing=true; loopCount=0;
+        Promise.resolve(ac().resume()).then(()=>{
+          if(gen!==tickGen) return;
+          mg().gain.cancelScheduledValues(ac().currentTime);
+          mg().gain.setValueAtTime(0,ac().currentTime);
+          // v92.31 — apply user-volume on track start
+          const target = (TRACKS[track]?.vol||0.20) * _musicUserVolume;
+          mg().gain.linearRampToValueAtTime(target,ac().currentTime+2.0);
+          tick(gen);
+        });
+      },300);
+    },
+    stop(){
+      tickGen++; clearTimeout(scheduleTimer); playing=false; currentTrack=null; hardSilence();
+    },
+    setZone(zone){
+      if(currentTrack===zone&&playing) return;
+      api.start(zone);
+    },
+    // v92.31 — User volume API. Setting volume re-applies to the live master gain.
+    setVolume(v){
+      _musicUserVolume = Math.max(0, Math.min(1, v||0));
+      if(masterGain && playing){
+        masterGain.gain.cancelScheduledValues(ac().currentTime);
+        masterGain.gain.linearRampToValueAtTime(_musicTargetForCurrentTrack(), ac().currentTime + 0.3);
+      }
+    },
+    getVolume(){ return _musicUserVolume; },
+  };
+  return api;
+})();
+
+var OST_KEYS = ['lobby','server_lobby','outpost','patrol','blooming_wilds','aviacanyon','lucidwilde','sunken_sands','ashlands','fungal','frostveil','ancient','void','citadel','cemetery','necropolis','caves_of_despair','sanctuary','veiled_sanctuary','riftvale','void_citadel','wyvernwastes','dragonlair','xumen','xumen_fortress','neon_hollow','xulcan','convergence','xeron'];
+
 function switchTab(tabName){
+  if(tabName !== 'soundtrack' && typeof MUSIC !== 'undefined'){ try{ MUSIC.stop(); }catch(e){} _ostNow = null; if(typeof _ostSyncUI === 'function') _ostSyncUI(); }
   document.querySelectorAll('.wiki-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === tabName));
   document.querySelectorAll('.wiki-panel').forEach(x => x.classList.toggle('active', x.id === 'panel-' + tabName));
   window.scrollTo({ top: document.querySelector('.wiki-tabs').offsetTop - 64, behavior: 'smooth' });
@@ -1101,15 +3210,39 @@ function renderSoundtrack(){
   var html = '';
   SOUNDTRACK.forEach(function(o, i){
     if(q && (o.z+' '+o.t+' '+o.d).toLowerCase().indexOf(q) < 0) return;
-    html += '<div class="ost-card'+(o.sig?' sig':'')+'">'
+    var key = OST_KEYS[i] || '';
+    html += '<div class="ost-card'+(o.sig?' sig':'')+'" data-k="'+key+'" role="button" tabindex="0">'
       + '<div class="ost-num">'+String(i+1).padStart(2,'0')+'</div>'
       + '<div class="ost-body"><div class="ost-zone">'+o.z+'</div>'
       + '<div class="ost-title">'+o.t+'</div><div class="ost-desc">'+o.d+'</div></div>'
-      + '<div class="ost-glyph">\u266a</div></div>';
+      + '<div class="ost-play">▶</div></div>';
   });
   wrap.innerHTML = html || '<div class="ost-head">No tracks match that search.</div>';
+  if(typeof _ostSyncUI === 'function') _ostSyncUI();
 }
-(function(){ var s=document.getElementById('ost-search'); if(s) s.addEventListener('input', renderSoundtrack); })();
+var _ostNow = null;
+function _ostSyncUI(){
+  document.querySelectorAll('#ost-list .ost-card').forEach(function(c){
+    var on = (c.dataset.k === _ostNow);
+    c.classList.toggle('playing', on);
+    var pb = c.querySelector('.ost-play'); if(pb) pb.textContent = on ? '❚❚' : '▶';
+  });
+}
+function ostPlay(key){
+  if(!key || typeof MUSIC === 'undefined') return;
+  try {
+    if(_ostNow === key){ MUSIC.stop(); _ostNow = null; }
+    else { MUSIC.setZone(key); _ostNow = key; }
+  } catch(e){}
+  _ostSyncUI();
+}
+(function(){
+  var s = document.getElementById('ost-search'); if(s) s.addEventListener('input', renderSoundtrack);
+  var list = document.getElementById('ost-list');
+  if(list) list.addEventListener('click', function(e){ var card = e.target.closest('.ost-card'); if(card && card.dataset.k) ostPlay(card.dataset.k); });
+  var vol = document.getElementById('ost-volume');
+  if(vol && typeof MUSIC !== 'undefined' && MUSIC.setVolume){ MUSIC.setVolume(vol.value/100); vol.addEventListener('input', function(){ MUSIC.setVolume(vol.value/100); }); }
+})();
 renderSoundtrack();
 
 

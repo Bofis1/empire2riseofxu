@@ -144,6 +144,21 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .boss-card.world:hover{border-color:rgba(136,34,255,0.6);}
 .boss-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--xu-red),transparent);}
 .boss-card.world::before{background:linear-gradient(to right,var(--xu-purple),transparent);}
+.ost-head{color:var(--xu-dim);letter-spacing:0.06em;margin:0 0 1.2rem;font-size:0.9rem;}
+.ost-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0.9rem;}
+.ost-card{display:flex;align-items:center;gap:1rem;background:var(--xu-deep);border:1px solid rgba(0,229,255,0.15);padding:0.95rem 1.1rem;position:relative;overflow:hidden;transition:border-color 0.2s;}
+.ost-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--xu-cyan),transparent);}
+.ost-card:hover{border-color:rgba(0,229,255,0.5);}
+.ost-card.sig{border-color:rgba(255,204,32,0.22);}
+.ost-card.sig::before{background:linear-gradient(to right,var(--xu-gold),transparent);}
+.ost-num{font-size:1.5rem;font-weight:700;color:var(--xu-cyan);opacity:0.45;min-width:2.1rem;text-align:center;}
+.ost-card.sig .ost-num{color:var(--xu-gold);}
+.ost-body{flex:1;min-width:0;}
+.ost-zone{font-size:0.72rem;letter-spacing:0.16em;color:var(--xu-dim);text-transform:uppercase;}
+.ost-title{font-size:1.05rem;color:var(--xu-cyan);font-weight:600;line-height:1.25;}
+.ost-card.sig .ost-title{color:var(--xu-gold);}
+.ost-desc{font-size:0.82rem;color:var(--xu-text);opacity:0.72;letter-spacing:0.02em;}
+.ost-glyph{font-size:1.25rem;opacity:0.28;}
 /* ── 3D boss specimen previews (shared overlay canvas) ── */
 .boss-preview{position:relative;height:210px;margin:-1.4rem -1.4rem 1.1rem;overflow:hidden;
   border-bottom:1px solid rgba(255,34,68,0.18);
@@ -510,6 +525,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <button class="wiki-tab" data-tab="enemies">Bestiary</button>
   <button class="wiki-tab" data-tab="crafting">Crafting</button>
   <button class="wiki-tab" data-tab="achievements">Achievements</button>
+  <button class="wiki-tab" data-tab="soundtrack">🎵 Soundtrack</button>
 </div>
 <main>
 <div class="wiki-panel active" id="panel-guide">
@@ -991,6 +1007,11 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <div class="filter-bar"><input class="filter-search" id="ach-search" type="text" placeholder="Search achievements..."></div>
   <div class="ach-cat-tabs" id="ach-cat-tabs"></div>
   <div class="ach-grid" id="ach-grid"></div>
+</div>
+<div class="wiki-panel" id="panel-soundtrack">
+  <p class="ost-head">Every zone in Empire 2 has its own original score — generated live in pure Web Audio, no audio files. 29 tracks in all.</p>
+  <div class="filter-bar"><input class="filter-search" id="ost-search" type="text" placeholder="Search the soundtrack by zone, title, or style..."></div>
+  <div class="ost-list" id="ost-list"></div>
 </div></main>
 <footer><p>Empire 2: Rise of Xu — Wiki indexed from the live game source</p></footer>
 <script>
@@ -1033,11 +1054,64 @@ function _wikiApplyHash(){
   var h = (window.location.hash || '').replace(/^#/, '').trim();
   if(!h) return;
   // Only honor hashes that match a known tab
-  var validTabs = ['guide','items','bosses','skills','talents','ascendancy','sets','zones','races','enemies','crafting','achievements'];
+  var validTabs = ['guide','items','bosses','skills','talents','ascendancy','sets','zones','races','enemies','crafting','achievements','soundtrack'];
   if(validTabs.indexOf(h) !== -1){ switchTab(h); }
 }
 window.addEventListener('hashchange', _wikiApplyHash);
 _wikiApplyHash();
+
+// ── SOUNDTRACK ──
+// Every zone's score, mirrored from the game's MUSIC.TRACKS map. Style/key/BPM
+// taken from each scheduler's header. `sig` = the bespoke flagship tracks.
+var SOUNDTRACK = [
+  {z:'Login / Character Select', t:'Lobby Theme',                d:'Dreamy ambient \u00b7 A Dorian \u00b7 58 BPM'},
+  {z:'Server / Battle Network',  t:'Server Lobby',               d:'High-tech techno \u00b7 A minor \u00b7 128 BPM'},
+  {z:'Xu Outpost',               t:'The Outpost',                d:'Industrial technological \u00b7 D minor \u00b7 120 BPM'},
+  {z:'Patrol Zone',              t:'Front Lines',                d:'Tense military march \u00b7 A minor \u00b7 110 BPM'},
+  {z:'The Blooming Wilds',       t:'Blooming Wilds',             d:'Playful, magical, slightly off-kilter fey'},
+  {z:'Avia Canyon',              t:'Flight of the Stormpinion',  d:'Majestic anthem \u00b7 D major \u00b7 128 BPM', sig:1},
+  {z:'Lucidwilde',               t:'The Dreaming Canopy',        d:'Psybient \u00b7 D Dorian \u00b7 80 BPM', sig:1},
+  {z:'Sunken Sands',             t:'Sunken Sands',               d:'Arabian desert \u00b7 tabla & sitar \u00b7 modal'},
+  {z:'Ashlands',                 t:'Ashlands',                   d:'Volcanic industrial rage \u00b7 D minor \u00b7 130 BPM'},
+  {z:'Fungal Caverns',           t:'Fungal Depths',              d:'Spore-lit atmospheric ambience'},
+  {z:'Frostveil Tundra',         t:'Frostveil Tundra',           d:'Frozen desolation \u00b7 B minor \u00b7 75 BPM'},
+  {z:'Ancient Ruins',            t:'The Ancients',               d:'Weathered ruins ambience'},
+  {z:'The Void Wastes',          t:'Void Wastes',                d:'Dark ambient dread \u00b7 E\u266d minor \u00b7 52 BPM'},
+  {z:'Xu Citadel',               t:'The Citadel',                d:'Epic war march \u00b7 F\u266f minor \u00b7 88 BPM'},
+  {z:'Xu Cemetery',              t:'The Cemetery',               d:'Mournful chimes & tolling bell \u00b7 B minor \u00b7 48 BPM'},
+  {z:'The Necropolis',           t:'The Necropolis',             d:'Ancient dirge \u00b7 C minor \u00b7 56 BPM'},
+  {z:'Caves of Despair',         t:'Caves of Despair',           d:'Dripping cavern dread \u00b7 E minor \u00b7 50 BPM'},
+  {z:'Sanctuary',                t:'Sanctuary',                  d:'Militant war drums & ancient power \u00b7 D minor \u00b7 140 BPM'},
+  {z:'Veiled Sanctuary',         t:'Veiled Sanctuary',           d:'Sacred, ethereal, void-touched \u00b7 A minor \u00b7 44 BPM'},
+  {z:'Rift Vale',                t:'Rift Vale',                  d:'Alien psychedelic horror \u00b7 D minor \u00b7 135 BPM'},
+  {z:'Void Citadel',             t:'Void Citadel',               d:'Dimensional fortress, dread & grandeur \u00b7 B\u266d minor \u00b7 64 BPM'},
+  {z:'Wyvern Wastes',            t:'Wyvern Wastes',              d:'Tribal war drums & savage hunting horn'},
+  {z:'Dragon Lair',              t:'Dragon Lair',                d:'Relentless dragon battle \u00b7 E minor \u00b7 160 BPM'},
+  {z:'Xumen',                    t:'Xumen',                      d:'Relentless military siege \u00b7 D minor \u00b7 155 BPM'},
+  {z:'Xu Fortress',              t:'Xu Fortress',                d:'Militant march \u00b7 D minor \u00b7 96 BPM'},
+  {z:'Neon Hollow',              t:'Neon Hollow',                d:'Cyberpunk synth grid \u00b7 A minor pentatonic \u00b7 84 BPM'},
+  {z:'Xulcan Prime',             t:'Forge of the Golden Harmonic', d:'Industrial / cyberpunk \u00b7 A Phrygian \u00b7 100 BPM \u00b7 half-time', sig:1},
+  {z:'The Convergence',          t:'Apocalyptic Tech',           d:'Industrial apocalypse \u00b7 D minor \u00b7 95 BPM'},
+  {z:'Xeron',                    t:'Xeron',                      d:'Industrial cyber \u00b7 cold & final'},
+];
+function renderSoundtrack(){
+  var wrap = document.getElementById('ost-list'); if(!wrap) return;
+  var sEl = document.getElementById('ost-search');
+  var q = (sEl && sEl.value || '').toLowerCase().trim();
+  var html = '';
+  SOUNDTRACK.forEach(function(o, i){
+    if(q && (o.z+' '+o.t+' '+o.d).toLowerCase().indexOf(q) < 0) return;
+    html += '<div class="ost-card'+(o.sig?' sig':'')+'">'
+      + '<div class="ost-num">'+String(i+1).padStart(2,'0')+'</div>'
+      + '<div class="ost-body"><div class="ost-zone">'+o.z+'</div>'
+      + '<div class="ost-title">'+o.t+'</div><div class="ost-desc">'+o.d+'</div></div>'
+      + '<div class="ost-glyph">\u266a</div></div>';
+  });
+  wrap.innerHTML = html || '<div class="ost-head">No tracks match that search.</div>';
+}
+(function(){ var s=document.getElementById('ost-search'); if(s) s.addEventListener('input', renderSoundtrack); })();
+renderSoundtrack();
+
 
 // ── ITEMS ──
 // Filter logic now matches itype against BOTH type AND slot, so chips like

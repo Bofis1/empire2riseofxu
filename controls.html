@@ -233,8 +233,66 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="mouse-labels">
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Left Click / Hold</b> — Attack in cursor direction. Hold to auto-attack.</div></div>
         <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block. Reduces incoming damage. Depletes stamina over time.</div></div>
-        <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Adjust camera zoom distance.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Switches between all three view modes. Scroll in for first-person, out for third-person and isometric. See <a href="#camera-modes" style="color:var(--xu-cyan);text-decoration:none;border-bottom:1px dotted var(--xu-cyan);">Camera Modes</a> below.</div></div>
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMERA MODES SECTION (v93.0 — FP / TP / ISO) -->
+  <div class="ctrl-section reveal" id="camera-modes">
+    <div class="section-eyebrow">Camera</div>
+    <h2 class="section-title">Three <span>Camera Modes</span></h2>
+    <p style="color:var(--xu-dim);max-width:820px;margin:0 0 28px;line-height:1.75;">
+      Rise of Xu plays in three perspectives, and they all live on a single <b style="color:var(--xu-text)">mouse wheel</b>. The view is one continuous zoom: roll the wheel <b style="color:var(--xu-cyan)">in</b> to pull the camera closer&nbsp;&mdash; eventually right behind your eyes&nbsp;&mdash; or <b style="color:var(--xu-gold)">out</b> to pull back into third-person and then the classic overhead angle. You start every session in <b style="color:var(--xu-green)">third-person</b>, and pressing <span class="hl">Esc</span> snaps straight back to the overhead view.
+    </p>
+
+    <!-- zoom rail -->
+    <div style="background:linear-gradient(180deg,rgba(10,22,40,0.55),rgba(6,13,24,0.55));border:1px solid rgba(0,229,255,0.15);border-radius:14px;padding:24px 20px 18px;margin:0 0 30px;">
+      <svg viewBox="0 0 820 132" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+        <defs>
+          <linearGradient id="railGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#00e5ff"/>
+            <stop offset="50%" stop-color="#00ff88"/>
+            <stop offset="100%" stop-color="#ffcc20"/>
+          </linearGradient>
+        </defs>
+        <!-- scroll hints -->
+        <polygon points="44,16 56,9 56,23" fill="#9aacc0"/>
+        <text x="64" y="20" fill="#9aacc0" font-size="12" font-family="monospace" text-anchor="start">SCROLL IN</text>
+        <text x="410" y="20" fill="#00ff88" font-size="11" font-family="monospace" text-anchor="middle">— MOUSE WHEEL —</text>
+        <text x="756" y="20" fill="#9aacc0" font-size="12" font-family="monospace" text-anchor="end">SCROLL OUT</text>
+        <polygon points="776,16 764,9 764,23" fill="#9aacc0"/>
+        <!-- rail line -->
+        <line x1="80" y1="52" x2="740" y2="52" stroke="url(#railGrad)" stroke-width="4" stroke-linecap="round"/>
+        <!-- nodes -->
+        <circle cx="80" cy="52" r="13" fill="#060d18" stroke="#00e5ff" stroke-width="2.5"/>
+        <circle cx="410" cy="52" r="16" fill="#060d18" stroke="#00ff88" stroke-width="3"/>
+        <circle cx="410" cy="52" r="5" fill="#00ff88"/>
+        <circle cx="740" cy="52" r="13" fill="#060d18" stroke="#ffcc20" stroke-width="2.5"/>
+        <!-- labels -->
+        <text x="80" y="86" fill="#00e5ff" font-size="13" font-family="monospace" font-weight="bold" text-anchor="middle">FIRST-PERSON</text>
+        <text x="80" y="104" fill="#9aacc0" font-size="10.5" font-family="monospace" text-anchor="middle">zoom fully in</text>
+        <text x="410" y="88" fill="#00ff88" font-size="13.5" font-family="monospace" font-weight="bold" text-anchor="middle">THIRD-PERSON</text>
+        <text x="410" y="106" fill="#9aacc0" font-size="10.5" font-family="monospace" text-anchor="middle">default — start here</text>
+        <text x="740" y="86" fill="#ffcc20" font-size="13" font-family="monospace" font-weight="bold" text-anchor="middle">ISOMETRIC</text>
+        <text x="740" y="104" fill="#9aacc0" font-size="10.5" font-family="monospace" text-anchor="middle">zoom fully out</text>
+      </svg>
+    </div>
+
+    <!-- per-mode cards -->
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num" style="color:#00e5ff;">FIRST-PERSON</div>
+        <p><b>Scroll all the way in.</b> The camera drops to your character's eyes and your body is hidden. This is the only mode with full <span class="hl">vertical aim</span>&nbsp;&mdash; look up or down and your shots follow your line of sight. Click to capture the mouse for free-look; <span class="hl">Esc</span> releases it.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num" style="color:#00ff88;">THIRD-PERSON &middot; DEFAULT</div>
+        <p><b>Where every session begins.</b> The camera floats behind your character so you can see them and the field around you. Move the mouse to orbit the camera, <span class="hl">WASD</span> moves relative to your facing, and attacks fire flat across the ground toward the crosshair.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num" style="color:#ffcc20;">ISOMETRIC &middot; CLASSIC</div>
+        <p><b>Scroll all the way out</b> past third-person to reach the original fixed overhead angle the game launched with&nbsp;&mdash; ideal for reading crowded fights and big arenas. Pressing <span class="hl">Esc</span> jumps straight to this view.</p>
       </div>
     </div>
   </div>

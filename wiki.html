@@ -72,6 +72,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:ce
 main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .wiki-panel{display:none;}
 .wiki-panel.active{display:block;}
+.wm-panel-head{text-align:center;max-width:860px;margin:0 auto 1.6rem;}
+.wm-panel-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.5rem,4vw,2.4rem);color:#e8f5ff;letter-spacing:0.03em;text-shadow:var(--glow-cyan);}
+.wm-panel-sub{color:var(--xu-dim);margin-top:0.6rem;}
+.wm-frame{position:relative;display:block;max-width:1240px;margin:0 auto;border:1px solid rgba(0,229,255,0.28);box-shadow:0 0 50px rgba(0,229,255,0.12),0 18px 50px rgba(0,0,0,0.6);overflow:hidden;transition:box-shadow .3s,border-color .3s;}
+.wm-frame:hover{border-color:rgba(0,229,255,0.6);box-shadow:0 0 90px rgba(0,229,255,0.22),0 18px 60px rgba(0,0,0,0.7);}
+.wm-frame img{display:block;width:100%;height:auto;}
+.wm-corner{position:absolute;width:22px;height:22px;border:2px solid var(--xu-cyan);opacity:0.75;pointer-events:none;}
+.wm-corner.tl{top:9px;left:9px;border-right:none;border-bottom:none;}
+.wm-corner.tr{top:9px;right:9px;border-left:none;border-bottom:none;}
+.wm-corner.bl{bottom:9px;left:9px;border-right:none;border-top:none;}
+.wm-corner.br{bottom:9px;right:9px;border-left:none;border-top:none;}
+.wm-cap{text-align:center;margin-top:1rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;}
+
 
 /* FILTERS */
 .filter-bar{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:2rem;align-items:center;}
@@ -526,6 +539,7 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
 </section>
 <div class="wiki-tabs">
   <button class="wiki-tab active" data-tab="guide">📖 Newbie Guide</button>
+  <button class="wiki-tab" data-tab="worldmap">🗺️ World Map</button>
   <button class="wiki-tab" data-tab="items">Items</button>
   <button class="wiki-tab" data-tab="bosses">Bosses</button>
   <button class="wiki-tab" data-tab="skills">Skills</button>
@@ -540,6 +554,18 @@ footer p{font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacin
   <button class="wiki-tab" data-tab="soundtrack">🎵 Soundtrack</button>
 </div>
 <main>
+<div class="wiki-panel" id="panel-worldmap">
+  <div class="wm-panel-head">
+    <h2 class="wm-panel-title">The World of Xu</h2>
+    <p class="wm-panel-sub">All 30 zones, from the Xu Outpost to The Reach. Difficulty climbs as you journey outward from the safe green heartland into the Xu war-cities, the dimensional rifts, and the post-cap endgame.</p>
+  </div>
+  <a href="worldmap.png" target="_blank" class="wm-frame" title="Open the full-size world map">
+    <img src="worldmap.png" alt="Empire 2: Rise of Xu world map showing all 30 zones" loading="lazy">
+    <span class="wm-corner tl"></span><span class="wm-corner tr"></span>
+    <span class="wm-corner bl"></span><span class="wm-corner br"></span>
+  </a>
+  <p class="wm-cap">Tap the map to open it full size</p>
+</div>
 <div class="wiki-panel active" id="panel-guide">
 
   <div class="guide-hero">

@@ -198,6 +198,21 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
 .reveal.vis{opacity:1;transform:translateY(0);}
+/* ── World Map showcase (added) ── */
+#worldmap{padding:6rem 2rem;background:var(--bg);position:relative;}
+#worldmap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--c),transparent);}
+.wm-wrap{max-width:1180px;margin:0 auto;text-align:center;}
+.wm-frame{position:relative;display:block;border:1px solid rgba(0,200,255,0.25);box-shadow:0 0 60px rgba(0,200,255,0.12),0 20px 60px rgba(0,0,0,0.6);overflow:hidden;transition:box-shadow .3s,border-color .3s;}
+.wm-frame:hover{border-color:rgba(0,200,255,0.6);box-shadow:0 0 90px rgba(0,200,255,0.22),0 22px 70px rgba(0,0,0,0.7);}
+.wm-frame img{display:block;width:100%;height:auto;}
+.wm-corner{position:absolute;width:22px;height:22px;border:2px solid var(--c);opacity:0.7;pointer-events:none;}
+.wm-corner.tl{top:9px;left:9px;border-right:none;border-bottom:none;}
+.wm-corner.tr{top:9px;right:9px;border-left:none;border-bottom:none;}
+.wm-corner.bl{bottom:9px;left:9px;border-right:none;border-top:none;}
+.wm-corner.br{bottom:9px;right:9px;border-left:none;border-top:none;}
+.wm-cap{margin-top:1.2rem;color:var(--dim);font-size:0.95rem;}
+.wm-cap span{display:block;margin-top:0.35rem;color:var(--c);font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;}
+
 </style>
 </head>
 <body>
@@ -205,6 +220,7 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   <a href="index.html" class="nav-logo">EMPIRE<em>2</em></a>
   <ul class="nav-links">
     <li><a href="#play">Play</a></li>
+    <li><a href="#worldmap">Map</a></li>
     <li><a href="#whatsnew">What's New</a></li>
     <li><a href="mechanics.html">Mechanics</a></li>
     <li><a href="lore.html">Lore</a></li>
@@ -246,6 +262,21 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
   <div class="scroll-hint"><span>SCROLL</span><div class="scroll-arr"></div></div>
 </section>
 <div class="ticker-wrap"><div class="ticker-track" id="tt"></div></div>
+<section id="worldmap">
+  <div class="sec-head reveal">
+    <p class="sec-pre">One World &middot; 30 Zones</p>
+    <h2 class="sec-title">The <em>World</em> of Xu</h2>
+    <div class="divbar"></div>
+  </div>
+  <div class="wm-wrap reveal">
+    <a href="worldmap.png" target="_blank" class="wm-frame" title="Open the full-size world map">
+      <img src="worldmap.png" alt="Empire 2: Rise of Xu world map showing all 30 zones from the Xu Outpost to The Reach" loading="lazy">
+      <span class="wm-corner tl"></span><span class="wm-corner tr"></span>
+      <span class="wm-corner bl"></span><span class="wm-corner br"></span>
+    </a>
+    <p class="wm-cap">From the green Xu Outpost to The Reach at the end of all things. Difficulty climbs as you journey outward. <span>Tap the map to view full size</span></p>
+  </div>
+</section>
 <section id="play">
   <div class="sec-head reveal">
     <p class="sec-pre">Free to Play &middot; No Download &middot; No Account</p>

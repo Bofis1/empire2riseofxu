@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mechanics — Empire 2: Rise of Xu</title>
+<link rel="icon" type="image/jpeg" href="xulogo.jpg">
+<meta property="og:title" content="Empire 2: Rise of Xu">
+<meta property="og:description" content="Game Mechanics — combat, stats, crafting, gems, talents, and every system explained.">
+<meta property="og:image" content="https://bofis1.github.io/empire2riseofxu/xuthumbnail.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://bofis1.github.io/empire2riseofxu/xuthumbnail.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Cinzel:wght@400;600;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -99,11 +106,17 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s;}
 .reveal.visible{opacity:1;transform:translateY(0);}
 </style>
+<style>
+.nav-logo{display:flex!important;align-items:center;gap:0.55rem;}
+.nav-logo-img{height:38px;width:auto;mix-blend-mode:screen;display:block;}
+.hero-emblem{width:min(240px,55vw);height:auto;mix-blend-mode:screen;display:block;margin:0 auto 0.4rem;position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(0,229,255,0.18));}
+.ft-logo-img{height:96px;width:auto;mix-blend-mode:screen;display:block;margin:0 auto 0.8rem;}
+</style>
 </head>
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">EMPIRE<span>2</span></a>
+  <a href="index.html" class="nav-logo"><img src="xulogo.jpg" alt="" class="nav-logo-img">EMPIRE<span>2</span></a>
   <ul class="nav-links">
     <li><a href="index.html#play">Play</a></li>
     <li><a href="mechanics.html" class="active">Mechanics</a></li>
@@ -117,6 +130,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 <div class="page-hero">
   <div class="page-hero-grid"></div>
   <p class="eyebrow">Systems Reference</p>
+  <img src="xulogo.jpg" alt="" class="hero-emblem">
   <h1 class="page-title">Game <span>Mechanics</span></h1>
 </div>
 
@@ -778,6 +792,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 </main>
 
 <footer style="padding:3rem 2rem;background:var(--xu-black);border-top:1px solid rgba(0,229,255,0.08);text-align:center;">
+  <img src="xulogo.jpg" alt="" class="ft-logo-img">
   <ul style="display:flex;justify-content:center;gap:2rem;list-style:none;margin-bottom:1rem;">
     <li><a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Home</a></li>
     <li><a href="lore.html" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--xu-dim);text-decoration:none;text-transform:uppercase;transition:color 0.2s;" onmouseenter="this.style.color='var(--xu-cyan)'" onmouseleave="this.style.color='var(--xu-dim)'">Lore</a></li>

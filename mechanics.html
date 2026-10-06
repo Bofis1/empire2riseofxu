@@ -568,23 +568,26 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="worldbosses" class="reveal">
         <h2><span class="icon">👹</span>World Bosses</h2>
         <div class="section-bar"></div>
-        <p>Four <b>roaming apex threats</b> that don't respect zone boundaries. Each spawns periodically across the world map, picks a zone, broadcasts a global announcement, and stays for a limited window before despawning. Cross-zone — you have to <em>travel to them</em>.</p>
+        <p>Seven <b>roaming apex threats</b> that don't respect zone boundaries. Each spawns periodically across the world map, picks a zone, broadcasts a global announcement, and stays for a limited window before despawning. Cross-zone — you have to <em>travel to them</em>.</p>
 
-        <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">The Four</p>
+        <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">The Seven</p>
         <div class="mechanic-grid">
-          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Forge Tyrant</div><p>Often Citadel · ~1.3M HP @ L100. Molten armor, dual hammers, magma quake AOE. Drops fire-themed legendaries.</p></div>
-          <div class="m-card"><span class="m-card-icon">🐉</span><div class="m-card-title">Ancient Wyrm</div><p>Often Dragon Lair · ~2.3M HP @ L100. Elder dragon, fire breath cones, dive attacks. Older than Vaeltharax.</p></div>
-          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Hollow Reaper</div><p>Often Necropolis · ~2.0M HP @ L100. Soul-tearing scythe, void teleports. Cold beyond absolute zero.</p></div>
-          <div class="m-card"><span class="m-card-icon">🕳</span><div class="m-card-title">Void Behemoth</div><p>Often Neon Hollow · ~3.6M HP @ L100. Reality-warping. Dimensional rifts. The size of a city block.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Forge Tyrant</div><p>Often Citadel &middot; ~1.3M HP @ L100. Molten armor, dual hammers, magma quake AOE. Drops fire-themed legendaries.</p></div>
+          <div class="m-card"><span class="m-card-icon">👁</span><div class="m-card-title">Eyexor</div><p>Often Vaeltharax's Lair &middot; ~2.3M HP @ L100. Older than the war. Older than the empire. It remembers when the sky was different.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Hollow Reaper</div><p>Often The Necropolis &middot; ~2.0M HP @ L100. Soul-tearing scythe, void teleports. Cold beyond absolute zero.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌌</span><div class="m-card-title">Void Behemoth</div><p>Often Neon Hollow &middot; ~3.6M HP @ L100. Reality-warping. Dimensional rifts. The size of a city block.</p></div>
+          <div class="m-card"><span class="m-card-icon">🧮</span><div class="m-card-title">Abacus of Flesh</div><p>Often Void Citadel &middot; ~4.3M HP @ L100. It counts. Every soul that has ever fallen in the Citadel is a bead on its frame.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Overseer of Discord</div><p>Often the Colosseum &middot; ~5.6M HP @ L100. It judged the gods and found them wanting. Now it presides over the Colosseum, scoring every duel, every death, every coward who flees.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Electronoid</div><p>Often The Forge &middot; ~7.9M HP @ L100. Once a brilliant scientist who pushed the limits of human consciousness, attempting to merge with pure energy.</p></div>
         </div>
 
         <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">How Spawning Works</p>
         <ul>
-          <li><b>Random selection</b> — When a world boss spawn timer fires, the game picks one of the four at random.</li>
+          <li><b>Random selection</b> — When a world boss spawn timer fires, the game picks one of the seven at random.</li>
           <li><b>Cross-zone defer</b> — If you're not in the boss's zone, the boss is "pending" — it materializes the moment you arrive.</li>
           <li><b>Global announcement</b> — A chat broadcast tells everyone where it spawned. Travel there to engage.</li>
           <li><b>Despawn timer</b> — Bosses don't wait forever. Get there fast or miss the window.</li>
-          <li><b>Manual spawn</b> — Console command <span class="hl">spawnWorldBoss(0–3)</span> for testing or community events.</li>
+          <li><b>Manual spawn</b> — Console command <span class="hl">spawnWorldBoss(0–6)</span> for testing or community events.</li>
         </ul>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>

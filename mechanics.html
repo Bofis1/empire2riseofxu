@@ -152,6 +152,10 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#sanctuary">Veiled Sanctuary</a></li>
         <li><a href="#vault">Gold Vault</a></li>
         <li><a href="#multiplayer">Multiplayer</a></li>
+        <li><a href="#downed">Downed &amp; Revive</a></li>
+        <li><a href="#upgrades">Gear Upgrades</a></li>
+        <li><a href="#skycars">Skycars</a></li>
+        <li><a href="#characters">Transfer Codes</a></li>
         <li><a href="#guilds">Guild System</a></li>
         <li><a href="#daily">Daily Rewards</a></li>
         <li><a href="#achievements">Achievements</a></li>
@@ -328,7 +332,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <thead><tr><th>Stat</th><th>Effect</th><th>Scales</th></tr></thead>
           <tbody>
             <tr><td>⚔️ STR</td><td>Physical damage, carry weight</td><td>Warrior skills, heavy weapons</td></tr>
-            <tr><td>🛡️ DEF</td><td>Damage reduction (flat)</td><td>Armor, block stance</td></tr>
+            <tr><td>🛡️ DEF</td><td>Damage reduction (%) &mdash; DEF &divide; (DEF + 180 + 10 &times; your level), capped at 80%</td><td>Armor, block stance</td></tr>
             <tr><td>🔮 INT</td><td>Magic damage, mana pool</td><td>Mage skills, staff weapons</td></tr>
             <tr><td>❤️ VIT</td><td>Max HP, physical resistance</td><td>Tanky builds, Ogre/Minotaur</td></tr>
             <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue, Gnome builds</td></tr>
@@ -341,13 +345,13 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="loot" class="reveal">
         <h2><span class="icon">💎</span>Loot & Crafting</h2>
         <div class="section-bar"></div>
-        <p>All enemies drop loot on death. Boss kills scatter items in a ring. Walk over items to auto-collect. <b>Rarity tiers</b> determine base power and visual appearance:</p>
+        <p>Most enemies carry their own loot table, and every drop rolls independently on each kill &mdash; the <a href="wiki.html">Wiki bestiary</a> lists exactly what each creature drops and how often. Boss kills scatter items in a ring. Walk over items to auto-collect. <b>Rarity tiers</b> determine base power and visual appearance:</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">⬜</span><div class="m-card-title" style="color:#aaa">Common</div><p>Drops from basic enemies. Starter gear.</p></div>
           <div class="m-card"><span class="m-card-icon">🟩</span><div class="m-card-title" style="color:#44cc44">Uncommon</div><p>Small bonus stats. Mid-game staple.</p></div>
           <div class="m-card"><span class="m-card-icon">🟦</span><div class="m-card-title" style="color:#4488ff">Rare</div><p>Meaningful upgrades. Zone-specific drops.</p></div>
           <div class="m-card"><span class="m-card-icon">🟪</span><div class="m-card-title" style="color:#aa44ff">Epic</div><p>Build-defining items. Crafting materials required.</p></div>
-          <div class="m-card"><span class="m-card-icon">🟨</span><div class="m-card-title" style="color:var(--xu-gold)">Legendary</div><p>Endgame power. Unique visuals. Boss-only drops.</p></div>
+          <div class="m-card"><span class="m-card-icon">🟨</span><div class="m-card-title" style="color:var(--xu-gold)">Legendary</div><p>Endgame power. Unique visuals. Rare drops from tougher creatures and bosses.</p></div>
         </div>
         <p style="margin-top:1.5rem;"><b>Gem Socketing</b> — Open inventory (<span class="hl">I</span>) and click the gem-socket icon on any equipped item to slot gems into gear. Rubies boost ATK, Sapphires boost INT, Emeralds boost SPD, Topaz boost SPD, Amethysts boost INT+VIT, Void Gems add all stats. Gems come in Small, Medium, and Large sizes.</p>
         <p><b>Crafting</b> — 28 craftable items across weapon, armor, and accessory benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
@@ -653,22 +657,75 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       </section>
 
       <!-- MULTIPLAYER -->
-      <section id="multiplayer" class="reveal">
+            <section id="multiplayer" class="reveal">
         <h2><span class="icon">🌐</span>Multiplayer</h2>
         <div class="section-bar"></div>
-        <p>Empire 2 supports <b>real-time cooperative multiplayer</b> via WebRTC peer-to-peer + a dedicated server. Up to <span class="hl">4 players</span> per game session.</p>
+        <p>Empire 2 supports <b>real-time cooperative multiplayer</b>, run entirely through the game server. Up to <span class="hl">4 players</span> per game session.</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>All 23 zones are live on the server from the moment a game is created. Enter any zone and enemies are already there, respawning on a 30-second timer.</p></div>
-          <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot Ownership</div><p>Each player gets their own loot roll on kills they land. XP and gold from enemy kills go to the killer only. Boss loot drops go to the player who lands the killing blow.</p></div>
-          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and dead status in real time. Trade items via the trade window (T key).</p></div>
+          <div class="m-card"><span class="m-card-icon">🔁</span><div class="m-card-title">The Host Can Leave</div><p>If the host quits or crashes, the game passes to the next player and carries on &mdash; the world keeps running for everyone still in it.</p></div>
+          <div class="m-card"><span class="m-card-icon">📶</span><div class="m-card-title">Drop &amp; Rejoin</div><p>If your connection blips, you rejoin the same session automatically. Playing solo, your world waits for you for 90 seconds.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>Every combat zone is live on the server from the moment a game is created. Enter any zone and its creatures are already there.</p></div>
+          <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot, Gold &amp; XP</div><p>Loot and gold go to the player who lands the kill. <b>XP is shared</b> with party members in the same zone.</p></div>
+          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and downed status in real time. Trade items via the trade window (T key).</p></div>
         </div>
 
-        <div style="margin-top:2rem;padding:1.25rem 1.5rem;border:1px solid rgba(255,176,32,0.25);background:rgba(20,12,2,0.5);">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.18em;color:#ffb020;text-transform:uppercase;margin-bottom:0.6rem;">⚠ Network Compatibility</div>
-          <p style="font-size:0.92rem;color:var(--xu-text);margin-bottom:0.6rem;">Multiplayer uses <b>WebRTC peer-to-peer</b> connections, the same technology that powers Discord voice, Google Meet, and most browser-based games. The connection is established through STUN and TURN servers (including TLS-encrypted TURNS over port 443) so it works on the vast majority of home, mobile, and public networks.</p>
-          <p style="font-size:0.88rem;color:var(--xu-dim);margin-bottom:0.6rem;">However, some <b style="color:var(--xu-text)">strict corporate, university, or security-hardened networks</b> block all WebRTC peer connections — even encrypted ones — as part of deep packet inspection or "no tunneling" policies. If you're on one of these networks, joining or hosting may fail with a connection timeout.</p>
-          <p style="font-size:0.88rem;color:var(--xu-dim);margin-bottom:0;"><b style="color:var(--xu-text)">If you can't connect:</b> try a different network (phone hotspot, home wifi instead of work/school), or contact your network administrator. Solo play and the persistent server systems (guilds, leaderboards, achievements, daily login) work fine on any network, since those use standard HTTPS only.</p>
+        <div style="margin-top:2rem;padding:1.25rem 1.5rem;border:1px solid rgba(57,255,138,0.25);background:rgba(2,20,10,0.5);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.18em;color:#39ff8a;text-transform:uppercase;margin-bottom:0.6rem;">✓ Works on any network</div>
+          <p style="font-size:0.92rem;color:var(--xu-text);margin-bottom:0;">Co-op travels over the same secure connection as the rest of the game, so <b>if you can load the game, you can play together</b> &mdash; home wifi, mobile hotspots, and work or school networks alike. There's nothing to configure.</p>
+        </div>
+      </section>
+
+      <!-- CO-OP: DOWNED & REVIVE -->
+      <section id="downed" class="reveal">
+        <h2><span class="icon">✚</span>Co-op: Downed &amp; Revive</h2>
+        <div class="section-bar"></div>
+        <p>In co-op, a lethal hit doesn't kill you outright while a teammate is still standing &mdash; you go <b>down</b> instead.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">⬇️</span><div class="m-card-title">Going Down</div><p>You drop with 30 seconds to be revived. You can still look around, but can't attack, move or use items. A <b>RELEASE</b> button lets you give up and respawn.</p></div>
+          <div class="m-card"><span class="m-card-icon">🤝</span><div class="m-card-title">Reviving</div><p>Stand next to a downed teammate and <b>hold F for 3 seconds</b>. They get back up at <b>40% HP</b> with a moment of invulnerability.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Wipes</div><p>If nobody is left standing to help &mdash; or you're playing solo &mdash; a lethal hit is a normal death. Apex Trials stay solo-style: no downs there.</p></div>
+          <div class="m-card"><span class="m-card-icon">😇</span><div class="m-card-title">Resurrection</div><p>The Healer's <b>Resurrection</b> skill revives a downed teammate from range at half health.</p></div>
+        </div>
+      </section>
+
+      <!-- GEAR UPGRADES -->
+      <section id="upgrades" class="reveal">
+        <h2><span class="icon">⚒️</span>Gear Upgrades</h2>
+        <div class="section-bar"></div>
+        <p>Any equippable item can be upgraded from <b>+1 to +10</b> through the <b>UPGRADE GEAR</b> tab in the crafting menu: the <b>Weaponsmith</b> upgrades weapons, the <b>Armourer</b> helmets, chests, legs, boots and off-hands, and the <b>Jeweller</b> rings and amulets. Each level raises the item's core stats.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">✅</span><div class="m-card-title">Safe Levels</div><p>Upgrades from +1 to +4 always succeed.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎲</span><div class="m-card-title">Rising Risk</div><p>Success chance then falls: +5 90%, +6 80%, +7 70%, +8 60%, +9 50%, +10 40%.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Danger Zone</div><p>Attempts at <b>+8 and above</b> are risky: a failure knocks the item down one level. Items are never destroyed.</p></div>
+          <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Awakening (+10)</div><p>A +10 weapon gains <b>Awakened Strike</b> (a chance on hit to unleash an arcane burst), +10 armour gains <b>Ward</b> (a chance to deflect a hit, up to 20%), and +10 jewellery gains <b>Attunement</b> (lifesteal). Awakened weapons glow, and your character wears an aura.</p></div>
+        </div>
+        <p style="margin-top:1rem;">Bonus to core stats by level: +1 +5%, +2 +10%, +3 +16%, +4 +23%, +5 +31%, +6 +40%, +7 +51%, +8 +64%, +9 +80%, +10 +120%.</p>
+      </section>
+
+      <!-- SKYCARS -->
+      <section id="skycars" class="reveal">
+        <h2><span class="icon">🚀</span>Skycars &amp; the XU Carport</h2>
+        <div class="section-bar"></div>
+        <p>Walk through the <b>south gate of the XU Outpost</b> to reach the <b>XU Carport</b>, a skycar dealership. Press <span class="hl">F</span> at the dealer terminal to browse. Each car costs gold <i>and</i> endgame materials.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🛸</span><div class="m-card-title">XU Sparrow</div><p>Courier &middot; Level 60+ &middot; <b>&#9672; 2,500,000</b> + 20 Ancient Relic Shard, 10 Data Shard &middot; <b>+100% travel speed</b></p></div>
+          <div class="m-card"><span class="m-card-icon">🛸</span><div class="m-card-title">XU Manta</div><p>Cruiser &middot; Level 75+ &middot; <b>&#9672; 6,000,000</b> + 30 Ancient Relic Shard, 15 Xu Titan Alloy, 20 Data Shard &middot; <b>+140% travel speed</b></p></div>
+          <div class="m-card"><span class="m-card-icon">🛸</span><div class="m-card-title">XU Striker</div><p>Interceptor &middot; Level 90+ &middot; <b>&#9672; 12,000,000</b> + 30 Xu Titan Alloy, 20 Colossus Bone Fragment, 5 Boss Core &middot; <b>+180% travel speed</b></p></div>
+          <div class="m-card"><span class="m-card-icon">🛸</span><div class="m-card-title">XU Sovereign</div><p>Flagship &middot; Level 100+ &middot; <b>&#9672; 25,000,000</b> + 50 Xu Titan Alloy, 40 Colossus Bone Fragment, 15 Boss Core, 50 Data Shard &middot; <b>+220% travel speed</b></p></div>
+        </div>
+        <p style="margin-top:1rem;">Press <span class="hl">B</span> anywhere to board or land. Your car replaces your character, carries you faster, and <b>stays with you through zone portals</b>; your party sees you flying it. Attacking or using a skill lands you, a hit worth 3% or more of your max HP knocks you out, you can't call it within 5 seconds of being hit, and skycars are grounded in the Colossus.</p>
+      </section>
+
+      <!-- YOUR CHARACTERS -->
+      <section id="characters" class="reveal">
+        <h2><span class="icon">🔑</span>Your Characters &amp; Transfer Codes</h2>
+        <div class="section-bar"></div>
+        <p>Whenever you play online, your character is saved to the game server as well as your browser, and the server keeps regular backups.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🔑</span><div class="m-card-title">Transfer Code</div><p>Your characters are tied to a private code on your device. Type <b>/transfer</b> in chat, or press <b>TRANSFER CODE</b> on character select, to see it. Keep it private.</p></div>
+          <div class="m-card"><span class="m-card-icon">💻</span><div class="m-card-title">New Device?</div><p>On the login screen, click <b>New device? Enter a transfer code</b>, type your name and code, and your characters come with you.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Loud Warnings</div><p>If a save ever can't be backed up to the server, you'll be told in chat &mdash; your progress is still kept on that device.</p></div>
         </div>
       </section>
 
@@ -724,7 +781,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <div class="mechanic-grid" style="margin-top:1.5rem;">
           <div class="m-card"><span class="m-card-icon">⚔️</span><div class="m-card-title">Combat Tiers</div><p>Kill 10 → 100 → 500 → 1K → 5K → 10K → 25K → 50K → 100K enemies. Earn titles from "Soldier" all the way to "Empire Slayer".</p></div>
           <div class="m-card"><span class="m-card-icon">👑</span><div class="m-card-title">Boss Hunting</div><p>Track first boss kill, 5/10/50/100 boss totals, plus per-boss achievements for Apex Pyramid, The Curator, and "Throne Breaker" — defeat all 18.</p></div>
-          <div class="m-card"><span class="m-card-icon">🗺️</span><div class="m-card-title">Exploration</div><p>Visit 3, 8, 15, or all 23 zones. Special achievements for reaching Frostveil, Dragon's Lair, Xumen, the Necropolis, and Xeron — the orbital citadel.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗺️</span><div class="m-card-title">Exploration</div><p>Visit 3, 8, 15, 20 or 23 different zones. Special achievements for reaching Frostveil, Dragon's Lair, Xumen, the Necropolis, and Xeron — the orbital citadel.</p></div>
           <div class="m-card"><span class="m-card-icon">⭐</span><div class="m-card-title">Progression</div><p>Lv 10/25/50/75/100 milestones. Earn 1M gold for "Empire Builder". Complete all 58 quests for "Champion of the People".</p></div>
           <div class="m-card"><span class="m-card-icon">🤝</span><div class="m-card-title">Social</div><p>Join a guild (Sworn). Belong to Lv 5+ guild (Brotherhood). Trade with another player (Merchant). Group up (Brothers in Arms).</p></div>
           <div class="m-card"><span class="m-card-icon">💎</span><div class="m-card-title">Itemization</div><p>Loot 10 legendaries (Mythic Hoarder). Activate 6-piece set bonus (Full Regalia). Socket 10 gems (Master Jeweler).</p></div>

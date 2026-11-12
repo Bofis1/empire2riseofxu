@@ -172,22 +172,22 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p>Empire 2 uses <b>real-time point-and-click combat</b>. Left-click attacks toward the mouse cursor, and holding down deals a continuous stream of auto-attacks. All combat is skill-expression — knowing when to commit, when to dodge, and when to parry separates survivors from corpses.</p>
 
         <h3 style="color:var(--xu-gold);font-family:'Orbitron',monospace;font-size:0.85rem;letter-spacing:0.1em;margin:1.5rem 0 0.75rem;text-transform:uppercase;">Combo Multiplier</h3>
-        <p>Chain consecutive hits without taking damage to build your combo multiplier. The multiplier resets when you get hit.</p>
+        <p>Land hits in quick succession to build a combo. At 3 hits you deal +15% damage, at 6 +30% and at 10 +50% (with a screen shake). Stop hitting for a moment and the combo fades.</p>
         <div class="combo-visual">
           <div class="combo-step"><div class="combo-num">x1</div><div class="combo-label">Default</div></div>
           <div class="combo-arrow">→</div>
-          <div class="combo-step"><div class="combo-num" style="color:var(--xu-green)">x3</div><div class="combo-label">5 Hits</div></div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-green)">x3</div><div class="combo-label">+15%</div></div>
           <div class="combo-arrow">→</div>
-          <div class="combo-step"><div class="combo-num" style="color:var(--xu-gold)">x6</div><div class="combo-label">12 Hits</div></div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-gold)">x6</div><div class="combo-label">+30%</div></div>
           <div class="combo-arrow">→</div>
-          <div class="combo-step"><div class="combo-num" style="color:var(--xu-red)">x10</div><div class="combo-label">25 Hits</div></div>
+          <div class="combo-step"><div class="combo-num" style="color:var(--xu-red)">x10</div><div class="combo-label">+50%</div></div>
         </div>
 
         <div class="mechanic-grid" style="margin-top:2rem;">
           <div class="m-card">
             <span class="m-card-icon">🛡️</span>
-            <div class="m-card-title">Block & Parry</div>
-            <p>Hold RMB to block. Parry perfectly just as an attack lands to counter with bonus damage and stun the attacker.</p>
+            <div class="m-card-title">Block & Off-hand</div>
+            <p>Hold RMB to block with a shield, or to fire a bow or gun carried in your off-hand. Warriors can ready a parry with the Counter Strike skill.</p>
           </div>
           <div class="m-card">
             <span class="m-card-icon">💨</span>
@@ -217,22 +217,26 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="class-title">⚔️ Warrior</div>
           <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> and <b style="color:var(--xu-text)">Berserker Fury</b> are core to the class.</p>
           <div class="class-skills">
-            <span class="skill-chip">🌀 Whirlwind</span>
-            <span class="skill-chip">⚔️ Rending Slash</span>
+            <span class="skill-chip">⚔ Rending Slash</span>
             <span class="skill-chip">🗡 Blade Flurry</span>
-            <span class="skill-chip red">💀 Execute</span>
+            <span class="skill-chip">💀 Execute</span>
             <span class="skill-chip">🦘 Leap Strike</span>
-            <span class="skill-chip">💢 Shockwave</span>
-            <span class="skill-chip">🌋 Ground Slam</span>
-            <span class="skill-chip red">🩸 Blood Rage</span>
-            <span class="skill-chip">⚡ Frenzy</span>
-            <span class="skill-chip gold">🛡 Counter Strike</span>
-            <span class="skill-chip gold">🛡 Force Shield</span>
-            <span class="skill-chip gold">💠 Aether Bulwark</span>
+            <span class="skill-chip">🛡 Force Shield</span>
             <span class="skill-chip">🗿 Iron Stance</span>
-            <span class="skill-chip gold">📣 War Rally</span>
-            <span class="skill-chip red">😤 Berserker Fury</span>
+            <span class="skill-chip">🔄 Counter Strike</span>
+            <span class="skill-chip">🌀 Whirlwind</span>
+            <span class="skill-chip">😤 Berserker Fury</span>
             <span class="skill-chip">🦴 Battle Hardened</span>
+            <span class="skill-chip">💠 Aether Bulwark</span>
+            <span class="skill-chip">💢 Shockwave</span>
+            <span class="skill-chip">⚡ Frenzy</span>
+            <span class="skill-chip">📣 War Rally</span>
+            <span class="skill-chip">🌋 Ground Slam</span>
+            <span class="skill-chip">🩸 Blood Rage</span>
+            <span class="skill-chip">⛰ Seismic Cataclysm</span>
+            <span class="skill-chip">🌀 Steel Maelstrom</span>
+            <span class="skill-chip">🚩 War Banner</span>
+            <span class="skill-chip">☄ Titan’s Descent</span>
           </div>
         </div>
 
@@ -240,18 +244,23 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="class-title">🔮 Mage</div>
           <p style="color:var(--xu-dim);font-size:0.92rem;">Highest burst damage, area denial, mobility. Glass cannon. <b style="color:var(--xu-text)">INT scaling</b> makes late-game Mages terrifying — especially the <b style="color:var(--xu-text)">Armageddon</b> one-shot build.</p>
           <div class="class-skills">
-            <span class="skill-chip purple">🌩 Chain Lightning</span>
-            <span class="skill-chip red">☄️ Void Meteor</span>
-            <span class="skill-chip" style="background:#1488cc;color:#fff">❄️ Cryo Pulse</span>
-            <span class="skill-chip" style="background:#1488cc;color:#fff">🧊 Ice Comet</span>
-            <span class="skill-chip red">🔥 Fire Wave</span>
-            <span class="skill-chip red">🌠 Meteor Shower</span>
-            <span class="skill-chip red">💥 Armageddon</span>
-            <span class="skill-chip purple">🔮 Aether Nova</span>
-            <span class="skill-chip purple">🔱 Void Pierce</span>
-            <span class="skill-chip purple">🌀 Void Blink</span>
-            <span class="skill-chip gold">🔮 Aether Sigil</span>
-            <span class="skill-chip" style="background:#0088cc;color:#fff">🔵 Aether Conduit</span>
+            <span class="skill-chip">⚡ Void Bolt</span>
+            <span class="skill-chip">✨ Aether Nova</span>
+            <span class="skill-chip">🌩 Chain Lightning</span>
+            <span class="skill-chip">❄ Cryo Pulse</span>
+            <span class="skill-chip">☄ Void Meteor</span>
+            <span class="skill-chip">🌠 Meteor Shower</span>
+            <span class="skill-chip">🔮 Aether Sigil</span>
+            <span class="skill-chip">🔱 Void Pierce</span>
+            <span class="skill-chip">🔵 Aether Conduit</span>
+            <span class="skill-chip">🌀 Void Blink</span>
+            <span class="skill-chip">🧊 Ice Comet</span>
+            <span class="skill-chip">🔥 Fire Wave</span>
+            <span class="skill-chip">💥 Armageddon</span>
+            <span class="skill-chip">🕳 Black Hole</span>
+            <span class="skill-chip">⏳ Temporal Stasis</span>
+            <span class="skill-chip">🌩 Arc Tempest</span>
+            <span class="skill-chip">🌈 Prism Beam</span>
           </div>
         </div>
 
@@ -259,20 +268,26 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="class-title">🗡️ Rogue</div>
           <p style="color:var(--xu-dim);font-size:0.92rem;">Long-range, high mobility, utility-heavy. Best sustained DPS at distance. <b style="color:var(--xu-text)">Precision Shot</b> and <b style="color:var(--xu-text)">Marked for Death</b> are the signature crit setups.</p>
           <div class="class-skills">
-            <span class="skill-chip">🏹 Aether Volley</span>
-            <span class="skill-chip gold">🎯 Precision Shot</span>
-            <span class="skill-chip red">🎯 Marked for Death</span>
-            <span class="skill-chip">🌪 Blade Storm</span>
-            <span class="skill-chip">🔱 Void Pierce</span>
-            <span class="skill-chip" style="background:#226622;color:#fff">☠️ Venom Coat</span>
-            <span class="skill-chip" style="background:#226622;color:#fff">☠ Poison Nova</span>
-            <span class="skill-chip">👁 Tactical Scan</span>
-            <span class="skill-chip">💨 Smoke Bomb</span>
-            <span class="skill-chip">⚡ Aether Dash</span>
+            <span class="skill-chip">🩸 Bloodfrenzy</span>
+            <span class="skill-chip">🗡 Umbral Barrage</span>
+            <span class="skill-chip">💀 Deathmark Detonation</span>
+            <span class="skill-chip">👤 Phantom Assault</span>
+            <span class="skill-chip">💨 Aether Dash</span>
             <span class="skill-chip">👁 Shadow Veil</span>
-            <span class="skill-chip">👤 Shadow Clone</span>
+            <span class="skill-chip">🏹 Aether Volley</span>
+            <span class="skill-chip">🎯 Precision Shot</span>
+            <span class="skill-chip">🌵 Venom Coat</span>
+            <span class="skill-chip">📡 Tactical Scan</span>
             <span class="skill-chip">👟 Swiftfoot</span>
-            <span class="skill-chip gold">💰 Scavenger</span>
+            <span class="skill-chip">💰 Scavenger</span>
+            <span class="skill-chip">🔱 Void Pierce</span>
+            <span class="skill-chip">🌪 Blade Storm</span>
+            <span class="skill-chip">💨 Smoke Bomb</span>
+            <span class="skill-chip">🎯 Marked for Death</span>
+            <span class="skill-chip">👤 Shadow Clone</span>
+            <span class="skill-chip">☠ Poison Nova</span>
+            <span class="skill-chip">🗡 Backstab</span>
+            <span class="skill-chip">🔪 Fan of Blades</span>
           </div>
         </div>
 
@@ -280,22 +295,25 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="class-title">💚 Healer</div>
           <p style="color:var(--xu-dim);font-size:0.92rem;">Party support, sustain, holy damage. <b style="color:var(--xu-gold)">Fully reworked in v93.0-a234:</b> every heal now scales with INT, skill level, and your Max HP (so they stay strong at endgame instead of falling behind), and they heal <b style="color:var(--xu-text)">real co-op allies</b>, not just bots. <b style="color:var(--xu-text)">Divine Renewal</b> auto-heals your most-wounded ally with a burst + heal-over-time, <b style="color:var(--xu-text)">Resurrection</b> revives a downed teammate (or cheats your own death once), and <b style="color:var(--xu-text)">War Rally</b> now buffs the whole party's attack speed. In co-op, a Healer changes everything.</p>
           <div class="class-skills">
-            <span class="skill-chip" style="background:#22aa44;color:#fff">💚 Void Mend</span>
-            <span class="skill-chip" style="background:#22aa44;color:#fff">💫 Heal Pulse</span>
-            <span class="skill-chip gold">🌅 Divine Renewal</span>
-            <span class="skill-chip gold">😇 Resurrection</span>
-            <span class="skill-chip gold">✨ Smite</span>
-            <span class="skill-chip gold">🌟 Holy Nova</span>
-            <span class="skill-chip red">🩸 Life Drain</span>
-            <span class="skill-chip gold">🔆 Sacred Ground</span>
-            <span class="skill-chip gold">💫 Sanctuary</span>
-            <span class="skill-chip gold">🔆 Holy Barrier</span>
-            <span class="skill-chip gold">💠 Aether Bulwark</span>
-            <span class="skill-chip gold">🕊️ Absolution</span>
-            <span class="skill-chip gold">📣 War Rally</span>
-            <span class="skill-chip" style="background:#22aa44;color:#fff">🌿 Void Regeneration</span>
-            <span class="skill-chip" style="background:#0088cc;color:#fff">🔵 Aether Conduit</span>
+            <span class="skill-chip">💚 Void Mend</span>
+            <span class="skill-chip">💫 Heal Pulse</span>
+            <span class="skill-chip">🩸 Life Drain</span>
+            <span class="skill-chip">🔆 Holy Barrier</span>
+            <span class="skill-chip">🌿 Void Regeneration</span>
+            <span class="skill-chip">🔵 Aether Conduit</span>
+            <span class="skill-chip">📣 War Rally</span>
+            <span class="skill-chip">💠 Aether Bulwark</span>
             <span class="skill-chip">🦴 Battle Hardened</span>
+            <span class="skill-chip">✨ Smite</span>
+            <span class="skill-chip">🌟 Holy Nova</span>
+            <span class="skill-chip">☀️ Condemn</span>
+            <span class="skill-chip">🔆 Sacred Ground</span>
+            <span class="skill-chip">⚡ Resurrection Strike</span>
+            <span class="skill-chip">💥 Divine Wrath</span>
+            <span class="skill-chip">🕊️ Absolution</span>
+            <span class="skill-chip">💫 Sanctuary</span>
+            <span class="skill-chip">🌅 Divine Renewal</span>
+            <span class="skill-chip">😇 Resurrection</span>
           </div>
         </div>
       </section>
@@ -304,24 +322,23 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="races" class="reveal">
         <h2><span class="icon">🧬</span>Races &mdash; 32 Traits Total</h2>
         <div class="section-bar"></div>
-        <p>Your race is chosen once and cannot be changed. Each race has <b>4 traits</b>: typically 2 passives, 1 active skill (on Hotkey 9), and 1 flaw. Updated in v93.0-a41 through a49 &mdash; every advertised racial actually works now.</p>
+        <p>Your race is chosen once and cannot be changed. Each race has <b>4 traits</b>. Four races carry an active ability on <span class="hl">E</span>: the Xu (Crest Flare, 60s), the Vampire (Void-Step, 6s), the Minotaur (Vreth Stance, 45s) and the Ogre (War Chant, 30s). The rest are passive.</p>
         <table>
           <thead>
-            <tr><th>Race</th><th>Trait 1</th><th>Trait 2</th><th>Active (Hotkey 9)</th><th>Flaw</th></tr>
+            <tr><th>Race</th><th>Traits</th></tr>
           </thead>
           <tbody>
-            <tr><td>🦎 <b>Xu</b></td><td>Scale Plating — 12% phys DR</td><td>Warrior Blood — +20% dmg below 30% HP</td><td>Crest Flare — 6-tile fear cone, 30s CD</td><td>-8% move speed</td></tr>
-            <tr><td>🧑 <b>Human</b></td><td>Adaptability — +1 all stats</td><td>Fast Learner — +8% XP</td><td>Any Weapon — no proficiency penalties</td><td>Balanced (no standout)</td></tr>
-            <tr><td>⚙️ <b>Gnome</b></td><td>Automaton Pet — persistent clockwork ally</td><td>Precision — +15% crit chance</td><td>Tinker — +25% gold &amp; rare drops</td><td>-10% max HP</td></tr>
-            <tr><td>💪 <b>Ogre</b></td><td>Thick Hide — 18% phys DR (highest)</td><td>Colossus — +30% max HP</td><td>War Chant — 8-tile party buff +25% atk, 45s CD</td><td>-12% move speed</td></tr>
-            <tr><td>🐴 <b>Centaur</b></td><td>Swift — +15% base speed (fastest)</td><td>Wind-Read — +8 tile aggro detect</td><td>Charge — 2× sprint + next melee +200%, 18s CD</td><td>-10% def from chest/legs/boots</td></tr>
-            <tr><td>🐂 <b>Minotaur</b></td><td>Natural Healer — +40% healing all sources</td><td>Earthsense — chests glow brighter</td><td>Vreth Stance — 60% DR + 30% reflect 3s, 25s CD</td><td>-6% move speed</td></tr>
-            <tr><td>🧝 <b>Elf</b></td><td>Aether-Weaving — -20% mana cost</td><td>Ancient Knowledge — +12% spell dmg</td><td>Void-Sight — 8s minimap-wide reveal, 50s CD</td><td>-15% max HP</td></tr>
-            <tr><td>🧛 <b>Vampire</b></td><td>Blood Drain — 5% melee lifesteal</td><td>Supernatural Speed — +12% spd, +25% backstab</td><td>Void-Step — 5-tile teleport, 12s CD</td><td>Aether Light — -15% stats in bright zones, scales with own illum</td></tr>
+            <tr><td>🦎 <b>Xu</b></td><td>Scale Plating — 12% physical damage reduction passively<br>Warrior Blood — +20% damage when below 30% HP<br>Crest Flare (E) — fear nearby enemies, 60s cooldown<br>Slow — -10% movement speed</td></tr>
+            <tr><td>🧑 <b>Human</b></td><td>Adaptability — +5% XP from all sources<br>Fast Learner — skill cooldowns 15% shorter<br>Any Weapon — equip any weapon regardless of class<br>Balanced — no stat penalties</td></tr>
+            <tr><td>⚙️ <b>Gnome</b></td><td>Automaton — passive combat companion follows you everywhere<br>Precision — +25% skill damage<br>Tinker — 25% discount at all vendors<br>Fragile — lowest HP and defence</td></tr>
+            <tr><td>💪 <b>Ogre</b></td><td>Thick Hide — 18% physical damage reduction<br>War Chant (E) — +25% atk speed aura, 8s duration, 30s CD<br>Colossus — 1.3× larger mesh than other races<br>Slow — -15% movement speed, lowest in game</td></tr>
+            <tr><td>🐴 <b>Centaur</b></td><td>Swift — +20% movement speed, fastest race<br>Wind-Read — minimap reveal radius +50%<br>Charge — run straight 3s, next melee +200% dmg<br>No Heavy Armour — cannot equip heavy chest/legs</td></tr>
+            <tr><td>🐂 <b>Minotaur</b></td><td>Natural Healer — healing skills 40% stronger<br>Earthsense — AOE heal pulse every 30s (party-wide in MP)<br>Vreth Stance (E) — 8s root: 50% DR + 30% reflect<br>Slow — -10% movement speed</td></tr>
+            <tr><td>🧝 <b>Elf</b></td><td>Aether-Weaving — spells cost 20% less mana<br>Ancient Knowledge — +30% magic damage<br>Void-Sight — enemies in 8 tiles visible through walls<br>Fragile — low physical defence</td></tr>
+            <tr><td>🧛 <b>Vampire</b></td><td>Blood Drain — melee attacks restore 5% damage as HP<br>Supernatural Speed — +10% movement speed<br>Void-Step (E) — 5-tile teleport, 6s cooldown<br>Night Sense — minimap reveal +50% in dark zones<br>Aether Light — -15% attack, defence and speed in bright zones</td></tr>
           </tbody>
         </table>
-        <p style="margin-top:1rem;"><b>Active skills</b> are bound to Hotkey 9. Cooldown bar shows in the upper HUD. Press it once and you can feel the difference — Charge slingshots you across a room into a one-shot, Crest Flare clears 6 tiles of enemies, Automaton Pet does damage even when you're not attacking.</p>
-      </section>
+              </section>
 
       <!-- STATS -->
       <section id="stats" class="reveal">
@@ -331,11 +348,11 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <table>
           <thead><tr><th>Stat</th><th>Effect</th><th>Scales</th></tr></thead>
           <tbody>
-            <tr><td>⚔️ STR</td><td>Physical damage, carry weight</td><td>Warrior skills, heavy weapons</td></tr>
-            <tr><td>🛡️ DEF</td><td>Damage reduction (%) &mdash; DEF &divide; (DEF + 180 + 10 &times; your level), capped at 80%</td><td>Armor, block stance</td></tr>
-            <tr><td>🔮 INT</td><td>Magic damage, mana pool</td><td>Mage skills, staff weapons</td></tr>
-            <tr><td>❤️ VIT</td><td>Max HP, physical resistance</td><td>Tanky builds, Ogre/Minotaur</td></tr>
-            <tr><td>💨 SPD</td><td>Movement speed, attack rate</td><td>Centaur, Rogue, Gnome builds</td></tr>
+            <tr><td>⚔️ STR</td><td>+4 ATK per point</td><td>Warrior and Rogue damage</td></tr>
+            <tr><td>🛡️ DEF</td><td>+3% DEF per point. Damage reduction (%) &mdash; DEF &divide; (DEF + 180 + 10 &times; your level), capped at 80%</td><td>Armour, block stance</td></tr>
+            <tr><td>🔮 INT</td><td>+8 Max MP per point; magic weapons and heals scale with INT</td><td>Mage and Healer skills, staves</td></tr>
+            <tr><td>❤️ VIT</td><td>+15 Max HP per point</td><td>Every build</td></tr>
+            <tr><td>💨 AGI</td><td>+3% SPD per point (movement and attack speed)</td><td>Rogue, Centaur, Vampire builds</td></tr>
           </tbody>
         </table>
         <p style="margin-top:1rem;"><span class="hl">Crit strikes</span> deal <span class="gold">2× damage</span> and create a screen flash. Critical hits can be forced with the <span class="hl">First-Hit Crit</span> talent.</p>
@@ -345,7 +362,9 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="loot" class="reveal">
         <h2><span class="icon">💎</span>Loot & Crafting</h2>
         <div class="section-bar"></div>
-        <p>Most enemies carry their own loot table, and every drop rolls independently on each kill &mdash; the <a href="wiki.html">Wiki bestiary</a> lists exactly what each creature drops and how often. Boss kills scatter items in a ring. Walk over items to auto-collect. <b>Rarity tiers</b> determine base power and visual appearance:</p>
+        <p><b>Creatures</b> drop materials, potions and gems from their own tables, and every kill also has a <b>12% chance at a piece of gear</b> rolled for the zone's level (from 10 levels below it to 3 above). Slain creatures return 5 minutes later. The <a href="wiki.html">Wiki bestiary</a> lists every creature's drops and chances.</p>
+        <p><b>Bosses</b> &mdash; every zone boss, Convergence depth, world boss, rare spawn and Apex Trial boss &mdash; drop <b>a full set of their own</b>: a greatsword, a one-hander, a staff, a ranged weapon, a helm, a chest, legs, boots, a ring and an amulet, each with its own model and its own look on your character. A kill pays one piece and a 45% chance of a second (never the same). Each piece is a weapon 30% of the time, armour 50% and jewellery 20%, and <b>your class's weapon types share 60% of the weapon roll</b> &mdash; roughly one kill in four drops a weapon you can wield. An Apex Trial clear pays two pieces of its boss's set (three with two or more modifiers or Cursed) plus gear for the zone you opened it in. The <a href="wiki.html#bosses">Wiki</a> lists every boss's set and the exact chance of each piece.</p>
+        <p>Walk over items to collect them. <b>Rarity tiers</b> determine base power and visual appearance:</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">⬜</span><div class="m-card-title" style="color:#aaa">Common</div><p>Drops from basic enemies. Starter gear.</p></div>
           <div class="m-card"><span class="m-card-icon">🟩</span><div class="m-card-title" style="color:#44cc44">Uncommon</div><p>Small bonus stats. Mid-game staple.</p></div>
@@ -354,7 +373,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🟨</span><div class="m-card-title" style="color:var(--xu-gold)">Legendary</div><p>Endgame power. Unique visuals. Rare drops from tougher creatures and bosses.</p></div>
         </div>
         <p style="margin-top:1.5rem;"><b>Gem Socketing</b> — Open inventory (<span class="hl">I</span>) and click the gem-socket icon on any equipped item to slot gems into gear. Rubies boost ATK, Sapphires boost INT, Emeralds boost SPD, Topaz boost SPD, Amethysts boost INT+VIT, Void Gems add all stats. Gems come in Small, Medium, and Large sizes.</p>
-        <p><b>Crafting</b> — 28 craftable items across weapon, armor, and accessory benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
+        <p><b>Crafting</b> — 75 recipes across the Weaponsmith, Armourer, Jeweller and Alchemist benches in the Outpost. Collect zone-specific materials (Crawler Chitin, Wraith Essence, Dragon Scales...) to unlock recipes.</p>
       </section>
 
       <!-- INVENTORY & ITEM BAR (v92.47–v92.53) -->
@@ -371,9 +390,9 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         </div>
 
         <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Item Bar Bindings</p>
-        <p>The bottom item bar has 5 consumable slots (<span class="hl">Z X C V G</span>) for potions, scrolls, food, and other consumables. Two ways to assign:</p>
+        <p>The bottom item bar has 4 consumable slots (<span class="hl">Z X C V</span>) for potions, scrolls, food, and other consumables. Two ways to assign:</p>
         <div class="mechanic-grid" style="margin-top:1rem;">
-          <div class="m-card"><span class="m-card-icon">🖱️</span><div class="m-card-title">Drag &amp; Drop</div><p>Drag a consumable from the inventory bag onto a Z/X/C/V/G slot. Move the inventory panel out of the way first if it's covering the bar.</p></div>
+          <div class="m-card"><span class="m-card-icon">🖱️</span><div class="m-card-title">Drag &amp; Drop</div><p>Drag a consumable from the inventory bag onto a Z/X/C/V slot. Move the inventory panel out of the way first if it's covering the bar.</p></div>
           <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Shift+Right-Click</div><p>One-step keyboard shortcut. Shift+RClick a consumable in the inventory and it auto-assigns to the first empty bar slot.</p></div>
         </div>
 
@@ -424,31 +443,34 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <!-- MULTIPLAYER -->
       <section id="convergence" class="reveal">
         <h2><span class="icon">∞</span>The Convergence</h2>
-        <p>The endgame zone, unlocked at character Lv 100+. Reality folded after Overseer Zero died, and now every zone of Aethon overlaps inside one 240&times;240 procedurally generated wound. Each run is a fresh BSP layout — different rooms, different enemy placements, different surprises.</p>
+        <p>The endgame zone, unlocked at character Lv 100+. Reality folded after Overseer Zero died, and now every zone of Aethon overlaps inside one 240&times;240 procedurally generated wound. Each run is a fresh maze of corridors, dead ends and side chambers built from the run's seed, so everyone in your party walks the same one.</p>
         <h3 style="margin-top:1.2rem;color:#d4b8ff;">Depth Chain</h3>
-        <p>The Depth Sentinel waits in the boss arena. Kill it, and a <span style="color:#ff60ff;font-weight:700;">magenta portal</span> appears at the kill site. Walk through and you descend to the next depth — same zone, fresh procgen, harder enemies, scaled boss HP. There is no cap.</p>
+        <p>Every depth ends in its own boss: <b>the Depth Sentinel</b> (1), <b>the Depth Inferno</b> (2), <b>the Archon</b> (3), <b>Xerathor</b> (4), <b>the Overseer of Technology</b> (5) and <b>the Forest Ancient</b> (6 and beyond). Kill it, and a <span style="color:#ff60ff;font-weight:700;">magenta portal</span> appears at the kill site. Walk through and you descend &mdash; a fresh maze, a new creature mix and harder enemies. There is no bottom.</p>
+        <p>Each depth has its own creatures, and every one fights with abilities of its own: Depth 1 Broken Reality (Corrupted Xu, Void Marines, Holo Wraiths, Ash Wraiths), Depth 2 Cinder, Depth 3 Storm, Depth 4 Scale &amp; Prism, Depth 5 Machine and Depth 6 Overgrowth. Each creature's abilities are on its card in the <a href="wiki.html">Wiki bestiary</a>.</p>
         <ul>
-          <li><b>Boss HP scaling:</b> 2,000,000 &times; depth multiplier &times; modifier multiplier. Depth 2 = 3M. Depth 5 = 6M. Depth 10 = 11M. With Vital modifier rolled, double.</li>
+          <li><b>Boss HP:</b> 2.8M at Depth 1, +20% per depth to 5.6M at Depth 6 (and beyond). The Vital modifier doubles it.</li>
+          <li><b>Creatures:</b> +50% HP and damage with every depth, without limit.</li>
+          <li><b>Boss loot:</b> each depth's boss drops its own full set (see Loot &amp; Crafting).</li>
           <li><b>Echo Shard drops:</b> 1-3 per kill plus floor(depth/2). Persists through death.</li>
           <li><b>Skip Depth 1</b> (Archivist upgrade): start every run at Depth 2 instead of 1.</li>
           <li><b>Reroll Token</b> (Archivist upgrade): press R within 10 seconds of arriving at a new depth to re-roll all modifiers. 1 per run.</li>
         </ul>
         <h3 style="margin-top:1.2rem;color:#d4b8ff;">Modifiers (10 normal + 3 cataclysm)</h3>
-        <p>Each depth rolls a set of modifiers from a 13-entry pool. Normal modifiers can stack 2-4 at a time. Every 5th depth, a guaranteed <span style="color:#ff5566;font-weight:700;">cataclysm</span> modifier rolls on top.</p>
+        <p>Depth 1 has no modifiers; Depths 2&ndash;3 roll one, 4&ndash;6 two, and 7 and deeper three. Every 5th depth, a guaranteed <span style="color:#ff5566;font-weight:700;">cataclysm</span> modifier rolls on top.</p>
         <ul>
           <li><b>Burning Ground</b> — passive fire damage at all times.</li>
           <li><b>Famine</b> — potions disabled. Reserve Vial upgrade grants 1 charge.</li>
-          <li><b>Veiled</b> — enemies invisible until close range.</li>
+          <li><b>Veiled</b> — the minimap is sealed in shadow.</li>
           <li><b>Storm Cell</b> — periodic lightning strikes around the player.</li>
           <li><b>Bleeding Reality</b> — standing still damages you.</li>
           <li><b>Marked</b> — enemies have homing aggro across the zone.</li>
-          <li><b>Brutal</b> — enemy damage +50% server-side.</li>
+          <li><b>Brutal</b> — enemies deal +75% damage.</li>
           <li><b>Vital</b> — enemy + boss HP doubled.</li>
           <li><b>Density</b> — enemy count tripled.</li>
-          <li><b>Bounty</b> — enemy gold drops doubled (the "good" modifier).</li>
+          <li><b>Bounty</b> — enemies drop 3&times; gold (the "good" modifier).</li>
           <li style="color:#ff5566;"><b>Volatile</b> (cataclysm) — enemies explode on death. 5-tile radius, 2-8% max HP.</li>
-          <li style="color:#ff5566;"><b>Frenzied</b> (cataclysm) — enemy attack speed +75%.</li>
-          <li style="color:#ff5566;"><b>Hardened Echo</b> (cataclysm) — enemies take 50% less damage.</li>
+          <li style="color:#ff5566;"><b>Frenzied</b> (cataclysm) — enemies attack 60% faster.</li>
+          <li style="color:#ff5566;"><b>Hardened Echo</b> (cataclysm) — enemies gain +50% damage reduction.</li>
         </ul>
       </section>
 
@@ -529,16 +551,16 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="apex" class="reveal">
         <h2><span class="icon">🌀</span>Apex Trials</h2>
         <div class="section-bar"></div>
-        <p>The endgame after Ascendancy. <b>Apex portals</b> spawn periodically across high-level zones (Lv 60+), each opening into a sealed rift. Step through, fight, clear — get rewards. The portal closes after one party clears it.</p>
+        <p>Kill enough in any zone and a hot-pink <b>Apex portal</b> can open (25 kills in a zone guarantees one); it stays for 4 minutes. Step through into three rooms that end in a boss. The trial's tier follows the zone's level, from Tier I in the Outpost and Patrol up to Tier VIII in the Lv 100+ zones.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">8 Tier Difficulty</p>
         <p>Each portal is one of 8 tiers. Higher tier = tougher enemies, more stacked modifiers, better loot. Tier scales the dungeon's name, monster levels, drop rates, and the shards you can earn.</p>
         <ul>
-          <li><b>Tier I–II</b> — Apprentice rifts. Single modifier. Bronze/Silver shards.</li>
-          <li><b>Tier III–IV</b> — Adept rifts. 2 stacked modifiers. Gold/Sapphire shards.</li>
-          <li><b>Tier V–VI</b> — Master rifts. 3 stacked modifiers. Emerald/Ruby shards.</li>
-          <li><b>Tier VII</b> — Sovereign tier. 4 stacked modifiers + Mirrored. The previous ceiling.</li>
-          <li><b>Tier VIII — XERON tier.</b> 5 stacked modifiers + Mirrored. Drops <b>+2 guaranteed Apex Shards</b> per clear. The new ceiling.</li>
+          <li><b>Tier I–II</b> — Apprentice rifts. Up to one modifier. Iron/Bronze shards.</li>
+          <li><b>Tier III–IV</b> — Adept rifts. 1–2 modifiers.</li>
+          <li><b>Tier V–VI</b> — Master rifts. 1–3 modifiers.</li>
+          <li><b>Tier VII</b> — Sovereign tier. 2–3 modifiers; Mirrored can roll.</li>
+          <li><b>Tier VIII — XERON tier.</b> 2–3 modifiers; Mirrored can roll. Pays <b>+2 Apex Shards</b> per clear. The ceiling.</li>
         </ul>
 
         <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Modifiers — Stack On Top of Tier</p>
@@ -561,7 +583,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         </div>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">25+ Tier-Locked Legendaries</p>
-        <p>Apex Trials drop a unique pool of legendaries that can ONLY be obtained from rifts and the Curator. Highlights: <b>Spore Architect's Staff</b> (T3), <b>Frostfang of the Sovereign</b> (T5), <b>Lich Sovereign's Scepter</b> (T6). The XERON tier (T8) drops with bonus shard quantity — your fastest route to top-end gear.</p>
+        <p><b>Every Apex Trial boss has a full set of its own</b> at its tier's level &mdash; The Hollow Initiate (Tier I); Magmaforged Brute (Tier II); The Spore Architect (Tier III); Glaciated Sovereign (Tier IV); Wyrm-Touched Vanguard (Tier V); The Lich Sovereign (Tier VI); The Apex Conqueror (Tier VII); The Apex Conqueror (Ascendant) (Tier VIII). A clear pays two pieces of it (three with two or more modifiers or Cursed), class-weighted like every boss, plus gear for the zone you opened the trial from, gold and Apex Shards. On top of that, the shards buy a unique pool of legendaries that can ONLY be obtained from rifts and the Curator. Highlights: <b>Spore Architect's Staff</b> (T3), <b>Frostfang of the Sovereign</b> (T5), <b>Lich Sovereign's Scepter</b> (T6). The XERON tier (T8) drops with bonus shard quantity — your fastest route to top-end gear.</p>
       </section>
 
       <!-- WORLD BOSSES -->
@@ -572,18 +594,20 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <p style="margin-top:1.25rem;color:var(--xu-red);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">The Seven</p>
         <div class="mechanic-grid">
-          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Forge Tyrant</div><p>Often Citadel &middot; ~1.3M HP @ L100. Molten armor, dual hammers, magma quake AOE. Drops fire-themed legendaries.</p></div>
-          <div class="m-card"><span class="m-card-icon">👁</span><div class="m-card-title">Eyexor</div><p>Often Vaeltharax's Lair &middot; ~2.3M HP @ L100. Older than the war. Older than the empire. It remembers when the sky was different.</p></div>
-          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Hollow Reaper</div><p>Often The Necropolis &middot; ~2.0M HP @ L100. Soul-tearing scythe, void teleports. Cold beyond absolute zero.</p></div>
-          <div class="m-card"><span class="m-card-icon">🌌</span><div class="m-card-title">Void Behemoth</div><p>Often Neon Hollow &middot; ~3.6M HP @ L100. Reality-warping. Dimensional rifts. The size of a city block.</p></div>
-          <div class="m-card"><span class="m-card-icon">🧮</span><div class="m-card-title">Abacus of Flesh</div><p>Often Void Citadel &middot; ~4.3M HP @ L100. It counts. Every soul that has ever fallen in the Citadel is a bead on its frame.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Overseer of Discord</div><p>Often the Colosseum &middot; ~5.6M HP @ L100. It judged the gods and found them wanting. Now it presides over the Colosseum, scoring every duel, every death, every coward who flees.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Electronoid</div><p>Often The Forge &middot; ~7.9M HP @ L100. Once a brilliant scientist who pushed the limits of human consciousness, attempting to merge with pure energy.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔥</span><div class="m-card-title">Forge Tyrant</div><p>Often Citadel &middot; 160,000 HP. Molten armor, dual hammers, magma quake AOE. Drops fire-themed legendaries.</p></div>
+          <div class="m-card"><span class="m-card-icon">👁</span><div class="m-card-title">Eyexor</div><p>Often Vaeltharax's Lair &middot; 950,000 HP. Older than the war. Older than the empire. It remembers when the sky was different.</p></div>
+          <div class="m-card"><span class="m-card-icon">💀</span><div class="m-card-title">Hollow Reaper</div><p>Often The Necropolis &middot; 3,500,000 HP. Soul-tearing scythe, void teleports. Cold beyond absolute zero.</p></div>
+          <div class="m-card"><span class="m-card-icon">🌌</span><div class="m-card-title">Void Behemoth</div><p>Often Neon Hollow &middot; 3,600,000 HP. Reality-warping. Dimensional rifts. The size of a city block.</p></div>
+          <div class="m-card"><span class="m-card-icon">🧮</span><div class="m-card-title">Abacus of Flesh</div><p>Often Void Citadel &middot; 1,100,000 HP. It counts. Every soul that has ever fallen in the Citadel is a bead on its frame.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Overseer of Discord</div><p>Often the Colosseum &middot; 4,500,000 HP. It judged the gods and found them wanting. Now it presides over the Colosseum, scoring every duel, every death, every coward who flees.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚡</span><div class="m-card-title">Electronoid</div><p>Often The Forge &middot; 3,400,000 HP. Once a brilliant scientist who pushed the limits of human consciousness, attempting to merge with pure energy.</p></div>
         </div>
 
         <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">How Spawning Works</p>
         <ul>
-          <li><b>Random selection</b> — When a world boss spawn timer fires, the game picks one of the seven at random.</li>
+          <li><b>Timing</b> — The first appears 2–4 minutes after you enter the world, then one every 5 minutes. Each stays for 4 minutes.</li>
+          <li><b>Random selection</b> — When the timer fires, the game picks one of the seven at random.</li>
+          <li><b>Group scaling</b> — Its HP grows by 65% for every extra player fighting it.</li>
           <li><b>Cross-zone defer</b> — If you're not in the boss's zone, the boss is "pending" — it materializes the moment you arrive.</li>
           <li><b>Global announcement</b> — A chat broadcast tells everyone where it spawned. Travel there to engage.</li>
           <li><b>Despawn timer</b> — Bosses don't wait forever. Get there fast or miss the window.</li>
@@ -591,7 +615,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         </ul>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
-        <p>Killing a world boss drops a guaranteed pile: tier-appropriate <b>Apex Shards</b>, 1–2 random legendaries from the dungeon pool, and a <b>+50% gold bonus</b> applied to every kill in the next 60 seconds.</p>
+        <p>Every world boss drops <b>its own full set</b> &mdash; all four weapon types and a full set of armour and jewellery &mdash; one piece per kill with a 45% chance of a second, leaning toward your class's weapons, plus a tier-appropriate <b>Apex Shard</b> and bonus gold (8,000 + 2,500 per loot tier).</p>
       </section>
 
       <!-- BLOOMING WILDS (v92.49) -->
@@ -667,10 +691,10 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
           <div class="m-card"><span class="m-card-icon">🔁</span><div class="m-card-title">The Host Can Leave</div><p>If the host quits or crashes, the game passes to the next player and carries on &mdash; the world keeps running for everyone still in it.</p></div>
-          <div class="m-card"><span class="m-card-icon">📶</span><div class="m-card-title">Drop &amp; Rejoin</div><p>If your connection blips, you rejoin the same session automatically. Playing solo, your world waits for you for 90 seconds.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>Every combat zone is live on the server from the moment a game is created. Enter any zone and its creatures are already there.</p></div>
+          <div class="m-card"><span class="m-card-icon">📶</span><div class="m-card-title">Drop &amp; Rejoin</div><p>If your connection blips, you rejoin the same session automatically. Playing solo, your world waits for you for 90 seconds. If the session is gone (the server restarted), the game quietly opens a new one and you keep playing where you stand.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>Every combat zone is live on the server from the moment a game is created. Enter any zone and its creatures are already there. A slain creature returns 5 minutes later.</p></div>
           <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot, Gold &amp; XP</div><p>Loot and gold go to the player who lands the kill. <b>XP is shared</b> with party members in the same zone.</p></div>
-          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and downed status in real time. Trade items via the trade window (T key).</p></div>
+          <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and downed status in real time. Trade items via the trade window (Y key, near another player).</p></div>
         </div>
 
         <div style="margin-top:2rem;padding:1.25rem 1.5rem;border:1px solid rgba(57,255,138,0.25);background:rgba(2,20,10,0.5);">

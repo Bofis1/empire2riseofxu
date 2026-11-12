@@ -158,7 +158,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="key-row">
         <div class="key action" id="key-q">Q<span class="key-label">QUEST</span></div>
         <div class="key action" id="key-w">W<span class="key-label">↑</span></div>
-        <div class="key" id="key-e">E<span class="key-label">—</span></div>
+        <div class="key" id="key-e">E<span class="key-label">RACE</span></div>
         <div class="key action" id="key-r" style="border-color:rgba(176,136,255,0.4);"><span style="color:#b088ff;">R</span><span class="key-label" style="color:#d4b8ff;">REROLL</span></div>
         <div class="key action" id="key-t">T<span class="key-label">MECH</span></div>
         <div class="key action" id="key-y">Y<span class="key-label">ACHIEV</span></div>
@@ -201,7 +201,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
 
     <div class="binding-grid">
       <div class="binding"><span class="key-badge">LMB</span><div class="binding-desc"><b>Attack</b> — Click or hold to strike toward cursor</div></div>
-      <div class="binding"><span class="key-badge red">RMB</span><div class="binding-desc"><b>Block</b> — Hold to raise shield and reduce damage</div></div>
+      <div class="binding"><span class="key-badge red">RMB</span><div class="binding-desc"><b>Block / Off-hand</b> — Hold to block with a shield, or to fire a bow or gun carried in your off-hand</div></div>
       <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction</div></div>
       <div class="binding"><span class="key-badge">WASD</span><div class="binding-desc"><b>Move</b> — Standard directional movement</div></div>
       <div class="binding"><span class="key-badge gold">1–8</span><div class="binding-desc"><b>Skills</b> — Activate equipped skill in that slot</div></div>
@@ -212,8 +212,13 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">/transfer</span><div class="binding-desc"><b>Transfer Code</b> — Type in chat to see the code that brings your characters to another device</div></div>
       <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open item bag and equipment slots</div></div>
       <div class="binding"><span class="key-badge">P</span><div class="binding-desc"><b>Stat Points</b> — Spend stat points (STR/AGI/VIT/INT/DEF)</div></div>
-      <div class="binding"><span class="key-badge">N</span><div class="binding-desc"><b>Talent Tree</b> — 25 talent nodes per class</div></div>
+      <div class="binding"><span class="key-badge">N</span><div class="binding-desc"><b>Talent Tree</b> — 48 talent nodes per class (opens at level 5)</div></div>
       <div class="binding"><span class="key-badge gold">J</span><div class="binding-desc"><b>Ascendancy</b> — Post-Lv.100 progression panel</div></div>
+      <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Racial Ability</b> — Xu Crest Flare, Vampire Void-Step, Minotaur Vreth Stance or Ogre War Chant</div></div>
+      <div class="binding"><span class="key-badge gold">U</span><div class="binding-desc"><b>AA Ability</b> — Fire your slotted Ascendancy active (Shift+U / Ctrl+U for the 2nd and 3rd)</div></div>
+      <div class="binding"><span class="key-badge">O</span><div class="binding-desc"><b>Dialogue Log</b> — Re-read conversations you missed</div></div>
+      <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>Mute</b> — Mute and unmute all audio</div></div>
+      <div class="binding"><span class="key-badge">H</span><div class="binding-desc"><b>Help</b> — Controls reference, Replay Tutorial and the Field Manual</div></div>
       <div class="binding"><span class="key-badge gold">G</span><div class="binding-desc"><b>Guild Panel</b> — Create/join guild, chat, perks</div></div>
       <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Quest Log</b> — Open quest log and objectives</div></div>
       <div class="binding"><span class="key-badge">Y</span><div class="binding-desc"><b>Achievements</b> — View achievements and titles</div></div>
@@ -222,7 +227,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">Z X C V</span><div class="binding-desc"><b>Item Bar</b> — Quick-use slots 1-4 (potions, scrolls)</div></div>
       <div class="binding"><span class="key-badge">F5</span><div class="binding-desc"><b>Save Game</b> — Manual save to local + cloud</div></div>
       <div class="binding"><span class="key-badge">ENTER</span><div class="binding-desc"><b>Chat</b> — Open lobby/party chat input</div></div>
-      <div class="binding"><span class="key-badge red">ESC</span><div class="binding-desc"><b>Close Panel</b> — Close any open menu</div></div>
+      <div class="binding"><span class="key-badge red">ESC</span><div class="binding-desc"><b>Close / Pause</b> — Close any open menu, or pause and open settings</div></div>
     </div>
   </div>
 
@@ -249,7 +254,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       </div>
       <div class="mouse-labels">
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Left Click / Hold</b> — Attack in cursor direction. Hold to auto-attack.</div></div>
-        <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block. Reduces incoming damage. Depletes stamina over time.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block with a shield, or fire the bow or gun in your off-hand.</div></div>
         <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Switches between all three view modes. Scroll in for first-person, out for third-person and isometric. See <a href="#camera-modes" style="color:var(--xu-cyan);text-decoration:none;border-bottom:1px dotted var(--xu-cyan);">Camera Modes</a> below.</div></div>
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space.</div></div>
       </div>
@@ -448,11 +453,11 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       </div>
       <div class="tip-card">
         <div class="tip-num">TIP 02</div>
-        <p><b>Combo multiplier is everything.</b> At <span class="hl">x10 combo</span>, your damage is ten times base. Learn to dodge-weave attacks rather than tank hits — preserving your combo is worth more than the damage you avoid.</p>
+        <p><b>Combo multiplier is everything.</b> Hits in quick succession build a combo: <span class="hl">x3</span> adds 15% damage, <span class="hl">x6</span> 30% and <span class="hl">x10</span> 50%. Stop hitting and it fades, so keep the pressure on and dodge-weave rather than backing off.</p>
       </div>
       <div class="tip-card">
         <div class="tip-num">TIP 03</div>
-        <p><b>Parry timing.</b> Block just as an enemy swings (watch their tell animation) to trigger a <span class="hl">perfect parry</span>. The counterattack deals 3× your ATK and staggers most enemies.</p>
+        <p><b>Roll through, don't tank.</b> Red on the ground means move. <span class="hl">SPACE</span> rolls you out of it and you're untouchable mid-roll. Warriors can also ready a parry with the <span class="hl">Counter Strike</span> skill.</p>
       </div>
       <div class="tip-card">
         <div class="tip-num">TIP 04</div>
@@ -468,7 +473,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       </div>
       <div class="tip-card">
         <div class="tip-num">TIP 07</div>
-        <p><b>In multiplayer, zone entry matters.</b> All enemies are server-side and persistent. If your party is in Patrol Zone but you're in the Outpost, enemies in Patrol Zone are still active — they will be there when you arrive.</p>
+        <p><b>In multiplayer, zone entry matters.</b> All enemies are server-side and persistent. If your party is in Patrol Zone but you're in the Outpost, enemies in Patrol Zone are still active — they will be there when you arrive. A slain creature comes back 5 minutes later.</p>
       </div>
       <div class="tip-card">
         <div class="tip-num">TIP 08</div>
@@ -496,15 +501,15 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       </div>
       <div class="tip-card" style="border-color:rgba(255,224,128,0.3);">
         <div class="tip-num" style="color:#ffe080;">SLOT 9</div>
-        <p><b>Lightstone equipment slot.</b> The 9th slot in your inventory panel — drag a Lightstone into it to equip. A halo orb hovers above your head, light radiates outward. Essential for Convergence + Void zone exploration. Buy Tallow / Amber / Aether at Hessek Scale-Weaver.</p>
+        <p><b>Lightstone equipment slot.</b> The 9th slot in your inventory panel — drag a Lightstone into it to equip. A halo orb hovers above your head, light radiates outward. Essential for Convergence + Void zone exploration. Buy Tallow / Amber / Aether from Hessek, the KB Trader in the Outpost.</p>
       </div>
       <div class="tip-card" style="border-color:rgba(176,136,255,0.3);">
         <div class="tip-num" style="color:#b088ff;">PORTAL</div>
-        <p><b>Magenta depth portal.</b> Kill the Depth Sentinel and a violet rift appears at its death position. Walk through to descend. Old portals from previous depths are auto-cleaned — no skipping. There is no bottom.</p>
+        <p><b>Magenta depth portal.</b> Kill the depth's boss and a violet rift appears where it fell. Walk through to descend. Old portals from previous depths are auto-cleaned — no skipping. There is no bottom.</p>
       </div>
       <div class="tip-card" style="border-color:rgba(255,85,102,0.3);">
         <div class="tip-num" style="color:#ff5566;">CATACLYSM</div>
-        <p><b>Every 5th depth.</b> A cataclysm-tier modifier guaranteed-rolls on top of normal mods every 5th depth: <span style="color:#ff5566;">Volatile</span> (enemies explode), <span style="color:#ff5566;">Frenzied</span> (+75% attack speed), or <span style="color:#ff5566;">Hardened Echo</span> (-50% damage dealt). Reroll Token still works on these.</p>
+        <p><b>Every 5th depth.</b> A cataclysm-tier modifier guaranteed-rolls on top of normal mods every 5th depth: <span style="color:#ff5566;">Volatile</span> (enemies explode), <span style="color:#ff5566;">Frenzied</span> (enemies attack 60% faster), or <span style="color:#ff5566;">Hardened Echo</span> (enemies take 50% less damage). Reroll Token still works on these.</p>
       </div>
     </div>
   </div>

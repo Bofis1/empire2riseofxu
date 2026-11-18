@@ -175,6 +175,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
         <div class="key action" id="key-j">J<span class="key-label">ASCEND</span></div>
         <div class="key action" id="key-p">P<span class="key-label">PTS</span></div>
         <div class="key action" id="key-n">N<span class="key-label">TALENT</span></div>
+        <div class="key action" id="key-m">M<span class="key-label">MAP</span></div>
       </div>
       <div class="key-row">
         <div class="key skill" id="key-1">1<span class="key-label">SKILL 1</span></div>
@@ -205,19 +206,19 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction</div></div>
       <div class="binding"><span class="key-badge">WASD</span><div class="binding-desc"><b>Move</b> — Standard directional movement</div></div>
       <div class="binding"><span class="key-badge gold">1–8</span><div class="binding-desc"><b>Skills</b> — Activate equipped skill in that slot</div></div>
-      <div class="binding"><span class="key-badge gold">K</span><div class="binding-desc"><b>Skill Manager</b> — Open the skill loadout screen</div></div>
+      <div class="binding"><span class="key-badge gold">K</span><div class="binding-desc"><b>Skill Manager</b> — Open the skill loadout screen; press K again to close it</div></div>
       <div class="binding"><span class="key-badge">F</span><div class="binding-desc"><b>Interact</b> — Talk to NPC, harvest gem node, use crafting bench, browse skycars at the XU Carport, or mech suits at the fabricator next to KB Trader. <b>Hold</b> next to a downed teammate to revive them</div></div>
       <div class="binding"><span class="key-badge">B</span><div class="binding-desc"><b>Skycar</b> — Board or land your flying car (once you own one)</div></div>
       <div class="binding"><span class="key-badge gold">T</span><div class="binding-desc"><b>Mech Suit</b> — Deploy or eject your mech (level 60+). Inside it, LMB fires the main gun and 1–8 become the suit's weapons</div></div>
-      <div class="binding"><span class="key-badge">/transfer</span><div class="binding-desc"><b>Transfer Code</b> — Type in chat to see the code that brings your characters to another device</div></div>
-      <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open item bag and equipment slots</div></div>
+      <div class="binding"><span class="key-badge">/transfer</span><div class="binding-desc"><b>Transfer Code</b> — Type in chat to see the code that brings your offline characters to another device. Online characters load on any device when you sign in</div></div>
+      <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open item bag and equipment slots. Tiles mark upgrades, tooltips show the Power a piece adds or costs, and the bag sorts by Power</div></div>
       <div class="binding"><span class="key-badge">P</span><div class="binding-desc"><b>Stat Points</b> — Spend stat points (STR/AGI/VIT/INT/DEF)</div></div>
       <div class="binding"><span class="key-badge">N</span><div class="binding-desc"><b>Talent Tree</b> — 48 talent nodes per class (opens at level 5)</div></div>
       <div class="binding"><span class="key-badge gold">J</span><div class="binding-desc"><b>Ascendancy</b> — Post-Lv.100 progression panel</div></div>
       <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Racial Ability</b> — Xu Crest Flare, Vampire Void-Step, Minotaur Vreth Stance or Ogre War Chant</div></div>
       <div class="binding"><span class="key-badge gold">U</span><div class="binding-desc"><b>AA Ability</b> — Fire your slotted Ascendancy active (Shift+U / Ctrl+U for the 2nd and 3rd)</div></div>
       <div class="binding"><span class="key-badge">O</span><div class="binding-desc"><b>Dialogue Log</b> — Re-read conversations you missed</div></div>
-      <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>Mute</b> — Mute and unmute all audio</div></div>
+      <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>World Map</b> — This Zone shows the ground around you with live markers for gates, vendors, bosses, rares, enemies, party members and loot; World shows every zone, its G and the route there. Mute is now in Settings</div></div>
       <div class="binding"><span class="key-badge">H</span><div class="binding-desc"><b>Help</b> — Controls reference, Replay Tutorial and the Field Manual</div></div>
       <div class="binding"><span class="key-badge gold">G</span><div class="binding-desc"><b>Guild Panel</b> — Create/join guild, chat, perks</div></div>
       <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Quest Log</b> — Open quest log and objectives</div></div>
@@ -225,7 +226,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">L</span><div class="binding-desc"><b>Stats &amp; Leaderboard</b> — Session stats and rankings</div></div>
       <div class="binding"><span class="key-badge">Y</span><div class="binding-desc"><b>Trade</b> — In multiplayer, open a trade window with the nearest player</div></div>
       <div class="binding"><span class="key-badge">Z X C V</span><div class="binding-desc"><b>Item Bar</b> — Quick-use slots 1-4 (potions, scrolls)</div></div>
-      <div class="binding"><span class="key-badge">F5</span><div class="binding-desc"><b>Save Game</b> — Manual save to local + cloud</div></div>
+      <div class="binding"><span class="key-badge">F5</span><div class="binding-desc"><b>Save Game</b> — Save on the spot. Online characters save to the game server, offline characters to your device</div></div>
       <div class="binding"><span class="key-badge">ENTER</span><div class="binding-desc"><b>Chat</b> — Open lobby/party chat input</div></div>
       <div class="binding"><span class="key-badge red">ESC</span><div class="binding-desc"><b>Close / Pause</b> — Close any open menu, or pause and open settings</div></div>
     </div>
@@ -256,8 +257,23 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Left Click / Hold</b> — Attack in cursor direction. Hold to auto-attack.</div></div>
         <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block with a shield, or fire the bow or gun in your off-hand.</div></div>
         <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Switches between all three view modes. Scroll in for first-person, out for third-person and isometric. See <a href="#camera-modes" style="color:var(--xu-cyan);text-decoration:none;border-bottom:1px dotted var(--xu-cyan);">Camera Modes</a> below.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Side Buttons</b> — On a multi-button mouse the two side buttons dodge and drink a potion. Mouse buttons, numpad keys and Alt or Ctrl combos can be bound to any action in Settings.</div></div>
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space.</div></div>
       </div>
+    </div>
+  </div>
+
+  <!-- TOUCH SECTION -->
+  <div class="ctrl-section reveal" id="touch">
+    <div class="section-eyebrow">Phones &amp; Tablets</div>
+    <h2 class="section-title">Touch <span>Controls</span></h2>
+    <div class="binding-grid">
+      <div class="binding"><span class="key-badge">LEFT</span><div class="binding-desc"><b>Move</b> — Drag on the left of the screen to move</div></div>
+      <div class="binding"><span class="key-badge">RIGHT</span><div class="binding-desc"><b>Look</b> — Drag on the right of the screen to look around; pinch to zoom</div></div>
+      <div class="binding"><span class="key-badge gold">PAD</span><div class="binding-desc"><b>Fight</b> — Attack, dodge, block, all eight skills and your racial ability. Attacks turn you toward the nearest enemy</div></div>
+      <div class="binding"><span class="key-badge">USE</span><div class="binding-desc"><b>Interact</b> — Talks, picks up and drinks</div></div>
+      <div class="binding"><span class="key-badge">MENU</span><div class="binding-desc"><b>Panels</b> — Reaches every panel, the world map included. UI size, look speed and auto-aim are set here</div></div>
+      <div class="binding"><span class="key-badge">TAP</span><div class="binding-desc"><b>Items</b> — Tap an item to see its details and tap again to equip it; a long press works as a right-click</div></div>
     </div>
   </div>
 
@@ -476,6 +492,10 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
         <p><b>In multiplayer, zone entry matters.</b> All enemies are server-side and persistent. If your party is in Patrol Zone but you're in the Outpost, enemies in Patrol Zone are still active — they will be there when you arrive. A slain creature comes back 5 minutes later.</p>
       </div>
       <div class="tip-card">
+        <div class="tip-num">TIP 09</div>
+        <p><b>Follow your G.</b> Every ten levels you enter a new <span class="hl">G</span>, and all gear of that G can be worn from its first level. When you cross into one, check your bag and the vendors: upgrades are marked, and zones of your G drop gear you can put on right away.</p>
+      </div>
+      <div class="tip-card">
         <div class="tip-num">TIP 08</div>
         <p><b>Level 100 isn't the end.</b> The <span class="hl">Ascendancy System</span> begins at the cap. Farm AA Points in endgame zones to unlock abilities that dramatically reshape your combat identity.</p>
       </div>
@@ -519,8 +539,11 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
     <div class="section-eyebrow">Quick Reference</div>
     <h2 class="section-title">UI <span>Panels</span></h2>
     <div class="binding-grid">
-      <div class="binding"><span class="key-badge gold">HUD</span><div class="binding-desc"><b>HP/MP bars</b> top-left, level, gold, zone name</div></div>
-      <div class="binding"><span class="key-badge gold">MINIMAP</span><div class="binding-desc">Top-right — red dots are enemies, white are items</div></div>
+      <div class="binding"><span class="key-badge gold">HUD</span><div class="binding-desc"><b>HP/MP bars</b> top-left, level and G, experience, Power, compass, gold, zone name</div></div>
+      <div class="binding"><span class="key-badge gold">G LEVEL</span><div class="binding-desc">Every ten levels is a G (G1 to level 9, G2 from 10, up to G11 at 100). Gear, portals and zones show a G too: the same G as yours means it is on your level</div></div>
+      <div class="binding"><span class="key-badge gold">POWER</span><div class="binding-desc">One number for how strong your character is — on the status bar, the character sheet and the bag</div></div>
+      <div class="binding"><span class="key-badge">WORLD MAP</span><div class="binding-desc">Press M, or the map button beside Help — zoom, pan and filter every marker type</div></div>
+      <div class="binding"><span class="key-badge gold">MINIMAP</span><div class="binding-desc">Top-right, marked N, E, S and W — red dots are enemies, white are items</div></div>
       <div class="binding"><span class="key-badge">CHAT</span><div class="binding-desc">Bottom-left — press ENTER to open, send chat</div></div>
       <div class="binding"><span class="key-badge">SKILL BAR</span><div class="binding-desc">Bottom-center — slots 1-8 with cooldown rings</div></div>
       <div class="binding"><span class="key-badge">PARTY</span><div class="binding-desc">Left panel — party members' HP/MP and zones</div></div>
@@ -547,7 +570,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
 const keyMap = {
   'q':'key-q','w':'key-w','e':'key-e','r':'key-r','t':'key-t','y':'key-y','i':'key-i',
   'a':'key-a','s':'key-s','d':'key-d','f':'key-f','g':'key-g','l':'key-l','k':'key-k',
-  'j':'key-j','p':'key-p','n':'key-n',
+  'j':'key-j','p':'key-p','n':'key-n','m':'key-m',
   '1':'key-1','2':'key-2','3':'key-3','4':'key-4','5':'key-5','6':'key-6','7':'key-7','8':'key-8',
   'z':'key-z','x':'key-x','c':'key-c','v':'key-v',
   ' ':'key-space','escape':'key-esc','f5':'key-f5',

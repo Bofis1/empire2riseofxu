@@ -143,6 +143,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#skills">Skills & Classes</a></li>
         <li><a href="#races">Races</a></li>
         <li><a href="#stats">Stats & Scaling</a></li>
+        <li><a href="#glevels">G Levels &amp; Power</a></li>
         <li><a href="#loot">Loot & Crafting</a></li>
         <li><a href="#inventory">Inventory & Item Bar</a></li>
         <li><a href="#ascendancy">Ascendancy</a></li>
@@ -155,7 +156,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#downed">Downed &amp; Revive</a></li>
         <li><a href="#upgrades">Gear Upgrades</a></li>
         <li><a href="#skycars">Skycars</a></li>
-        <li><a href="#characters">Transfer Codes</a></li>
+        <li><a href="#characters">Accounts &amp; Characters</a></li>
         <li><a href="#guilds">Guild System</a></li>
         <li><a href="#daily">Daily Rewards</a></li>
         <li><a href="#achievements">Achievements</a></li>
@@ -358,12 +359,43 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p style="margin-top:1rem;"><span class="hl">Crit strikes</span> deal <span class="gold">2× damage</span> and create a screen flash. Critical hits can be forced with the <span class="hl">First-Hit Crit</span> talent.</p>
       </section>
 
+      <!-- G LEVELS & POWER (a794–a799) -->
+      <section id="glevels" class="reveal">
+        <h2><span class="icon">🔰</span>G Levels &amp; Power</h2>
+        <div class="section-bar"></div>
+        <p>Every ten levels is a <b>G</b>. Your G shows beside your level, and gear, portals, the zone banner, the travel map and the world map all carry a G too, so you can tell at a glance what is on your level: <span class="hl">the same G as yours is yours to wear, fight and explore</span>. The experience readout counts the levels to your next G, and crossing into one gets its own banner.</p>
+        <table>
+          <thead><tr><th>G</th><th>Levels</th><th>Zones of that G</th></tr></thead>
+          <tbody>
+            <tr><td>G1</td><td>1–9</td><td>XU Outpost, Patrol Zone (5)</td></tr>
+            <tr><td>G2</td><td>10–19</td><td>The Blooming Wilds (10), Void Wastes (15)</td></tr>
+            <tr><td>G3</td><td>20–29</td><td>Xu Cemetery (20), Xu Citadel (25)</td></tr>
+            <tr><td>G4</td><td>30–39</td><td>Avia Canyon (30), The Ashlands (35)</td></tr>
+            <tr><td>G5</td><td>40–49</td><td>Caves of Despair (40), Fungal Depths (42)</td></tr>
+            <tr><td>G6</td><td>50–59</td><td>Frostveil Tundra (50), Ancient Realm (58)</td></tr>
+            <tr><td>G7</td><td>60–69</td><td>The Sunken Sands (60), Vaeltharax's Lair and Rift Vale (65)</td></tr>
+            <tr><td>G8</td><td>70–79</td><td>Void Citadel (70)</td></tr>
+            <tr><td>G9</td><td>80–89</td><td>Wyvern Wastes and Xumen (80)</td></tr>
+            <tr><td>G10</td><td>90–99</td><td>Xulcan Prime (90), The Forge (95)</td></tr>
+            <tr><td>G11</td><td>100+</td><td>The Necropolis, Xumen Fortress, Neon Hollow, Xeron, The Convergence, The Reach, Lucidwilde, The Veiled Sanctuary (110)</td></tr>
+          </tbody>
+        </table>
+        <div class="mechanic-grid" style="margin-top:1.25rem;">
+          <div class="m-card"><span class="m-card-icon">🗡️</span><div class="m-card-title">Gear Has a G</div><p>Every piece of gear belongs to a G and can be worn from the <b>first level of that G</b>: G2 gear at level 10, G3 gear at level 20. Reaching a new G opens all of its gear at once.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚖️</span><div class="m-card-title">Sized by Slot, G &amp; Rarity</div><p>A piece's stats come from its slot, its G and its rarity, so it is worth the same to every class. A higher G beats a lower one of the same rarity: always when they are two G apart, and one G apart unless the older piece rolled far better affixes.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎲</span><div class="m-card-title">Affixes Scale Too</div><p>An affix gives a share of the piece it is on, so a low-level ring does not carry endgame-sized bonuses. Speed, crit, gems, upgrades and set bonuses are not resized.</p></div>
+          <div class="m-card"><span class="m-card-icon">💪</span><div class="m-card-title">Power</div><p>One number for how strong your character is, from how hard you hit and how much you can take. It shows on the status bar, the character sheet and the bag. It is a yardstick for gear and builds; combat does not read it.</p></div>
+          <div class="m-card"><span class="m-card-icon">⬆️</span><div class="m-card-title">Upgrades at a Glance</div><p>Gear tooltips say how much Power a piece would add or cost, bag tiles mark upgrades with an arrow, and the bag can be sorted by Power.</p></div>
+          <div class="m-card"><span class="m-card-icon">🚫</span><div class="m-card-title">Why Can't I Wear It?</div><p>Clicking gear you cannot wear says why. A skill that can be trained shows a pip on the skill bar, and unspent stat and talent points stay on the status bar.</p></div>
+        </div>
+      </section>
+
       <!-- LOOT -->
       <section id="loot" class="reveal">
         <h2><span class="icon">💎</span>Loot & Crafting</h2>
         <div class="section-bar"></div>
-        <p><b>Creatures</b> drop materials, potions and gems from their own tables, and every kill also has a <b>12% chance at a piece of gear</b> rolled for the zone's level (from 10 levels below it to 3 above). Slain creatures return 5 minutes later. The <a href="wiki.html">Wiki bestiary</a> lists every creature's drops and chances.</p>
-        <p><b>Bosses</b> &mdash; every zone boss, Convergence depth, world boss, rare spawn and Apex Trial boss &mdash; drop <b>a full set of their own</b>: a greatsword, a one-hander, a staff, a ranged weapon, a helm, a chest, legs, boots, a ring and an amulet, each with its own model and its own look on your character. A kill pays one piece and a 45% chance of a second (never the same). Each piece is a weapon 30% of the time, armour 50% and jewellery 20%, and <b>your class's weapon types share 60% of the weapon roll</b> &mdash; roughly one kill in four drops a weapon you can wield. An Apex Trial clear pays two pieces of its boss's set (three with two or more modifiers or Cursed) plus gear for the zone you opened it in. The <a href="wiki.html#bosses">Wiki</a> lists every boss's set and the exact chance of each piece.</p>
+        <p><b>Creatures</b> drop materials, potions and gems from their own tables, and every kill also has a <b>12% chance at a piece of gear</b> rolled for the zone: from 10 levels below it up to the end of the zone's own <a href="#glevels">G</a> (and never less than 3 levels above it), so every zone drops gear you can put on while you are there. Slain creatures return 5 minutes later. The <a href="wiki.html">Wiki bestiary</a> lists every creature's drops and chances.</p>
+        <p><b>Bosses</b> &mdash; every zone boss, Convergence depth, world boss, rare spawn and Apex Trial boss &mdash; drop <b>a full set of their own</b>: a greatsword, a one-hander, a staff, a ranged weapon, a helm, a chest, legs, boots, a ring and an amulet, each with its own model and its own look on your character. A zone boss or world boss kill pays <b>two different pieces</b> and a 45% chance of a third; a rare spawn pays one piece and a 45% chance of a second. Each piece is a weapon 30% of the time, armour 50% and jewellery 20%, and <b>your class's weapon types share 60% of the weapon roll</b> &mdash; so the weapons you can wield come up far more often than the ones you can't. An Apex Trial clear pays two pieces of its boss's set (three with two or more modifiers or Cursed) plus gear for the zone you opened it in. The <a href="wiki.html#bosses">Wiki</a> lists every boss's set and the exact chance of each piece.</p>
         <p>Walk over items to collect them. <b>Rarity tiers</b> determine base power and visual appearance:</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">⬜</span><div class="m-card-title" style="color:#aaa">Common</div><p>Drops from basic enemies. Starter gear.</p></div>
@@ -386,7 +418,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🤚</span><div class="m-card-title">Draggable</div><p>Click and hold the header bar to move the panel anywhere on screen. Position is clamped — at least 50px stays visible.</p></div>
           <div class="m-card"><span class="m-card-icon">↘️</span><div class="m-card-title">Resizable</div><p>Drag the bottom-right corner handle. Min 560×400, max viewport-bounded. Useful when you want to see the item bar underneath.</p></div>
           <div class="m-card"><span class="m-card-icon">💾</span><div class="m-card-title">Persistent</div><p>Position + size saved to localStorage per character. Reopening keeps your layout. RESET button restores defaults.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔍</span><div class="m-card-title">Sort &amp; Filter</div><p>Sort by Rarity, Type, Name, or Newest. Filter by Weapon, Armour, Accessory, Use, Quest. Sell Junk button sells all common items.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔍</span><div class="m-card-title">Sort &amp; Filter</div><p>Sort by Rarity, Type, Name, Newest or Power. Filter by Weapon, Armour, Accessory, Use, Quest. Sell Junk button sells all common items.</p></div>
         </div>
 
         <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Item Bar Bindings</p>
@@ -397,7 +429,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         </div>
 
         <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Quick Actions</p>
-        <p><b>Right-click</b> in inventory → instant equip. <b>Shift+click</b> → sell. <b>Middle-click</b> → toggle lock (locked items can't be sold or junked). <b>Hover</b> any item for tooltip with stats and live comparison vs your equipped piece.</p>
+        <p><b>Right-click</b> in inventory → instant equip. <b>Shift+click</b> → sell. <b>Middle-click</b> → toggle lock (locked items can't be sold or junked). <b>Hover</b> any item for tooltip with stats, its G and the level it opens at, a live comparison vs your equipped piece and the Power it would add or cost. Bag tiles mark upgrades with an arrow. Items on your item bar leave the bag, the way worn gear does.</p>
       </section>
 
       <!-- ASCENDANCY -->
@@ -551,7 +583,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="apex" class="reveal">
         <h2><span class="icon">🌀</span>Apex Trials</h2>
         <div class="section-bar"></div>
-        <p>Kill enough in any zone and a hot-pink <b>Apex portal</b> can open (25 kills in a zone guarantees one); it stays for 4 minutes. Step through into three rooms that end in a boss. The trial's tier follows the zone's level, from Tier I in the Outpost and Patrol up to Tier VIII in the Lv 100+ zones.</p>
+        <p>Kill enough in any zone and a hot-pink <b>Apex portal</b> can open (25 kills in a zone guarantees one); it stays for 4 minutes. The portal asks before it takes you in. Step through into three rooms that end in a boss. Trial creatures and bosses match your level (or the tier's, if that is higher) and fight with their full abilities. The trial's tier follows the zone's level, from Tier I in the Outpost and Patrol up to Tier VIII in the Lv 100+ zones.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">8 Tier Difficulty</p>
         <p>Each portal is one of 8 tiers. Higher tier = tougher enemies, more stacked modifiers, better loot. Tier scales the dungeon's name, monster levels, drop rates, and the shards you can earn.</p>
@@ -637,7 +669,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Five garden rooms</p>
         <p>Player walks south to north through: <b>Entrance Glade</b> (fairy camps + brute pair) → <b>Petal Clearing</b> (vine groves + brutes) → <b>Rose Garden</b> (Thorn Knight mini-boss + court) → <b>Mushroom Ring</b> (signature 4-brute formation around 2 wraiths) → <b>Wildmother's Approach</b> (final guard wave).</p>
 
-        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Wildmother — 35,000 HP</p>
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Wildmother — 50,000 HP</p>
         <p>Ancient willow tree-being with two whip-vine arms ending in flower-blossom hands. Crown of layered leaves with a giant central purple flower and 8 pink/gold side flowers. <b>Four moonstones orbit her crown</b> and fire when the player stands still. Her face is in the bark — two glowing eyes, a horizontal mouth-split that glows orange when she speaks. Vine arms have tremendous reach; stay outside and fire from range.</p>
       </section>
 
@@ -645,28 +677,27 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="sanctuary" class="reveal">
         <h2><span class="icon">⛪</span>The Veiled Sanctuary</h2>
         <div class="section-bar"></div>
-        <p>Hidden raid accessed from the <b>Necropolis</b>. Lv 90+ recommended. A monastery of the Forsaken Order, frozen mid-ritual when their attempt to seal a void rift went wrong six years ago. Heavy purple-gold thunderstorm, sacred lightning, drifting void tornadoes.</p>
+        <p>Hidden raid accessed from the <b>Necropolis</b>. Lv 110 (G11), the highest zone in the game. A monastery of the Forsaken Order, frozen mid-ritual when their attempt to seal a void rift went wrong six years ago. Heavy purple-gold thunderstorm, sacred lightning, drifting void tornadoes.</p>
 
-        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Eight new enemies</p>
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Seven enemies</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">⛪</span><div class="m-card-title">Veiled Acolyte</div><p>Low-rank monks frozen mid-prayer. 42K HP. Slow but persistent.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚔</span><div class="m-card-title">Penitent Striker</div><p>Order martial guards with purple-gold staves. 38K HP. Don't feel pain.</p></div>
-          <div class="m-card"><span class="m-card-icon">🗿</span><div class="m-card-title">Stone Inquisitor</div><p>Senior monks petrified entirely. Mobile despite the stone. 65K HP, 25% damage reduction.</p></div>
-          <div class="m-card"><span class="m-card-icon">🕯️</span><div class="m-card-title">Censer Bearer</div><p>Swings incense in arcs that scorch the floor. 48K HP. Telegraphed AOE.</p></div>
-          <div class="m-card"><span class="m-card-icon">🛡</span><div class="m-card-title">Ritual Guardian</div><p>Holds cardinal points of the central nave. Will not break formation. 80K HP, 30% damage reduction.</p></div>
-          <div class="m-card"><span class="m-card-icon">🎵</span><div class="m-card-title">Halo-Cantor</div><p>Singing damages the player in a register that bypasses normal shielding. 52K HP. Range threat.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚔</span><div class="m-card-title">Penitent Striker</div><p>Order martial guards with purple-gold staves. 55K HP, 5% damage reduction. Don't feel pain.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗿</span><div class="m-card-title">Stone Inquisitor</div><p>Senior monks petrified entirely. Mobile despite the stone. 130K HP, 30% damage reduction.</p></div>
+          <div class="m-card"><span class="m-card-icon">🕯️</span><div class="m-card-title">Censer Bearer</div><p>Swings incense in arcs that scorch the floor. 62K HP, 10% damage reduction. Telegraphed AOE.</p></div>
+          <div class="m-card"><span class="m-card-icon">🛡</span><div class="m-card-title">Ritual Guardian</div><p>Holds cardinal points of the central nave. Will not break formation. 95K HP, 20% damage reduction.</p></div>
           <div class="m-card"><span class="m-card-icon">👻</span><div class="m-card-title">Choir Wraith</div><p>What's left of the singing monks who lost the rest of themselves. 38K HP. Phases through walls.</p></div>
           <div class="m-card" style="border-color:rgba(255,208,96,0.35);"><span class="m-card-icon">👑</span><div class="m-card-title" style="color:#ffeeaa;">Veiled Cardinal (Mini-Boss)</div><p>Senior officiants who were closest to the altar at the moment the seal failed. <b>240,000 HP</b>, 15% damage reduction.</p></div>
         </div>
 
-        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Final Abbot — 850,000 HP</p>
+        <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Boss: The Final Abbot — 6,000,000 HP</p>
         <p>The senior officiant of the Forsaken Order, still attempting to complete the ritual after six years. Robed figure with a halo, wielding twin staves — left radiates void, right radiates gold. <b>Twin censers fire void + gold beams that meet in front of him in a column of light</b> — the unfinished work of the ritual. Stand in the column long enough and the ritual accepts you. Members lost to the column do not come back.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Atmosphere</p>
         <p><b>Purple-gold thunderstorm</b> with sacred lightning that strikes vertically with a 3-tier branching pattern. Up to <b>2 active void tornadoes</b> at any time, drifting through the courtyard with hand-tuned curving paths. <b>14 frozen monks</b> still kneeling in the central nave. <b>24 dead trees</b> in the courtyard with leaves frozen mid-fall a meter above the ground. The bell in the tower rings once every 23 minutes.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
-        <p><b>Six unique legendaries</b> drop only here. The Coalition's senior command has been quietly funneling their best strike teams toward the Sanctuary because these legendaries are the difference between strike teams surviving Wandering Apex encounters and not surviving them. Sacred choir music underscores every fight in the zone.</p>
+        <p><b>The Final Abbot's full ten-piece set</b> drops only here. The Coalition's senior command has been quietly funneling their best strike teams toward the Sanctuary because these legendaries are the difference between strike teams surviving Wandering Apex encounters and not surviving them. Sacred choir music underscores every fight in the zone.</p>
       </section>
 
       <!-- GOLD VAULT -->
@@ -687,7 +718,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
             <section id="multiplayer" class="reveal">
         <h2><span class="icon">🌐</span>Multiplayer</h2>
         <div class="section-bar"></div>
-        <p>Empire 2 supports <b>real-time cooperative multiplayer</b>, run entirely through the game server. Up to <span class="hl">4 players</span> per game session.</p>
+        <p>Empire 2 supports <b>real-time cooperative multiplayer</b>, run entirely through the game server. Up to <span class="hl">4 players</span> per game session. Hosting and joining need an <a href="#characters">online character</a>.</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
           <div class="m-card"><span class="m-card-icon">🔁</span><div class="m-card-title">The Host Can Leave</div><p>If the host quits or crashes, the game passes to the next player and carries on &mdash; the world keeps running for everyone still in it.</p></div>
@@ -746,13 +777,15 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
       <!-- YOUR CHARACTERS -->
       <section id="characters" class="reveal">
-        <h2><span class="icon">🔑</span>Your Characters &amp; Transfer Codes</h2>
+        <h2><span class="icon">🔑</span>Accounts &amp; Your Characters</h2>
         <div class="section-bar"></div>
-        <p>Whenever you play online, your character is saved to the game server as well as your browser, and the server keeps regular backups.</p>
+        <p>The title screen offers two ways to play. <b>Play Online</b> signs you in to an account; <b>Play Offline</b> keeps characters on the device you are using.</p>
         <div class="mechanic-grid">
-          <div class="m-card"><span class="m-card-icon">🔑</span><div class="m-card-title">Transfer Code</div><p>Your characters are tied to a private code on your device. Type <b>/transfer</b> in chat, or press <b>TRANSFER CODE</b> on character select, to see it. Keep it private.</p></div>
-          <div class="m-card"><span class="m-card-icon">💻</span><div class="m-card-title">New Device?</div><p>On the login screen, click <b>New device? Enter a transfer code</b>, type your name and code, and your characters come with you.</p></div>
-          <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Loud Warnings</div><p>If a save ever can't be backed up to the server, you'll be told in chat &mdash; your progress is still kept on that device.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔑</span><div class="m-card-title">Online Characters</div><p>Choose <b>Play Online</b> to sign in, or <b>Create Account</b> to make one. Online characters live on the game server behind your account and password, load on any device, phones included, and are the only ones that can host or join multiplayer games.</p></div>
+          <div class="m-card"><span class="m-card-icon">🏕️</span><div class="m-card-title">Offline Characters</div><p><b>Play Offline</b> keeps your characters on this device for solo play. They are tied to a private transfer code: type <b>/transfer</b> in chat, or press <b>TRANSFER CODE</b> on character select, to see it. Keep it private.</p></div>
+          <div class="m-card"><span class="m-card-icon">📥</span><div class="m-card-title">Bring a Hero Online</div><p>Sign in with Play Online and choose <b>Import Old Character</b> on character select to move an offline character into your account with its level, gear and gold. Each character can be imported once, it takes your account name, and the offline copy stays on your device.</p></div>
+          <div class="m-card"><span class="m-card-icon">💻</span><div class="m-card-title">New Device?</div><p>Online characters are there as soon as you sign in. For offline characters, choose Play Offline, click <b>New device? Enter a transfer code</b>, type your name and code, and they come with you.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Loud Warnings</div><p>If a save ever can't reach the server, you'll be told in chat.</p></div>
         </div>
       </section>
 
@@ -821,14 +854,14 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="audio" class="reveal">
         <h2><span class="icon">🔊</span>Audio System</h2>
         <div class="section-bar"></div>
-        <p>Empire 2 features a fully procedural audio engine — every sound is generated in-browser via Web Audio API oscillators and noise buffers. No audio files. No bandwidth cost. The entire soundtrack is code.</p>
+        <p>Empire 2 features a fully procedural audio engine — the music and the built-in sounds are generated in-browser via Web Audio API oscillators and noise buffers, so the entire soundtrack is code. Recorded sound effects for combat, skills and creatures play on top where they exist.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Audio Mixer</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🎚</span><div class="m-card-title">Master Volume</div><p>0–100% global volume control. Multiplies with Music and SFX channels.</p></div>
           <div class="m-card"><span class="m-card-icon">🎵</span><div class="m-card-title">Music Channel</div><p>Independent control for zone tracks. Set music to 0 to play in silence with full SFX feedback.</p></div>
           <div class="m-card"><span class="m-card-icon">💥</span><div class="m-card-title">SFX Channel</div><p>Independent control for combat, UI, and event sounds.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔇</span><div class="m-card-title">Mute Toggle</div><p>Press <span class="hl">M</span> to instantly mute everything. Press M again to restore. Slider state preserved.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔇</span><div class="m-card-title">Mute Toggle</div><p>Mute everything from Settings and unmute it the same way. Slider state preserved. (The <span class="hl">M</span> key now opens the world map.)</p></div>
           <div class="m-card"><span class="m-card-icon">💾</span><div class="m-card-title">Per-Character</div><p>Settings save to localStorage <em>per character</em>. Your Mage can have music low; your Warrior can have it loud.</p></div>
           <div class="m-card"><span class="m-card-icon">⚙</span><div class="m-card-title">Settings Panel</div><p>Open via the Gear icon (⚙) in the top-right HUD. All sliders live there alongside other game options.</p></div>
         </div>

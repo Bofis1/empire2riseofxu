@@ -325,6 +325,7 @@ footer{padding:3rem 2rem;background:var(--bg);border-top:1px solid rgba(57,255,1
     <div class="divbar"></div>
   </div>
   <div class="feat-grid">
+    <div class="fc reveal" style="border-color:rgba(57,255,138,0.35);background:linear-gradient(135deg,rgba(4,20,10,0.92),rgba(6,28,16,0.92));"><span class="fc-icon" style="color:#39ff8a;">&#x1FA96;</span><div class="fc-title" style="color:#aaffcc;">Real Helms &amp; Chest Armour</div><p class="fc-desc">Every helmet and chest piece is its own model now, on all eight races, and other players see it too. Great helms, crowns, hoods, visors, horns, antlers, wings and halos. Chest pieces add pauldrons that swing with your arms, breastplates, collars and back pieces, and the higher the level the more elaborate they get: spikes, glowing seams, reactor cores, and at Level 100 energy wings and floating shards. Frost grows crystals, fire burns, void trails tendrils, bone carries skulls.</p><span class="fc-tag">a873&ndash;a874</span></div>
     <div class="fc reveal" style="border-color:rgba(57,255,138,0.35);background:linear-gradient(135deg,rgba(4,20,10,0.92),rgba(6,28,16,0.92));"><span class="fc-icon" style="color:#39ff8a;">&#x267E;&#xFE0F;</span><div class="fc-title" style="color:#aaffcc;">The End</div><p class="fc-desc">Beat the Keeper of the End and the way opens onward: a level 120+ zone with no edge, built new on every visit from every land in the game. Its creatures never stop coming and grow stronger the farther you walk, six bosses with attacks of their own arrive without warning, and the loot is Endwrought and Endborn gear. In a multiplayer game everyone walks the same End.</p><span class="fc-tag">a802&ndash;a853</span></div>
     <div class="fc reveal" style="border-color:rgba(57,255,138,0.35);background:linear-gradient(135deg,rgba(4,20,10,0.92),rgba(6,28,16,0.92));"><span class="fc-icon" style="color:#39ff8a;">&#x1F5DD;&#xFE0F;</span><div class="fc-title" style="color:#aaffcc;">Delves</div><p class="fc-desc">Every combat zone holds a Delve: a maze dungeon behind a navy blue portal at a random spot, carved fresh each time. Find it first: it only shows on your minimap once you have explored there. Kill half the creatures to break the seal on the boss chamber. 40 creatures, 10 bosses and 5 gear sets with 2, 4 and 6 piece bonuses, in every G from 1 to 11.</p><span class="fc-tag">a861&ndash;a871</span></div>
     <div class="fc reveal" style="border-color:rgba(57,255,138,0.35);background:linear-gradient(135deg,rgba(4,20,10,0.92),rgba(6,28,16,0.92));"><span class="fc-icon" style="color:#39ff8a;">&#x1F695;</span><div class="fc-title" style="color:#aaffcc;">Robot Cabs</div><p class="fc-desc">Boxi and Roamer cabs stop beside the zone gates. Ride from a stop, book one in the Outpost or pay extra for an express, all from the world map, or take the Grand Tour. Every ride carries a random toll, and everyone in your game shares the same cab.</p><span class="fc-tag">a800 &middot; a812&ndash;a815</span></div>
@@ -729,6 +730,26 @@ document.querySelectorAll('.fc,.rc').forEach((el,i)=>{el.style.transitionDelay=(
 // ── PATCH NOTES — mirrors in-game CHANGELOG ──
 // Categories: 'major' (cyan accent), 'content' (green, default), 'fix' (orange)
 const PATCH_NOTES = [
+  {ver:"v95.1-a874", date:"Nov 2026", cat:'major', title:"Real Chest Armour",
+   notes:[
+     "Chest pieces are real models now. Each one adds its own pauldrons, which swing with your arms, and its own breastplate pieces, collar and back piece over your armour.",
+     "The higher the level, the more elaborate it gets. Low-level pieces have plain rounded pauldrons. Then come layered plates and rivets, spikes and raised collars, glowing seams and back spines, then reactor cores, vents and great horns. At Level 100 (and on every convergent, geometric and stormforged piece) you get a tech pack with energy wings, a spinning rune ring and floating shards.",
+     "Each piece follows its name: frost pieces grow crystals, fire pieces burn, void pieces trail tendrils, bone pieces carry skulls and ribs, bark and petal pieces sprout leaves, spore pieces grow mushrooms, dragon pieces are scaled, holy pieces get golden feathers, storm pieces spark. Robes and cloaks get cloth mantles.",
+     "Fits all eight races, and other players see it too. Display only: no stat or hit box changes. No server change."
+   ]},
+  {ver:"v95.1-a873", date:"Nov 2026", cat:'major', title:"Real Helms",
+   notes:[
+     "Helmets are real models now. A worn helmet puts its own helm on your head instead of repainting your race helm: great helms, horned helms, crowns, hoods, visors, skull helms, antlers, crests, plumes, wings, halos and orbiting satellites.",
+     "Every helmet in the game has its own design, painted in its own colours with its own glow. The Delve helmets get more parts as their grade goes up.",
+     "Helms fit all eight races: horns, snouts, ears and hair come through where they should. Take the helmet off and your race helm comes back.",
+     "Other players see your helm too. Display only: no stat or hit box changes. No server change."
+   ]},
+  {ver:"v95.1-a872", date:"Nov 2026", cat:'fix', title:"A Fish For The Bag",
+   notes:[
+     "Bofocats Tuna has a painted icon in the bag now: a fat silver tuna, like the other quest items.",
+     "Its tooltip tells you where to take it: to Bofocat in the XU Outpost, press F next to her.",
+     "No server change."
+   ]},
   {ver:"v95.1-a871", date:"Nov 2026", cat:'content', title:"One Delve, Somewhere",
    notes:[
      "Each zone now has one Delve portal instead of three (five in the big zones), standing at a random spot somewhere in the zone. When you clear it, a new one opens somewhere else a minute later.",

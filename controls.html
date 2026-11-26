@@ -203,7 +203,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
     <div class="binding-grid">
       <div class="binding"><span class="key-badge">LMB</span><div class="binding-desc"><b>Attack</b> — Click or hold to strike toward cursor</div></div>
       <div class="binding"><span class="key-badge red">RMB</span><div class="binding-desc"><b>Block / Off-hand</b> — Hold to block with a shield, or to fire a bow or gun carried in your off-hand</div></div>
-      <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction</div></div>
+      <div class="binding"><span class="key-badge">SPACE</span><div class="binding-desc"><b>Dodge Roll</b> — Brief i-frames in movement direction. When you fall, SPACE respawns</div></div>
       <div class="binding"><span class="key-badge">WASD</span><div class="binding-desc"><b>Move</b> — Standard directional movement</div></div>
       <div class="binding"><span class="key-badge gold">1–8</span><div class="binding-desc"><b>Skills</b> — Activate equipped skill in that slot</div></div>
       <div class="binding"><span class="key-badge gold">K</span><div class="binding-desc"><b>Skill Manager</b> — Open the skill loadout screen; press K again to close it</div></div>
@@ -211,17 +211,17 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">B</span><div class="binding-desc"><b>Skycar</b> — Board or land your flying car (once you own one)</div></div>
       <div class="binding"><span class="key-badge gold">T</span><div class="binding-desc"><b>Mech Suit</b> — Deploy or eject your mech (level 60+). Inside it, LMB fires the main gun and 1–8 become the suit's weapons</div></div>
       <div class="binding"><span class="key-badge">/transfer</span><div class="binding-desc"><b>Transfer Code</b> — Type in chat to see the code that brings your offline characters to another device. Online characters load on any device when you sign in</div></div>
+      <div class="binding"><span class="key-badge">/sounds</span><div class="binding-desc"><b>Sound Lab</b> — Type in chat to hear every sound in the game, with a MOB ATTACKS tab for every creature's attack</div></div>
       <div class="binding"><span class="key-badge">I</span><div class="binding-desc"><b>Inventory</b> — Open item bag and equipment slots. Tiles mark upgrades, tooltips show the Power a piece adds or costs, and the bag sorts by Power</div></div>
       <div class="binding"><span class="key-badge">P</span><div class="binding-desc"><b>Stat Points</b> — Spend stat points (STR/AGI/VIT/INT/DEF)</div></div>
       <div class="binding"><span class="key-badge">N</span><div class="binding-desc"><b>Talent Tree</b> — 48 talent nodes per class (opens at level 5)</div></div>
       <div class="binding"><span class="key-badge gold">J</span><div class="binding-desc"><b>Ascendancy</b> — Post-Lv.100 progression panel</div></div>
-      <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Racial Ability</b> — Xu Crest Flare, Vampire Void-Step, Minotaur Vreth Stance or Ogre War Chant</div></div>
+      <div class="binding"><span class="key-badge gold">E</span><div class="binding-desc"><b>Racial Ability</b> — Xu Crest Flare, Vampire Drain (switches between LIFE and MANA), Minotaur Vreth Stance or Ogre War Chant</div></div>
       <div class="binding"><span class="key-badge gold">U</span><div class="binding-desc"><b>AA Ability</b> — Fire your slotted Ascendancy active (Shift+U / Ctrl+U for the 2nd and 3rd)</div></div>
-      <div class="binding"><span class="key-badge">O</span><div class="binding-desc"><b>Dialogue Log</b> — Re-read conversations you missed</div></div>
       <div class="binding"><span class="key-badge">M</span><div class="binding-desc"><b>World Map</b> — This Zone shows the ground around you with live markers for gates, vendors, bosses, rares, enemies, party members and loot; World shows every zone, its G and the route there. Mute is now in Settings</div></div>
       <div class="binding"><span class="key-badge">H</span><div class="binding-desc"><b>Help</b> — Controls reference, Replay Tutorial and the Field Manual</div></div>
       <div class="binding"><span class="key-badge gold">G</span><div class="binding-desc"><b>Guild Panel</b> — Create/join guild, chat, perks</div></div>
-      <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Quest Log</b> — Open quest log and objectives</div></div>
+      <div class="binding"><span class="key-badge">Q</span><div class="binding-desc"><b>Quest Log</b> — Open quest log and objectives; its DIALOGUE tab re-reads conversations you missed</div></div>
       <div class="binding"><span class="key-badge">Y</span><div class="binding-desc"><b>Achievements</b> — View achievements and titles</div></div>
       <div class="binding"><span class="key-badge">L</span><div class="binding-desc"><b>Stats &amp; Leaderboard</b> — Session stats and rankings</div></div>
       <div class="binding"><span class="key-badge">Y</span><div class="binding-desc"><b>Trade</b> — In multiplayer, open a trade window with the nearest player</div></div>
@@ -229,6 +229,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="binding"><span class="key-badge">F5</span><div class="binding-desc"><b>Save Game</b> — Save on the spot. Online characters save to the game server, offline characters to your device</div></div>
       <div class="binding"><span class="key-badge">ENTER</span><div class="binding-desc"><b>Chat</b> — Open lobby/party chat input</div></div>
       <div class="binding"><span class="key-badge red">ESC</span><div class="binding-desc"><b>Close / Pause</b> — Close any open menu, or pause and open settings</div></div>
+      <div class="binding"><span class="key-badge">F / ENTER</span><div class="binding-desc"><b>Leave a Delve</b> — The exit portal and the LEAVE DELVE button ask first and say how much loot is still on the floor. F or Enter leaves, Esc stays</div></div>
     </div>
   </div>
 
@@ -256,9 +257,9 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       <div class="mouse-labels">
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Left Click / Hold</b> — Attack in cursor direction. Hold to auto-attack.</div></div>
         <div class="mouse-binding"><div class="mouse-dot right"></div><div class="binding-desc"><b style="color:var(--xu-text)">Right Click / Hold</b> — Block with a shield, or fire the bow or gun in your off-hand.</div></div>
-        <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Switches between all three view modes. Scroll in for first-person, out for third-person and isometric. See <a href="#camera-modes" style="color:var(--xu-cyan);text-decoration:none;border-bottom:1px dotted var(--xu-cyan);">Camera Modes</a> below.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot scroll"></div><div class="binding-desc"><b style="color:var(--xu-text)">Scroll Wheel</b> — Switches between all three view modes, one stop per scroll. Scroll in for first-person, out for third-person and isometric. In third-person, <b style="color:var(--xu-text)">hold the wheel down</b> and move the mouse to look all the way around your character. See <a href="#camera-modes" style="color:var(--xu-cyan);text-decoration:none;border-bottom:1px dotted var(--xu-cyan);">Camera Modes</a> below.</div></div>
         <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Side Buttons</b> — On a multi-button mouse the two side buttons dodge and drink a potion. Mouse buttons, numpad keys and Alt or Ctrl combos can be bound to any action in Settings.</div></div>
-        <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space.</div></div>
+        <div class="mouse-binding"><div class="mouse-dot"></div><div class="binding-desc"><b style="color:var(--xu-text)">Move Cursor</b> — All skills and attacks aim at the mouse cursor position in world space. Point at a creature and it is your target: its name, level and health show under the compass.</div></div>
       </div>
     </div>
   </div>
@@ -282,7 +283,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
     <div class="section-eyebrow">Camera</div>
     <h2 class="section-title">Three <span>Camera Modes</span></h2>
     <p style="color:var(--xu-dim);max-width:820px;margin:0 0 28px;line-height:1.75;">
-      Rise of Xu plays in three perspectives, and they all live on a single <b style="color:var(--xu-text)">mouse wheel</b>. The view is one continuous zoom: roll the wheel <b style="color:var(--xu-cyan)">in</b> to pull the camera closer&nbsp;&mdash; eventually right behind your eyes&nbsp;&mdash; or <b style="color:var(--xu-gold)">out</b> to pull back into third-person and then the classic overhead angle. You start every session in <b style="color:var(--xu-green)">third-person</b>, and pressing <span class="hl">Esc</span> snaps straight back to the overhead view.
+      Rise of Xu plays in three perspectives, and they all live on a single <b style="color:var(--xu-text)">mouse wheel</b>. The wheel moves between five stops, two to each view and one stop per scroll: roll the wheel <b style="color:var(--xu-cyan)">in</b> to pull the camera closer&nbsp;&mdash; eventually right behind your eyes&nbsp;&mdash; or <b style="color:var(--xu-gold)">out</b> to pull back into third-person and then the classic overhead angle. You start every session in <b style="color:var(--xu-green)">third-person</b>, and pressing <span class="hl">Esc</span> snaps straight back to the overhead view.
     </p>
 
     <!-- zoom rail -->
@@ -326,7 +327,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
       </div>
       <div class="tip-card">
         <div class="tip-num" style="color:#00ff88;">THIRD-PERSON &middot; DEFAULT</div>
-        <p><b>Where every session begins.</b> The camera floats behind your character so you can see them and the field around you. Move the mouse to orbit the camera, <span class="hl">WASD</span> moves relative to your facing, and attacks fire flat across the ground toward the crosshair.</p>
+        <p><b>Where every session begins.</b> The camera floats behind your character so you can see them and the field around you. Move the mouse to orbit the camera, <span class="hl">WASD</span> moves relative to your facing, and attacks fire flat across the ground toward the crosshair. <b>Hold the mouse wheel down</b> and move the mouse to swing the camera all the way around you: you keep facing, walking and aiming the same way, and when you let go the camera glides back behind you.</p>
       </div>
       <div class="tip-card">
         <div class="tip-num" style="color:#ffcc20;">ISOMETRIC &middot; CLASSIC</div>
@@ -336,7 +337,7 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
   </div>
 
   <!-- CONTROLLER / GAMEPAD SECTION (rewritten for v93.0-a77) -->
-  <div class="ctrl-section reveal">
+  <div class="ctrl-section reveal" id="controller">
     <div class="section-eyebrow">Full Guide for New Players</div>
     <h2 class="section-title">Controller <span>Support</span></h2>
     <p style="color:var(--xu-dim);font-size:0.95rem;margin-bottom:1rem;max-width:760px;">
@@ -540,14 +541,16 @@ main{max-width:1000px;margin:0 auto;padding:4rem 2rem 6rem;}
     <h2 class="section-title">UI <span>Panels</span></h2>
     <div class="binding-grid">
       <div class="binding"><span class="key-badge gold">HUD</span><div class="binding-desc"><b>HP/MP bars</b> top-left, level and G, experience, Power, compass, gold, zone name</div></div>
+      <div class="binding"><span class="key-badge gold">TARGET</span><div class="binding-desc">Point at a creature: its name, level and health show under the compass</div></div>
+      <div class="binding"><span class="key-badge">BEACONS</span><div class="binding-desc">Beams of light over the gate to your next area, bosses, rare spawns, legendary drops, supply crates, bounties and Apex rifts. On or off in Settings (SKY BEACONS)</div></div>
       <div class="binding"><span class="key-badge gold">G LEVEL</span><div class="binding-desc">Every ten levels is a G (G1 to level 9, G2 from 10, up to G11 at 100). Gear, portals and zones show a G too: the same G as yours means it is on your level</div></div>
       <div class="binding"><span class="key-badge gold">POWER</span><div class="binding-desc">One number for how strong your character is — on the status bar, the character sheet and the bag</div></div>
       <div class="binding"><span class="key-badge">WORLD MAP</span><div class="binding-desc">Press M, or the map button beside Help — zoom, pan and filter every marker type</div></div>
-      <div class="binding"><span class="key-badge gold">MINIMAP</span><div class="binding-desc">Top-right, marked N, E, S and W — red dots are enemies, white are items</div></div>
+      <div class="binding"><span class="key-badge gold">MINIMAP</span><div class="binding-desc">Top-right, marked N, E, S and W — red dots are enemies, white are items, navy diamonds are Delve portals. Inside a Delve it becomes the Delve's own map</div></div>
       <div class="binding"><span class="key-badge">CHAT</span><div class="binding-desc">Bottom-left — press ENTER to open, send chat</div></div>
       <div class="binding"><span class="key-badge">SKILL BAR</span><div class="binding-desc">Bottom-center — slots 1-8 with cooldown rings</div></div>
       <div class="binding"><span class="key-badge">PARTY</span><div class="binding-desc">Left panel — party members' HP/MP and zones</div></div>
-      <div class="binding"><span class="key-badge red">BOSS BAR</span><div class="binding-desc">Top-center — appears when boss is in zone</div></div>
+      <div class="binding"><span class="key-badge red">BOSS BAR</span><div class="binding-desc">When a boss wakes, its bar shows the boss's picture for a moment, then tucks away as a name and health line under the compass</div></div>
       <div class="binding"><span class="key-badge">COMBO</span><div class="binding-desc">Screen center-top — current combo multiplier</div></div>
       <div class="binding"><span class="key-badge">LOOT</span><div class="binding-desc">Walk over items to auto-collect — check bag (I)</div></div>
     </div>

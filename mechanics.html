@@ -148,14 +148,17 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <li><a href="#inventory">Inventory & Item Bar</a></li>
         <li><a href="#ascendancy">Ascendancy</a></li>
         <li><a href="#apex">Apex Trials</a></li>
+        <li><a href="#delves">Delves</a></li>
         <li><a href="#worldbosses">World Bosses</a></li>
         <li><a href="#blooming">Blooming Wilds</a></li>
         <li><a href="#sanctuary">Veiled Sanctuary</a></li>
+        <li><a href="#theend">The End</a></li>
         <li><a href="#vault">Gold Vault</a></li>
         <li><a href="#multiplayer">Multiplayer</a></li>
         <li><a href="#downed">Downed &amp; Revive</a></li>
         <li><a href="#upgrades">Gear Upgrades</a></li>
         <li><a href="#skycars">Skycars</a></li>
+        <li><a href="#cabs">Robot Cabs</a></li>
         <li><a href="#characters">Accounts &amp; Characters</a></li>
         <li><a href="#guilds">Guild System</a></li>
         <li><a href="#daily">Daily Rewards</a></li>
@@ -216,7 +219,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <div class="class-block">
           <div class="class-title">⚔️ Warrior</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> and <b style="color:var(--xu-text)">Berserker Fury</b> are core to the class.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">High physical damage, melee range, survival tools. The front-line fighter. <b style="color:var(--xu-text)">Combo stacking</b> and <b style="color:var(--xu-text)">Berserker Fury</b> are core to the class. <b style="color:var(--xu-text)">Iron Stance</b> roots you in place for its 4 seconds.</p>
           <div class="class-skills">
             <span class="skill-chip">⚔ Rending Slash</span>
             <span class="skill-chip">🗡 Blade Flurry</span>
@@ -267,7 +270,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <div class="class-block">
           <div class="class-title">🗡️ Rogue</div>
-          <p style="color:var(--xu-dim);font-size:0.92rem;">Long-range, high mobility, utility-heavy. Best sustained DPS at distance. <b style="color:var(--xu-text)">Precision Shot</b> and <b style="color:var(--xu-text)">Marked for Death</b> are the signature crit setups.</p>
+          <p style="color:var(--xu-dim);font-size:0.92rem;">Close-range, high mobility, utility-heavy. <b style="color:var(--xu-text)">Aether Volley</b>, <b style="color:var(--xu-text)">Void Pierce</b>, <b style="color:var(--xu-text)">Precision Shot</b> and <b style="color:var(--xu-text)">Fan of Blades</b> hit the enemies right in front of you, and <b style="color:var(--xu-text)">Backstab</b> strikes the nearest enemy within reach, one strike in three landing for 4&times;. Rogues have the highest melee speed cap: 10 hits a second with a one-handed weapon, 6 with a two-handed one, and virtually no cap while <b style="color:var(--xu-text)">Bloodfrenzy</b> is up. <b style="color:var(--xu-text)">Marked for Death</b> is the signature crit setup.</p>
           <div class="class-skills">
             <span class="skill-chip">🩸 Bloodfrenzy</span>
             <span class="skill-chip">🗡 Umbral Barrage</span>
@@ -285,7 +288,6 @@ tr:hover td{background:rgba(0,229,255,0.03);}
             <span class="skill-chip">🌪 Blade Storm</span>
             <span class="skill-chip">💨 Smoke Bomb</span>
             <span class="skill-chip">🎯 Marked for Death</span>
-            <span class="skill-chip">👤 Shadow Clone</span>
             <span class="skill-chip">☠ Poison Nova</span>
             <span class="skill-chip">🗡 Backstab</span>
             <span class="skill-chip">🔪 Fan of Blades</span>
@@ -323,7 +325,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="races" class="reveal">
         <h2><span class="icon">🧬</span>Races &mdash; 32 Traits Total</h2>
         <div class="section-bar"></div>
-        <p>Your race is chosen once and cannot be changed. Each race has <b>4 traits</b>. Four races carry an active ability on <span class="hl">E</span>: the Xu (Crest Flare, 60s), the Vampire (Void-Step, 6s), the Minotaur (Vreth Stance, 45s) and the Ogre (War Chant, 30s). The rest are passive.</p>
+        <p>Your race is chosen once and cannot be changed. Each race has <b>4 traits</b>. Four races carry an active ability on <span class="hl">E</span>: the Xu (Crest Flare, 60s), the Vampire (Drain, which switches between LIFE and MANA), the Minotaur (Vreth Stance, 45s) and the Ogre (War Chant, 30s). The rest are passive.</p>
         <table>
           <thead>
             <tr><th>Race</th><th>Traits</th></tr>
@@ -333,10 +335,10 @@ tr:hover td{background:rgba(0,229,255,0.03);}
             <tr><td>🧑 <b>Human</b></td><td>Adaptability — +5% XP from all sources<br>Fast Learner — skill cooldowns 15% shorter<br>Any Weapon — equip any weapon regardless of class<br>Balanced — no stat penalties</td></tr>
             <tr><td>⚙️ <b>Gnome</b></td><td>Automaton — passive combat companion follows you everywhere<br>Precision — +25% skill damage<br>Tinker — 25% discount at all vendors<br>Fragile — lowest HP and defence</td></tr>
             <tr><td>💪 <b>Ogre</b></td><td>Thick Hide — 18% physical damage reduction<br>War Chant (E) — +25% atk speed aura, 8s duration, 30s CD<br>Colossus — 1.3× larger mesh than other races<br>Slow — -15% movement speed, lowest in game</td></tr>
-            <tr><td>🐴 <b>Centaur</b></td><td>Swift — +20% movement speed, fastest race<br>Wind-Read — minimap reveal radius +50%<br>Charge — run straight 3s, next melee +200% dmg<br>No Heavy Armour — cannot equip heavy chest/legs</td></tr>
+            <tr><td>🐴 <b>Centaur</b></td><td>Swift — +20% movement speed, fastest race, with a run speed cap of about 2.4&times; the base walk<br>Wind-Read — minimap reveal radius +50%<br>Charge — run straight 3s, next melee +200% dmg<br>No Heavy Armour — cannot equip heavy chest/legs</td></tr>
             <tr><td>🐂 <b>Minotaur</b></td><td>Natural Healer — healing skills 40% stronger<br>Earthsense — AOE heal pulse every 30s (party-wide in MP)<br>Vreth Stance (E) — 8s root: 50% DR + 30% reflect<br>Slow — -10% movement speed</td></tr>
             <tr><td>🧝 <b>Elf</b></td><td>Aether-Weaving — spells cost 20% less mana<br>Ancient Knowledge — +30% magic damage<br>Void-Sight — enemies in 8 tiles visible through walls<br>Fragile — low physical defence</td></tr>
-            <tr><td>🧛 <b>Vampire</b></td><td>Blood Drain — melee attacks restore 5% damage as HP<br>Supernatural Speed — +10% movement speed<br>Void-Step (E) — 5-tile teleport, 6s cooldown<br>Night Sense — minimap reveal +50% in dark zones<br>Aether Light — -15% attack, defence and speed in bright zones</td></tr>
+            <tr><td>🧛 <b>Vampire</b></td><td>Blood Drain — melee hits restore 5% of the damage they do<br>Supernatural Speed — +10% movement speed<br>Drain (E) — switch your drain between LIFE (25% less damage, melee hits heal you) and MANA (50% more damage, melee hits restore mana and heal nothing); also on the character sheet<br>Night Sense — minimap reveal +50% in dark zones<br>Aether Light — -15% attack, defence and speed in bright zones</td></tr>
           </tbody>
         </table>
               </section>
@@ -377,15 +379,17 @@ tr:hover td{background:rgba(0,229,255,0.03);}
             <tr><td>G8</td><td>70–79</td><td>Void Citadel (70)</td></tr>
             <tr><td>G9</td><td>80–89</td><td>Wyvern Wastes and Xumen (80)</td></tr>
             <tr><td>G10</td><td>90–99</td><td>Xulcan Prime (90), The Forge (95)</td></tr>
-            <tr><td>G11</td><td>100+</td><td>The Necropolis, Xumen Fortress, Neon Hollow, Xeron, The Convergence, The Reach, Lucidwilde, The Veiled Sanctuary (110)</td></tr>
+            <tr><td>G11</td><td>100+</td><td>The Necropolis, Xumen Fortress, Neon Hollow, The Convergence, The Reach, Lucidwilde, Xeron and The Veiled Sanctuary (110), <a href="#theend">The End</a> (120+)</td></tr>
           </tbody>
         </table>
         <div class="mechanic-grid" style="margin-top:1.25rem;">
           <div class="m-card"><span class="m-card-icon">🗡️</span><div class="m-card-title">Gear Has a G</div><p>Every piece of gear belongs to a G and can be worn from the <b>first level of that G</b>: G2 gear at level 10, G3 gear at level 20. Reaching a new G opens all of its gear at once.</p></div>
           <div class="m-card"><span class="m-card-icon">⚖️</span><div class="m-card-title">Sized by Slot, G &amp; Rarity</div><p>A piece's stats come from its slot, its G and its rarity, so it is worth the same to every class. A higher G beats a lower one of the same rarity: always when they are two G apart, and one G apart unless the older piece rolled far better affixes.</p></div>
           <div class="m-card"><span class="m-card-icon">🎲</span><div class="m-card-title">Affixes Scale Too</div><p>An affix gives a share of the piece it is on, so a low-level ring does not carry endgame-sized bonuses. Speed, crit, gems, upgrades and set bonuses are not resized.</p></div>
-          <div class="m-card"><span class="m-card-icon">💪</span><div class="m-card-title">Power</div><p>One number for how strong your character is, from how hard you hit and how much you can take. It shows on the status bar, the character sheet and the bag. It is a yardstick for gear and builds; combat does not read it.</p></div>
+          <div class="m-card"><span class="m-card-icon">💪</span><div class="m-card-title">Power</div><p>One number for how strong your character is, from how hard you hit and how much you can take. It climbs with the whole game: about 5,000 by the end of G1, 100,000 in G5, a million in G8 and a billion in G11. The character sheet shows the typical Power of your G and whether you are BELOW, AVERAGE or ABOVE it. It is a yardstick for gear and builds; combat does not read it.</p></div>
           <div class="m-card"><span class="m-card-icon">⬆️</span><div class="m-card-title">Upgrades at a Glance</div><p>Gear tooltips say how much Power a piece would add or cost, bag tiles mark upgrades with an arrow, and the bag can be sorted by Power.</p></div>
+          <div class="m-card"><span class="m-card-icon">📈</span><div class="m-card-title">Levelling</div><p>A level costs a set number of fights against monsters your own level: 10 in G1, one more for every G after that, and three times as many for the last level of each G, the one that carries you into the next.</p></div>
+          <div class="m-card"><span class="m-card-icon">⛲</span><div class="m-card-title">The Outpost Fountain</div><p>Stand near the fountain in the XU Outpost plaza and it gives back 5% of your health and mana every half second, empty to full in about ten seconds.</p></div>
           <div class="m-card"><span class="m-card-icon">🚫</span><div class="m-card-title">Why Can't I Wear It?</div><p>Clicking gear you cannot wear says why. A skill that can be trained shows a pip on the skill bar, and unspent stat and talent points stay on the status bar.</p></div>
         </div>
       </section>
@@ -396,6 +400,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <div class="section-bar"></div>
         <p><b>Creatures</b> drop materials, potions and gems from their own tables, and every kill also has a <b>12% chance at a piece of gear</b> rolled for the zone: from 10 levels below it up to the end of the zone's own <a href="#glevels">G</a> (and never less than 3 levels above it), so every zone drops gear you can put on while you are there. Slain creatures return 5 minutes later. The <a href="wiki.html">Wiki bestiary</a> lists every creature's drops and chances.</p>
         <p><b>Bosses</b> &mdash; every zone boss, Convergence depth, world boss, rare spawn and Apex Trial boss &mdash; drop <b>a full set of their own</b>: a greatsword, a one-hander, a staff, a ranged weapon, a helm, a chest, legs, boots, a ring and an amulet, each with its own model and its own look on your character. A zone boss or world boss kill pays <b>two different pieces</b> and a 45% chance of a third; a rare spawn pays one piece and a 45% chance of a second. Each piece is a weapon 30% of the time, armour 50% and jewellery 20%, and <b>your class's weapon types share 60% of the weapon roll</b> &mdash; so the weapons you can wield come up far more often than the ones you can't. An Apex Trial clear pays two pieces of its boss's set (three with two or more modifiers or Cursed) plus gear for the zone you opened it in. The <a href="wiki.html#bosses">Wiki</a> lists every boss's set and the exact chance of each piece.</p>
+        <p>Gear that drops in <b>Xeron</b> (Lv 110) is <b>Xeron-Forged</b>: +25% on top of the piece's own stats, shown in its name and tooltip, and it stacks with the piece's affixes. Xeron's creatures hit 15% harder.</p>
         <p>Walk over items to collect them. <b>Rarity tiers</b> determine base power and visual appearance:</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">⬜</span><div class="m-card-title" style="color:#aaa">Common</div><p>Drops from basic enemies. Starter gear.</p></div>
@@ -438,6 +443,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <div class="section-bar"></div>
         <p>At <span class="gold">Level 100</span>, the level cap is reached — but your character is not done. The <b>Ascendancy System</b> unlocks power beyond the cap via <span class="hl">Ascendancy Ability Points (AA Points)</span> earned through kills and boss clears. AA abilities split into two categories: <b>universal</b> (any class) and <b>class-specific</b>. Each ability has an AA-point requirement and a point cost to slot.</p>
         <p style="margin-top:1rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.85rem;background:rgba(255,208,96,0.06);border-left:2px solid var(--xu-gold);padding:0.6rem 0.9rem;">⚡ As of v92.48, all 9 active abilities are fully functional — including <b>Void Lord's Grasp</b>, <b>Singularity</b>, <b>Ancient Warcry</b>, <b>Salvation</b>, and <b>Titan's Blow</b>. Bind any active to <span class="hl">U</span> (or <span class="hl">Shift+U</span> for the secondary) for one-press combat use.</p>
+        <p style="margin-top:1rem;"><b>Vigg the Wise</b> floats above a turning rune circle just west of the central plaza in the <b>Sanctuary of Aelun</b> and trades Ascendancy Points for things you can hold: mech suit and skycar parts, crafting materials, potions, socket gems, socket punches and lightstones, plus a shelf of gear that turns every day. Only he sells the <b>Starseer</b> line, legendary gear for level 100 in night violet and silver, and the <b>Ascendant</b> line on his elite shelf, a full step above anything that drops at the cap. Hover an item on his shelves for its full stat card and a comparison with what you wear.</p>
         <p style="margin-top:1rem;color:var(--xu-cyan);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Universal (all classes)</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">💨</span><div class="m-card-title">Second Wind</div><p>When HP drops below 20%, instantly recover 25% Max HP. 90s internal cooldown.</p></div>
@@ -618,6 +624,19 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p><b>Every Apex Trial boss has a full set of its own</b> at its tier's level &mdash; The Hollow Initiate (Tier I); Magmaforged Brute (Tier II); The Spore Architect (Tier III); Glaciated Sovereign (Tier IV); Wyrm-Touched Vanguard (Tier V); The Lich Sovereign (Tier VI); The Apex Conqueror (Tier VII); The Apex Conqueror (Ascendant) (Tier VIII). A clear pays two pieces of it (three with two or more modifiers or Cursed), class-weighted like every boss, plus gear for the zone you opened the trial from, gold and Apex Shards. On top of that, the shards buy a unique pool of legendaries that can ONLY be obtained from rifts and the Curator. Highlights: <b>Spore Architect's Staff</b> (T3), <b>Frostfang of the Sovereign</b> (T5), <b>Lich Sovereign's Scepter</b> (T6). The XERON tier (T8) drops with bonus shard quantity — your fastest route to top-end gear.</p>
       </section>
 
+      <!-- DELVES (a861–a863) -->
+      <section id="delves" class="reveal">
+        <h2><span class="icon">◈</span>Delves</h2>
+        <div class="section-bar"></div>
+        <p>Every combat zone holds Delves: maze dungeons behind <b>navy blue portals</b>, marked as navy diamonds on the minimap. Three stand open in each zone at a time (five in the big zones). Walk into one and it asks before taking you in. Each Delve is a fresh maze the size of the Caves of Despair, built in one of ten wall styles matched to its zone, with its own map where the minimap is, filled in as you explore.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🔒</span><div class="m-card-title">The Sealed Chamber</div><p>Kill half of the creatures inside to break the seal on the boss chamber, then beat the boss. Clearing a Delve closes it, and a new one opens in the zone about a minute later.</p></div>
+          <div class="m-card"><span class="m-card-icon">👾</span><div class="m-card-title">40 Creatures, 10 Bosses</div><p>Four creatures live only in each wall style, each with a signature move, and each Delve draws three of them. Packs wake when you come near and find their way to you through the maze. Ten bosses, one per wall style, each with three moves and three phases.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎁</span><div class="m-card-title">5 Delve Sets</div><p>Circuitbound Array, the Deepwarden Kit, Sunroot Regalia, Rimegrave Vestments and Starcinder Panoply, with bonuses at 2, 4 and 6 pieces, in every G from 1 to 11. Creatures drop gear of the zone's level with a chance at a set piece (elites far more often); the boss drops two or three set pieces, two more pieces of zone gear, gems and gold.</p></div>
+          <div class="m-card"><span class="m-card-icon">🚪</span><div class="m-card-title">Leaving</div><p>The green exit portal and the LEAVE DELVE button both ask first and say how much loot is still on the floor: <span class="hl">F</span> or <span class="hl">Enter</span> leaves, <span class="hl">Esc</span> stays. If you leave or fall before the boss is beaten, the portal stays, but the Delve starts over when you come back.</p></div>
+        </div>
+      </section>
+
       <!-- WORLD BOSSES -->
       <section id="worldbosses" class="reveal">
         <h2><span class="icon">👹</span>World Bosses</h2>
@@ -656,7 +675,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <div class="section-bar"></div>
         <p>A pre-Xu fey garden that the war never reached. Lv 10+ entry zone, accessed from the <b>north wall of the Patrol Zone</b>. The colors are too bright in a way that feels wrong. The fairies are not helping you.</p>
 
-        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Six new enemies</p>
+        <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Seven enemies</p>
         <div class="mechanic-grid">
           <div class="m-card"><span class="m-card-icon">🧚</span><div class="m-card-title">Bloom Sprite</div><p>Pink fairy with petal skirt. Fires petal projectiles. 380 HP. Fast and fragile.</p></div>
           <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Glimmer Fairy</div><p>Cyan orb with trailing sparkles. Fastest enemy in the zone. 280 HP. Evasive.</p></div>
@@ -664,6 +683,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🌿</span><div class="m-card-title">Vine Stalker</div><p>Tall plant-creature with whip vines for arms and a flower head. 550 HP. Mid-range whip attacks.</p></div>
           <div class="m-card"><span class="m-card-icon">☁️</span><div class="m-card-title">Pollen Wraith</div><p>Hovering purple spore-cloud with floating particles. 420 HP. Drains MP on hit.</p></div>
           <div class="m-card" style="border-color:rgba(255,102,204,0.35);"><span class="m-card-icon">🌹</span><div class="m-card-title" style="color:#ffaadd;">Thorn Knight (Mini-Boss)</div><p>Armored rose-creature with thorn crown and rose-emblem chestplate. <b>3,200 HP</b>, 20% damage reduction. Found in the rose garden, guarded by 3 vine stalkers.</p></div>
+          <div class="m-card"><span class="m-card-icon">🐝</span><div class="m-card-title">Bixie</div><p>A small bee-winged fairy. Eight hives of three live round the edge of the garden. She weaves in and stings (one sting in four poisons), and the rest of her hive comes when one is hit. Drops the Bixie Stinger, and now and then the Bixie Antennae, a hat with no stats.</p></div>
         </div>
 
         <p style="margin-top:1.5rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Five garden rooms</p>
@@ -677,7 +697,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
       <section id="sanctuary" class="reveal">
         <h2><span class="icon">⛪</span>The Veiled Sanctuary</h2>
         <div class="section-bar"></div>
-        <p>Hidden raid accessed from the <b>Necropolis</b>. Lv 110 (G11), the highest zone in the game. A monastery of the Forsaken Order, frozen mid-ritual when their attempt to seal a void rift went wrong six years ago. Heavy purple-gold thunderstorm, sacred lightning, drifting void tornadoes.</p>
+        <p>Hidden raid accessed from the <b>Necropolis</b>. Lv 110 (G11), as high as Xeron; only <a href="#theend">The End</a> lies beyond. A monastery of the Forsaken Order, frozen mid-ritual when their attempt to seal a void rift went wrong six years ago. Heavy purple-gold thunderstorm, sacred lightning, drifting void tornadoes.</p>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Seven enemies</p>
         <div class="mechanic-grid">
@@ -698,6 +718,18 @@ tr:hover td{background:rgba(0,229,255,0.03);}
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Rewards</p>
         <p><b>The Final Abbot's full ten-piece set</b> drops only here. The Coalition's senior command has been quietly funneling their best strike teams toward the Sanctuary because these legendaries are the difference between strike teams surviving Wandering Apex encounters and not surviving them. Sacred choir music underscores every fight in the zone.</p>
+      </section>
+
+      <!-- THE END (a802–a853) -->
+      <section id="theend" class="reveal">
+        <h2><span class="icon">🌀</span>The End</h2>
+        <div class="section-bar"></div>
+        <p>Beat the <b>Keeper of the End</b> in The Reach and it leaves a way onward: <b>THE END</b>, a level 120+ zone with no edge. Every visit builds a new world from every land in the game, stitched together and stretching for as far as you care to walk. Creatures start at level 120 and grow a level stronger every 160 tiles you walk out from the first Gate, and they never stop coming. In a multiplayer game everyone who steps through walks the same End and fights the same creatures and bosses.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">👁️</span><div class="m-card-title">Six Bosses</div><p>The Last Star, the Worldeater, the Unwritten, the Clockless King, the Mother of Endings and the Entropy Engine arrive without warning, from 6,000,000 HP up, stronger the farther you go. Each has attacks no other boss has, and its own way to reach you when the land stops it: a marked circle shows where it will land.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚔️</span><div class="m-card-title">Endwrought &amp; Endborn</div><p>The creatures drop Endwrought gear and the bosses drop Endborn gear, both worn at level 100.</p></div>
+          <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Gates Home</div><p>Gates home to the XU Outpost stand where you arrive and across the land beyond, and the tracker at the top of the screen points to the nearest one.</p></div>
+        </div>
       </section>
 
       <!-- GOLD VAULT -->
@@ -723,7 +755,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🏠</span><div class="m-card-title">Create Game</div><p>Host a game from the lobby. Others can see it in the server list and join directly. Optional password protection.</p></div>
           <div class="m-card"><span class="m-card-icon">🔁</span><div class="m-card-title">The Host Can Leave</div><p>If the host quits or crashes, the game passes to the next player and carries on &mdash; the world keeps running for everyone still in it.</p></div>
           <div class="m-card"><span class="m-card-icon">📶</span><div class="m-card-title">Drop &amp; Rejoin</div><p>If your connection blips, you rejoin the same session automatically. Playing solo, your world waits for you for 90 seconds. If the session is gone (the server restarted), the game quietly opens a new one and you keep playing where you stand.</p></div>
-          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>Every combat zone is live on the server from the moment a game is created. Enter any zone and its creatures are already there. A slain creature returns 5 minutes later.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔗</span><div class="m-card-title">Persistent Enemies</div><p>Every combat zone is live on the server from the moment a game is created. Enter any zone and its creatures are already there. A slain creature returns 5 minutes later. Any player can wake a zone boss, and a slain boss returns after 5 minutes.</p></div>
           <div class="m-card"><span class="m-card-icon">📦</span><div class="m-card-title">Loot, Gold &amp; XP</div><p>Loot and gold go to the player who lands the kill. <b>XP is shared</b> with party members in the same zone.</p></div>
           <div class="m-card"><span class="m-card-icon">💬</span><div class="m-card-title">Party Frames</div><p>See all party members' HP and MP bars, current zone, and downed status in real time. Trade items via the trade window (Y key, near another player).</p></div>
         </div>
@@ -775,6 +807,19 @@ tr:hover td{background:rgba(0,229,255,0.03);}
         <p style="margin-top:1rem;">Press <span class="hl">B</span> anywhere to board or land. Your car replaces your character, carries you faster, and <b>stays with you through zone portals</b>; your party sees you flying it. Attacking or using a skill lands you, a hit worth 3% or more of your max HP knocks you out, you can't call it within 5 seconds of being hit, and skycars are grounded in the Colossus.</p>
       </section>
 
+      <!-- ROBOT CABS (a800–a815) -->
+      <section id="cabs" class="reveal">
+        <h2><span class="icon">🚕</span>Robot Cabs</h2>
+        <div class="section-bar"></div>
+        <p>Two driverless cab services work the world: <b>Boxi</b>, the square pod, around the Outpost, and <b>Roamer</b>, the long car with the spinning dome, on the frontier. They overlap in the Void Wastes, the Citadel and the Ashlands. Dungeons, lairs, the Colosseum and the endgame zones have no service. Each stop sits a few steps from the gate you arrive by, clear of the boss arena and mob camps. Every destination is picked on the <b>world map</b>, and you pay when you get in.</p>
+        <div class="mechanic-grid">
+          <div class="m-card"><span class="m-card-icon">🚏</span><div class="m-card-title">Ride, Book or Express</div><p>Press <span class="hl">F</span> at a waiting cab to ride. In the Outpost you can book a cab to come to you. In any zone with service, an express is with you in seconds and drives faster, for three fares.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎲</span><div class="m-card-title">Tolls</div><p>Every ride carries a random toll on top of the fare: 50% more XP or gold lost at your next death, 25% less XP or damage for five minutes, or half health and mana with no potions for a minute.</p></div>
+          <div class="m-card"><span class="m-card-icon">🗺️</span><div class="m-card-title">The Grand Tour</div><p>420 gold for a slow ride through every zone the cab serves, until you press <span class="hl">F</span>. It never breaks down, and its toll is doubled.</p></div>
+          <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Mind the Road</div><p>While you ride you cannot be hurt or attack, but every 20 seconds there is a 1 in 10 chance the cab gives up and lets you out where it is. A cab you are not riding will hit you if you stand in its way (except in safe zones). Cabs are shared: only the first player to reach one gets in.</p></div>
+        </div>
+      </section>
+
       <!-- YOUR CHARACTERS -->
       <section id="characters" class="reveal">
         <h2><span class="icon">🔑</span>Accounts &amp; Your Characters</h2>
@@ -785,6 +830,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🏕️</span><div class="m-card-title">Offline Characters</div><p><b>Play Offline</b> keeps your characters on this device for solo play. They are tied to a private transfer code: type <b>/transfer</b> in chat, or press <b>TRANSFER CODE</b> on character select, to see it. Keep it private.</p></div>
           <div class="m-card"><span class="m-card-icon">📥</span><div class="m-card-title">Bring a Hero Online</div><p>Sign in with Play Online and choose <b>Import Old Character</b> on character select to move an offline character into your account with its level, gear and gold. Each character can be imported once, it takes your account name, and the offline copy stays on your device.</p></div>
           <div class="m-card"><span class="m-card-icon">💻</span><div class="m-card-title">New Device?</div><p>Online characters are there as soon as you sign in. For offline characters, choose Play Offline, click <b>New device? Enter a transfer code</b>, type your name and code, and they come with you.</p></div>
+          <div class="m-card"><span class="m-card-icon">🎒</span><div class="m-card-title">New Characters</div><p>A new character skips the intro and the walkthrough and starts with what they hand out: 600 gold, the class weapon at +3, the class skill on the bar and potions. <b>REPLAY TUTORIAL</b> in Help and Settings still plays the full walkthrough.</p></div>
           <div class="m-card"><span class="m-card-icon">⚠️</span><div class="m-card-title">Loud Warnings</div><p>If a save ever can't reach the server, you'll be told in chat.</p></div>
         </div>
       </section>
@@ -884,6 +930,7 @@ tr:hover td{background:rgba(0,229,255,0.03);}
           <div class="m-card"><span class="m-card-icon">🎺</span><div class="m-card-title">World Boss Kill</div><p>Triumphant rising fanfare. Em → G → B → high E with a crescendo sweep.</p></div>
           <div class="m-card"><span class="m-card-icon">🌀</span><div class="m-card-title">Apex Portal Spawn</div><p>Descending dimensional rip — distinct from regular zone portals.</p></div>
           <div class="m-card"><span class="m-card-icon">✨</span><div class="m-card-title">Apex Trial Clear</div><p>Major triad cascade — C → E → G → high C with a shimmer sustain.</p></div>
+          <div class="m-card"><span class="m-card-icon">🔉</span><div class="m-card-title">Sound Lab</div><p>Type <span class="hl">/sounds</span> in chat. Every mob attack makes a sound, and the MOB ATTACKS tab lists every creature with the file name for its own attack, what it plays now, and a play button.</p></div>
         </div>
 
         <p style="margin-top:1.25rem;color:var(--xu-gold);font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">17 Unique Staff Projectile FX</p>

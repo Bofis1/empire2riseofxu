@@ -354,12 +354,8 @@ main{max-width:1280px;margin:0 auto;padding:3rem 2rem 6rem;}
 .enemy-armor-fill{height:100%;background:var(--xu-red);}
 /* ── 3D specimen previews (rendered by the shared overlay canvas) ── */
 /* ── pictures rendered from the game (replaces the live 3D overlay) ── */
-.spin{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:150px;background-repeat:no-repeat;background-size:1200% 100%;background-position:0 0;
-  mix-blend-mode:screen;animation:e2spin 9s steps(12,jump-none) infinite;}
-.enemy-card:hover .spin,.boss-card:hover .spin,.set-card:hover .spin,.race-card:hover .spin{animation-duration:4s;}
+.spin{position:absolute;top:0;left:50%;transform:translateX(-50%);height:100%;width:150px;object-fit:contain;mix-blend-mode:screen;background:#000;pointer-events:none;}
 .boss-preview .spin{width:210px;}.set-preview .spin{width:230px;}.race-preview .spin{width:240px;}
-@keyframes e2spin{from{background-position:0 0}to{background-position:100% 0}}
-@media (prefers-reduced-motion: reduce){.spin{animation:none;}}
 .item-preview img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-height:88%;max-width:88%;}
 .item-preview.art img{width:96px;height:96px;image-rendering:auto;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--rar) 40%,transparent));}
 .item-preview.model img{height:100%;mix-blend-mode:screen;}
@@ -1170,11 +1166,16 @@ const HAS_PIC = {"ls001":1,"ls002":1,"ls003":1,"ls004":1,"ls005":1,"ls_echo_fila
 const ZONE_PIC = {"ancient":1,"arena":1,"ashlands":1,"aviacanyon":1,"blooming_wilds":1,"carport":1,"caves_of_despair":1,"cemetery":1,"citadel":1,"convergence":1,"depth1_broken_reality":1,"depth2_cinder":1,"depth3_storm":1,"depth4_scale_and_prism":1,"depth5_machine":1,"depth6_overgrowth":1,"dragonlair":1,"forge":1,"frostveil":1,"fungal":1,"lucidwilde":1,"necropolis":1,"neon_hollow":1,"outpost":1,"patrol":1,"riftvale":1,"sanctuary":1,"sunken_sands":1,"the_end":1,"the_reach":1,"veiled_sanctuary":1,"void":1,"void_citadel":1,"wyvernwastes":1,"xeron":1,"xulcan":1,"xumen":1,"xumen_fortress":1};
 
 // ── pictures: creatures, bosses, races and sets turn on a strip of 12 frames rendered from the game; items show the game's own picture ──
-function _spin(kind, key){ return '<div class="spin" data-src="img/' + kind + '/' + key + '.webp"></div>'; }
+function _spin(kind, key){ return '<video class="spin" muted loop playsinline disablepictureinpicture preload="none" data-src="img/' + kind + '/' + key + '.mp4"></video>'; }
 function _itemPicSrc(it){ if(HAS_PIC[it.id]) return 'img/item/' + it.id + '.png';
   if(it.type === 'weapon' || it.slot === 'helmet' || it.slot === 'chest' || it.slot === 'legs' || it.slot === 'boots') return 'img/item3d/' + String(it.id).replace(/_g\d+$/, '_g1') + '.webp'; return null; }
-var _spinObs = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el = e.target; el.style.backgroundImage = 'url(' + el.getAttribute('data-src') + ')'; _spinObs.unobserve(el); } }); }, { rootMargin: '300px' }) : null;
-window.__refreshBestiary3D = function(){ document.querySelectorAll('.spin[data-src]:not([data-on])').forEach(function(el){ el.setAttribute('data-on', '1'); if(_spinObs) _spinObs.observe(el); else el.style.backgroundImage = 'url(' + el.getAttribute('data-src') + ')'; }); };
+// each turntable is a short seamless video: it loads when its card comes near the screen and only plays while it is on screen
+var _spinObs = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){ es.forEach(function(e){ var v = e.target;
+  if(e.isIntersecting){ if(!v.src) v.src = v.getAttribute('data-src'); var p = v.play(); if(p && p.catch) p.catch(function(){}); } else if(!v.paused) v.pause(); }); }, { rootMargin: '200px' }) : null;
+window.__refreshBestiary3D = function(){ document.querySelectorAll('video.spin[data-src]:not([data-on])').forEach(function(v){ v.setAttribute('data-on', '1'); v.muted = true;
+  if(_spinObs) _spinObs.observe(v); else { v.src = v.getAttribute('data-src'); v.play(); } }); };
+document.addEventListener('mouseover', function(ev){ var c = ev.target.closest && ev.target.closest('.enemy-card,.boss-card,.set-card,.race-card'); if(!c) return; var v = c.querySelector('video.spin'); if(v) v.playbackRate = 2; });
+document.addEventListener('mouseout', function(ev){ var c = ev.target.closest && ev.target.closest('.enemy-card,.boss-card,.set-card,.race-card'); if(!c || (ev.relatedTarget && c.contains(ev.relatedTarget))) return; var v = c.querySelector('video.spin'); if(v) v.playbackRate = 1; });
 
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
